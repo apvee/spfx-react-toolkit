@@ -181,7 +181,12 @@ async function main() {
     await d('formatted-text','content').selectOption('jsx');
     const mixed = await d('formatted-text','mixed-jsx').elementHandle();
     await setDiagnostics(false);
-    await d('formatted-text','as').waitFor({ state: 'hidden' });
+    // Fluent retains diagnostic descendants while the panel clips them at zero height.
+    // Their layout boxes remain measurable, so descendant visibility is not the close signal.
+    await page.waitForFunction(() => {
+      const panel = document.querySelector('[data-formatted-text-demo="as"]')?.closest('.fui-AccordionPanel');
+      return panel?.hasAttribute('inert') && panel.getBoundingClientRect().height <= 1;
+    });
     check('formatted: diagnostics collapse retains native select and inert', await d('formatted-text','as').evaluate(node => node.closest('.fui-AccordionPanel').getAttribute('inert') === ''));
     check('formatted: diagnostics collapse retains the same actual JSX action', await mixed.evaluate(node => node === document.querySelector('[data-formatted-text-demo="mixed-jsx"]') && node.tagName === 'BUTTON' && !node.closest('.fui-AccordionPanel')));
     await d('formatted-text','mixed-jsx').click();

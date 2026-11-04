@@ -31,12 +31,12 @@ export function ExampleExplorer({ groups }: {
                   {feature.scenarios.map(scenario => <option key={scenario.id} value={scenario.id}>{scenario.title}</option>)}
                 </Select>
               </Field>}
-              <Button ref={state.resetButtonRef} onClick={event => state.resetScenario(event.currentTarget)}>Ripristina scenario</Button>
+              <Button ref={state.resetButtonRef} onClick={event => state.resetScenario(event.currentTarget)}>Reset scenario</Button>
             </div>
-            <Text><strong>Cosa osservare: </strong>{entry.metadata.observe}</Text>
+            <Text><strong>What to observe: </strong>{entry.metadata.observe}</Text>
             <ExecutableExampleHost entry={entry} resetRevision={state.resetRevision} />
           </>}
-        </> : <Text>Nessuno scenario disponibile.</Text>}
+        </> : <Text>No scenarios available.</Text>}
       </div>
     </div>
   </div>;

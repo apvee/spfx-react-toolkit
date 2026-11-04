@@ -839,7 +839,7 @@ test('5a actual Explorer Reset keeps native focus and outer Demo while retiring 
     f.click('Start');
     await f.ready();
     assert.equal(f.subject.mounts, 1);
-    const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Ripristina scenario');
+    const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Reset scenario');
     assert.ok(reset);
     f.h.act(() => { reset.focus(); reset.click(); });
     await f.flush();

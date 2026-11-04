@@ -23,13 +23,13 @@ function unexpectedReadJavaScript(requests, url) {
 
 /** Select the current generated feature/scenario through the actual explorer. */
 async function selectGeneratedShellScenario(page, title = 'Configure the actual web part Shell') {
-  const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+  const mobile = page.getByRole('combobox', { name: 'Feature', exact: true });
   if (await mobile.isVisible()) {
     const value = await mobile.locator('option').filter({ hasText: /^WebPartShell$/ }).getAttribute('value');
     await mobile.selectOption(value);
   } else {
-    const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-    const group = nav.getByRole('button', { name: /^Controlli/ }).first();
+    const nav = page.getByRole('navigation', { name: 'Example groups and features' });
+    const group = nav.getByRole('button', { name: /^Controls/ }).first();
     if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
     await nav.getByRole('button', { name: 'WebPartShell', exact: true }).click();
   }

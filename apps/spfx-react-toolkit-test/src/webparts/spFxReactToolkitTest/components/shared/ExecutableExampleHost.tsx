@@ -23,7 +23,7 @@ class ExampleLoadBoundary extends React.Component<{ readonly children?: React.Re
   public static getDerivedStateFromError(error: Error): { readonly error: Error } { return { error }; }
   public render(): React.ReactNode {
     return this.state.error
-      ? <MessageBar intent="error"><MessageBarBody>Impossibile caricare lo scenario: {this.state.error.message}</MessageBarBody></MessageBar>
+      ? <MessageBar intent="error"><MessageBarBody>Unable to load scenario: {this.state.error.message}</MessageBarBody></MessageBar>
       : this.props.children;
   }
 }
@@ -73,7 +73,7 @@ export function ExecutableExampleHost({ entry, resetRevision }: {
   if (!isExecutableEntryForHost(entry, actualHost)) return <MessageBar intent="warning"><MessageBarBody>Scenario requires its matching native host: {entry.metadata.host}.</MessageBarBody></MessageBar>;
   const Scenario = entry.metadata.hostAdapter === 'webPartShell' ? ShellScenario : entry.metadata.hostAdapter === 'propertyPane' ? NativeScenario : entry.metadata.hostAdapter === 'applicationCustomizerTop' ? TopScenario : OrdinaryScenario;
   return <ExampleLoadBoundary key={entry.id}>
-    <React.Suspense fallback={<Spinner size="medium" label={`Caricamento ${entry.title}...`} />}>
+    <React.Suspense fallback={<Spinner size="medium" label={`Loading ${entry.title}...`} />}>
       <Scenario entry={entry} resetRevision={resetRevision} render={render} />
     </React.Suspense>
   </ExampleLoadBoundary>;

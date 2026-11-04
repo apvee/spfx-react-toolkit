@@ -27,7 +27,7 @@ interface DemoCardProps {
 export const DemoCard: React.FC<DemoCardProps> = ({ title, iconName, description, error, controls, commands, status, diagnostics, diagnosticsLabel = 'Advanced diagnostics', contentPlacement = 'subject', children }) => {
   const styles = useDemoStyles();
   return (
-    <section className={styles.section} aria-label={title} data-demo-section="">
+    <section className={styles.section} aria-label={title} data-demo-section="" data-demo-content-placement={contentPlacement}>
       <div className={styles.sectionHeader}>
         <Text as="h3" size={500} weight="semibold" className={styles.heading}>{title}</Text>
         {description && <Text as="p" className={styles.description}>{description}</Text>}

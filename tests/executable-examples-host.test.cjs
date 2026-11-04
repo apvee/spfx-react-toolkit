@@ -189,7 +189,7 @@ test('generated Hook navigation, expansion and scenario selection never query th
   assert.equal(h.calls.length, 0, 'read scenario selection performs no list I/O');
   h.change('Team A'); await h.flush(); assert.equal(h.calls.length, 0);
   h.click(); await h.flush(); assert.equal(h.calls.length, 1);
-  h.click('Ripristina scenario'); assert.equal(h.container.querySelector('input[aria-label="List title"]').value, '');
+  h.click('Reset scenario'); assert.equal(h.container.querySelector('input[aria-label="List title"]').value, '');
   await h.fail(0, 'Late navigation error'); assert.doesNotMatch(h.container.textContent, /Late navigation error/);
   assert.equal(h.calls.length, 1);
   h.change('Team B'); h.click(); await h.flush();

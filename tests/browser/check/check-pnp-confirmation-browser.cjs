@@ -39,7 +39,9 @@ async function main() {
     await page.getByRole('button', { name: 'Load', exact: true }).click();
     await page.getByText('#42 - Intended item', { exact: true }).waitFor();
     for (const action of ['Cancel', 'Escape']) {
-      await trigger.click(); await dialog.waitFor(); check(`${action}: intended item`, (await dialog.textContent()).includes('Delete item #42?'), true);
+      await trigger.click(); await dialog.waitFor();
+      await page.waitForFunction(() => { const surface = document.querySelector('[role=dialog]'); return surface?.contains(document.activeElement); });
+      check(`${action}: intended item`, (await dialog.textContent()).includes('Delete item #42?'), true);
       check(`${action}: consent before removal`, await page.evaluate(() => window.pnpConfirmationMock.calls.length), 0);
       if (action === 'Cancel') await dialog.getByRole('button', { name: 'Cancel', exact: true }).click(); else await page.keyboard.press('Escape');
       await dialog.waitFor({ state: 'hidden' });
@@ -53,8 +55,8 @@ async function main() {
     check('Confirmation inherits RTL', await dialog.evaluate(element => getComputedStyle(element).direction), 'rtl');
     check('Modal owns keyboard focus', await dialog.evaluate(element => element.contains(document.activeElement)), true);
     const screenshot = path.join(output, 'confirmation-dark-rtl.png'); await page.screenshot({ path: screenshot }); screenshots.push(screenshot);
-    check('Load locked during consent', await page.getByRole('button', { name: 'Load', exact: true }).isDisabled(), true);
-    check('Edit locked during consent', await page.getByRole('button', { name: 'Edit', exact: true }).first().isDisabled(), true);
+    check('Load locked during consent', await page.getByRole('button', { name: 'Load', exact: true, includeHidden: true }).isDisabled(), true);
+    check('Edit locked during consent', await page.getByRole('button', { name: 'Edit', exact: true, includeHidden: true }).first().isDisabled(), true);
     check('Target read-only during consent', await page.getByLabel('List Title', { exact: true }).getAttribute('readonly') !== null, true);
     await page.evaluate(() => window.pnpConfirmationMock.replaceOperation());
     await dialog.getByRole('button', { name: 'Delete item', exact: true }).click(); await dialog.waitFor({ state: 'hidden' });

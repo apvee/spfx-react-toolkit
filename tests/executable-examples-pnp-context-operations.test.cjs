@@ -149,7 +149,7 @@ test('actual Explorer departure keeps navigation available and retires the dispa
   const select = name => { const node = [...f.container.querySelectorAll('[data-example-feature]')].find(node => node.textContent === name); assert.ok(node, name); f.h.act(() => Simulate.click(node)); };
   select('useSPFxPnPContext'); await drain(f); assert.equal(f.calls.length, 0);
   const original = handler(f, 'Run'); f.click('Run'); await drain(f); assert.equal(f.calls.length, 1);
-  const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Ripristina scenario'); assert.ok(reset);
+  const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Reset scenario'); assert.ok(reset);
   f.h.act(() => Simulate.click(reset)); await f.flush(() => original()); await drain(f); assert.equal(f.calls.length, 1);
   select('useSPFxContext'); await drain(f); await finish(f, 0, web('Departed Explorer result'));
   assert.ok(!f.container.textContent.includes('Departed Explorer result')); assert.match(f.container.textContent, /Native context available/);
@@ -394,7 +394,7 @@ test('operations real Explorer selection, stable Reset and departure do no autom
   const { Simulate } = require('react-dom/test-utils'); const f = operationsFixture(t, { explorer: true }); await drain(f);
   const select = name => { const button = [...f.container.querySelectorAll('[data-example-feature]')].find(n => n.textContent === name); assert.ok(button); f.h.act(() => Simulate.click(button)); };
   select('useSPFxPnP'); await drain(f); assert.equal(f.calls.length, 0); const run = handler(f, 'Run'); f.click('Run'); await drain(f);
-  const selector = f.container.querySelector('[aria-label="Request"]'); f.click('Ripristina scenario'); assert.equal(f.container.querySelector('[aria-label="Request"]'), selector);
+  const selector = f.container.querySelector('[aria-label="Request"]'); f.click('Reset scenario'); assert.equal(f.container.querySelector('[aria-label="Request"]'), selector);
   await f.flush(() => run()); await drain(f); assert.equal(f.calls.length, 1);
   select('useSPFxContext'); await finish(f, 0, denied('Departed operation')); assert.ok(!f.container.textContent.includes('Departed operation'));
 });

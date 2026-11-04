@@ -41,7 +41,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
   const renderer = require('@griffel/core').createDOMRenderer(null);
   const host = document.createElement('div'); document.body.appendChild(host);
   const mounts = new Map(), unmounts = new Map(), loads = new Map();
-  const groups = [{ key: 'core', title: 'Provider e contesto', features: ['first', 'second'].map(key => ({ key, title: key, scenarios: [{ id: key, title: key, metadata: { host: 'none', contentPlacement: 'configuration', observe: 'Observe generated lazy lifetime.' }, load: () => {
+  const groups = [{ key: 'core', title: 'Providers and context', features: ['first', 'second'].map(key => ({ key, title: key, scenarios: [{ id: key, title: key, metadata: { host: 'none', contentPlacement: 'configuration', observe: 'Observe generated lazy lifetime.' }, load: () => {
     loads.set(key, (loads.get(key) || 0) + 1);
     return Promise.resolve({ Demo: props => {
       React.useEffect(() => { mounts.set(key, (mounts.get(key) || 0) + 1); return () => unmounts.set(key, (unmounts.get(key) || 0) + 1); }, []);
@@ -148,9 +148,9 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
     render(root()); await act(async () => { await Promise.resolve(); });
     const coverageToggle = Array.from(host.querySelectorAll('button')).find(node => node.textContent === 'Detailed package coverage');
     assert.ok(coverageToggle); assert.equal(coverageToggle.getAttribute('aria-expanded'), 'false');
-    assert.match(host.textContent, /2 funzionalità generate · 2 scenari disponibili per WebPart/);
+    assert.match(host.textContent, /2 generated features · 2 scenarios available for WebPart/);
     act(() => coverageToggle.click());
-    assert.match(host.textContent, /Provider e contesto/);
+    assert.match(host.textContent, /Providers and context/);
     assert.doesNotMatch(host.textContent, /host providers|pannelli transitori/);
     const hosted = require('./fixtures/executable-examples/cards-description-list.cjs').scenario(
       'Explore hosted files and folders with explicit source policies',
@@ -254,5 +254,20 @@ test('browser cardinality helpers reject duplicate Groups roots and roots added 
     await assert.rejects(singleExampleTransitions(page, 'groups'), /groups\/diagnostics: one actual principal control/);
     diagnostics.innerHTML = ''; duplicateOnOpen = false; duplicateOnVariant = true;
     await assert.rejects(singleExampleTransitions(page, 'groups'), /groups\/group-type=settings: one actual principal control/);
+    document.querySelector('[role=tabpanel]').innerHTML = `<section data-demo-section data-demo-content-placement="configuration">
+      <div data-demo-configuration><p role="status">Enter text, then run Search.</p></div>
+    </section>`;
+    await singleExample(page, 'search-text');
+    const configuration = document.querySelector('[data-demo-configuration]');
+    configuration.insertAdjacentHTML('beforeend', '<div data-demo-result>Current result</div>');
+    await singleExample(page, 'search-text');
+    configuration.insertAdjacentHTML('beforeend', '<div data-demo-result>Duplicate result</div>');
+    await assert.rejects(singleExample(page, 'search-text'), /at most one published result/);
+    configuration.querySelectorAll('[data-demo-result]').forEach(node => node.remove());
+    configuration.querySelector('[role=status]').remove();
+    await assert.rejects(singleExample(page, 'search-text'), /meaningful current status/);
+    configuration.innerHTML = '<p role="status">Ready.</p><div data-demo-subject>Stray visual subject</div>';
+    await assert.rejects(singleExample(page, 'search-text'), /no separate visual subject/);
+
   } finally { dom.window.close(); }
 });

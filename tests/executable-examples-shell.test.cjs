@@ -183,24 +183,24 @@ test('explicit explorer Reset restores focus after actual Shell body remount wit
     h.React.createElement(WebPartShellDemoHost, { instance }, h.React.createElement(ExampleExplorer, { groups }))), container));
   // The host defaults to the full catalogue's first feature. Select the actual
   // Shell feature through the mobile selector, then observe its real lazy commit.
-  h.act(() => Simulate.change(container.querySelector('select[aria-label="Funzionalità"]'), { target: { value: groups[0].features[0].key } }));
+  h.act(() => Simulate.change(container.querySelector('select[aria-label="Feature"]'), { target: { value: groups[0].features[0].key } }));
   await flush(); assert.equal(document.activeElement, elsewhere, 'mount/selection never invents reset focus');
   const appearance = () => container.querySelector('select[aria-label="Appearance"]');
   h.act(() => Simulate.change(appearance(), { target: { value: 'filled' } })); await flush();
-  const oldReset = button(container, 'Ripristina scenario'); oldReset.focus();
+  const oldReset = button(container, 'Reset scenario'); oldReset.focus();
   h.act(() => Simulate.click(oldReset)); await flush();
   assert.equal(oldReset.isConnected, false, 'real subtle/Card body change destroys the old toolbar');
-  assert.ok(document.activeElement === button(container, 'Ripristina scenario'), 'explicit Reset focus follows its replacement after real Shell remount');
+  assert.ok(document.activeElement === button(container, 'Reset scenario'), 'explicit Reset focus follows its replacement after real Shell remount');
   h.act(() => Simulate.change(appearance(), { target: { value: 'filled' } })); await flush();
-  const nextReset = button(container, 'Ripristina scenario'); nextReset.focus();
+  const nextReset = button(container, 'Reset scenario'); nextReset.focus();
   h.act(() => { Simulate.click(nextReset); elsewhere.focus(); }); await flush();
   assert.equal(nextReset.isConnected, false);
   assert.equal(document.activeElement, elsewhere, 'later user focus wins over pending reset recovery');
   h.act(() => Simulate.change(appearance(), { target: { value: 'filled' } })); await flush();
-  const pointerReset = button(container, 'Ripristina scenario'); pointerReset.focus();
+  const pointerReset = button(container, 'Reset scenario'); pointerReset.focus();
   h.act(() => { Simulate.click(pointerReset); elsewhere.dispatchEvent(new window.Event('pointerdown', { bubbles: true })); }); await flush();
   assert.equal(pointerReset.isConnected, false);
-  assert.ok(document.activeElement !== button(container, 'Ripristina scenario'), 'later pointer action cancels recovery even before focus changes');
+  assert.ok(document.activeElement !== button(container, 'Reset scenario'), 'later pointer action cancels recovery even before focus changes');
   // Track only the exact callbacks owned by this private focus intent. Native
   // Fluent/provider listeners remain real and outside this assertion.
   const add = document.addEventListener, remove = document.removeEventListener;
@@ -213,16 +213,16 @@ test('explicit explorer Reset restores focus after actual Shell body remount wit
     pending.delete(listener); return remove.call(this, type, listener, capture);
   };
   try {
-    const reset = button(container, 'Ripristina scenario'); reset.focus(); h.act(() => Simulate.click(reset));
+    const reset = button(container, 'Reset scenario'); reset.focus(); h.act(() => Simulate.click(reset));
     assert.equal(pending.size, 2, 'a retained Reset owns two per-document cancellation listeners');
     h.act(() => Simulate.change(container.querySelector('select[aria-label="Scenario"]'), { target: { value: groups[0].features[0].scenarios[1].id } }));
     await require('react-dom/test-utils').act(async () => { await Promise.resolve(); });
     assert.equal(pending.size, 0, 'scenario navigation clears pending focus intent');
-    const lastReset = button(container, 'Ripristina scenario'); lastReset.focus(); h.act(() => Simulate.click(lastReset));
+    const lastReset = button(container, 'Reset scenario'); lastReset.focus(); h.act(() => Simulate.click(lastReset));
     // This scenario reset can cross the Shell boundary and consume immediately;
     // a second same-boundary reset remains pending until unmount/navigation.
     await require('react-dom/test-utils').act(async () => { await Promise.resolve(); });
-    const retainedReset = button(container, 'Ripristina scenario'); retainedReset.focus(); h.act(() => Simulate.click(retainedReset));
+    const retainedReset = button(container, 'Reset scenario'); retainedReset.focus(); h.act(() => Simulate.click(retainedReset));
     assert.equal(pending.size, 2);
     h.act(() => ReactDOM.unmountComponentAtNode(container));
     assert.equal(pending.size, 0, 'provider unmount removes its per-document listeners');

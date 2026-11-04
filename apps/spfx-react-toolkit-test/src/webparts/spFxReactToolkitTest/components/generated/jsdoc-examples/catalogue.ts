@@ -599,7 +599,7 @@ export const executableExamples: readonly ExecutableExampleEntry[] = [
 ];
 
 export const executableGroups: readonly ExecutableGroup[] = [
-  { key: "controls", title: "Controlli", features: [
+  { key: "controls", title: "Controls", features: [
     { key: "packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#AccordionGroup", title: "AccordionGroup", scenarios: [executableExamples[0]] },
     { key: "packages/spfx-react-toolkit/src/controls/auto-skeleton/auto-skeleton.tsx#AutoSkeleton", title: "AutoSkeleton", scenarios: [executableExamples[1]] },
     { key: "packages/spfx-react-toolkit/src/controls/content-card/content-card.tsx#ContentCard", title: "ContentCard", scenarios: [executableExamples[2]] },
@@ -630,13 +630,13 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/controls/form/create-form.ts#createForm", title: "createForm", scenarios: [executableExamples[35], executableExamples[36]] },
     { key: "packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell-metadata.ts#getWebPartShellPropertiesMetadata", title: "getWebPartShellPropertiesMetadata", scenarios: [executableExamples[37]] }
   ] },
-  { key: "core", title: "Provider e contesto", features: [
+  { key: "core", title: "Providers and context", features: [
     { key: "packages/spfx-react-toolkit/src/core/provider-application-customizer.tsx#SPFxApplicationCustomizerProvider", title: "SPFxApplicationCustomizerProvider", scenarios: [executableExamples[38], executableExamples[39]] },
     { key: "packages/spfx-react-toolkit/src/core/provider-field-customizer.tsx#SPFxFieldCustomizerProvider", title: "SPFxFieldCustomizerProvider", scenarios: [executableExamples[40]] },
     { key: "packages/spfx-react-toolkit/src/core/provider-listview-commandset.tsx#SPFxListViewCommandSetProvider", title: "SPFxListViewCommandSetProvider", scenarios: [executableExamples[41]] },
     { key: "packages/spfx-react-toolkit/src/core/provider-webpart.tsx#SPFxWebPartProvider", title: "SPFxWebPartProvider", scenarios: [executableExamples[42]] }
   ] },
-  { key: "helpers", title: "Helper e stili", features: [
+  { key: "helpers", title: "Helpers and styles", features: [
     { key: "packages/spfx-react-toolkit/src/helpers/styles/states.ts#active", title: "active", scenarios: [executableExamples[43]] },
     { key: "packages/spfx-react-toolkit/src/helpers/styles/align-items.ts#<module>", title: "alignItems", scenarios: [executableExamples[44]] },
     { key: "packages/spfx-react-toolkit/src/helpers/styles/align-self.ts#<module>", title: "alignSelf", scenarios: [executableExamples[45]] },
@@ -684,7 +684,7 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/helpers/styles/viewport.ts#<module>", title: "viewport", scenarios: [executableExamples[87]] },
     { key: "packages/spfx-react-toolkit/src/helpers/styles/width.ts#<module>", title: "width", scenarios: [executableExamples[88]] }
   ] },
-  { key: "hooks", title: "Hook", features: [
+  { key: "hooks", title: "Hooks", features: [
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#SearchVerticals", title: "SearchVerticals", scenarios: [executableExamples[89]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxAadHttpClient.ts#useSPFxAadHttpClient", title: "useSPFxAadHttpClient", scenarios: [executableExamples[90]] },
     { key: "packages/spfx-react-toolkit/src/hooks/useSPFxAadTokenProvider.ts#useSPFxAadTokenProvider", title: "useSPFxAadTokenProvider", scenarios: [executableExamples[91]] },
@@ -744,7 +744,7 @@ export const executableGroups: readonly ExecutableGroup[] = [
     { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#PropertyPaneSitePicker", title: "PropertyPaneSitePicker", scenarios: [executableExamples[149], executableExamples[150]] },
     { key: "packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#PropertyPaneViewPicker", title: "PropertyPaneViewPicker", scenarios: [executableExamples[151]] }
   ] },
-  { key: "services", title: "Servizi", features: [
+  { key: "services", title: "Services", features: [
     { key: "packages/spfx-react-toolkit/src/services/spfx-configuration-store.service.ts#createSPFxConfigurationStoreService", title: "createSPFxConfigurationStoreService", scenarios: [executableExamples[152]] },
     { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-context.service.ts#createSPFxPnPContextService", title: "createSPFxPnPContextService", scenarios: [executableExamples[153]] },
     { key: "packages/spfx-react-toolkit/src/services/spfx-pnp-list.service.ts#createSPFxPnPListService", title: "createSPFxPnPListService", scenarios: [executableExamples[154]] },

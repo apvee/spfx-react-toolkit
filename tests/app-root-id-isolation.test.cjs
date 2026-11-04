@@ -53,7 +53,7 @@ for (const compiled of [false, true]) {
         await f.render(a);
         assert.match(a.dom.textContent, /Current count: 1/);
         assert.equal([...a.dom.querySelectorAll('button')].find(node => node.textContent === 'Increment counter'), increment);
-        click(f, a, 'Ripristina scenario');
+        click(f, a, 'Reset scenario');
         await f.flush();
         assert.match(a.dom.textContent, /Current count: 0/);
         assert.equal([...a.dom.querySelectorAll('button')].find(node => node.textContent === 'Increment counter'), increment);
@@ -61,7 +61,7 @@ for (const compiled of [false, true]) {
       } else {
         const disclosure = click(f, a, 'Advanced diagnostics');
         await f.render(a);
-        click(f, a, 'Ripristina scenario');
+        click(f, a, 'Reset scenario');
         await f.flush();
         assert.equal(disclosure.getAttribute('aria-expanded'), 'true');
         assert.match(a.dom.textContent, /AppCustomizer native-a \| Web native-a \| Root message/);

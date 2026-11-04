@@ -63,7 +63,24 @@ async function verify(boundary) {
     await contentProduct.locator('[data-cards-demo="content-card"]').click({ position: { x: 5, y: 5 } });
     check('source ContentCard can decline the next selection request', (await contentProduct.locator('[data-cards-demo="counters"]').textContent()).includes('Selection requests:2 Selected:true'), true);
     await page.goto(url);
-    const liveMediaBox = () => liveTarget('preview-card').evaluate(node => { const r = node.querySelector('[data-card-preview]').getBoundingClientRect(); return { width: r.width, height: r.height }; });
+    const liveMediaBox = () => liveTarget('preview-card').evaluate(async node => {
+      await document.fonts.ready;
+      let previous, stableFrames = 0;
+      // React effects and ResizeObserver can still settle across successive frames.
+      // Compare exact geometry only after both states have stopped changing.
+      for (let frame = 0; frame < 120; frame++) {
+        await new Promise(requestAnimationFrame);
+        const media = node.querySelector('[data-card-preview]');
+        const image = media.querySelector('img');
+        const rect = media.getBoundingClientRect();
+        const current = { width: rect.width, height: rect.height };
+        stableFrames = (!image || image.complete) && previous?.width === current.width && previous?.height === current.height
+          ? stableFrames + 1 : 0;
+        if (stableFrames === 4) return current;
+        previous = current;
+      }
+      throw new Error('Preview media geometry did not settle before comparison');
+    });
     const originalLiveMedia = await liveMediaBox();
     await liveTarget('fail-image').click(); await liveTarget('preview-card').locator('[data-card-image-fallback]').waitFor();
     check('single example fallback keeps media geometry', await liveMediaBox(), originalLiveMedia);

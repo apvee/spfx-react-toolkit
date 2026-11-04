@@ -188,7 +188,7 @@ for (const c of cases) {
     const { Simulate } = require('react-dom/test-utils');
     const feature = [...explorer.container.querySelectorAll('[data-example-feature]')].find(node => node.textContent === 'useSPFxPnPListBy' + c.suffix); assert.ok(feature);
     explorer.h.act(() => Simulate.click(feature)); await drain(explorer); assert.equal(explorer.calls.length, 0); explorer.change(c.label, c.value); explorer.click(c.action); await drain(explorer);
-    const node = explorer.container.querySelector('input'); explorer.click('Ripristina scenario'); assert.equal(explorer.container.querySelector('input'), node);
+    const node = explorer.container.querySelector('input'); explorer.click('Reset scenario'); assert.equal(explorer.container.querySelector('input'), node);
     await finish(explorer, 0, json([{ Id: 1, Title: 'Before Explorer reset' }])); assert.ok(!explorer.container.textContent.includes('Before Explorer reset'));
     explorer.change(c.label, c.value); explorer.click(c.action); await drain(explorer);
     const nav = [...explorer.container.querySelectorAll('nav button')].find(button => button.textContent === 'useSPFxContext'); assert.ok(nav);

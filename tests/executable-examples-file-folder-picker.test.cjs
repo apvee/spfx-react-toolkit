@@ -691,14 +691,14 @@ test('5b actual outer Shell explorer Reset retains command ref focus and outer c
     f.click('FileFolderPicker');
     await f.flush();
     await start(f);
-    const input = f.node('Web / site collection URL (empty: current)'), reset = [...f.container.querySelectorAll('button')].find(n => n.textContent === 'Ripristina scenario');
+    const input = f.node('Web / site collection URL (empty: current)'), reset = [...f.container.querySelectorAll('button')].find(n => n.textContent === 'Reset scenario');
     assert.ok(reset);
     const x = await open(f);
     x.command('p', { command: 'pick', items: [raw('FileA')] });
     await f.flush();
     f.h.act(() => { reset.focus(); reset.click(); });
     await f.flush();
-    assert.equal([...f.container.querySelectorAll('button')].find(n => n.textContent === 'Ripristina scenario') === reset, true);
+    assert.equal([...f.container.querySelectorAll('button')].find(n => n.textContent === 'Reset scenario') === reset, true);
     assert.equal(document.activeElement === reset, true);
     assert.equal(f.node('Web / site collection URL (empty: current)') === input, true);
     assert.equal(f.trigger() === null, true);

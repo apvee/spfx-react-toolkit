@@ -25,14 +25,14 @@ export function ExampleExplorerNavigation({ groups }: {
   const navigationGroups = getNavigationGroups(groups);
   const selectedKey = navigationGroups.flatMap(group => group.features).find(feature => feature.key === state.selectedFeatureKey)?.key ?? navigationGroups[0]?.features[0]?.key;
   return <>
-    <Field label="Funzionalità" className={styles.mobile}>
-      <Select className={styles.selectRoot} select={{ className: styles.selectInput }} aria-label="Funzionalità" value={selectedKey ?? ''} disabled={!selectedKey} onChange={(_event, data) => state.selectFeature(data.value)}>
+    <Field label="Feature" className={styles.mobile}>
+      <Select className={styles.selectRoot} select={{ className: styles.selectInput }} aria-label="Feature" value={selectedKey ?? ''} disabled={!selectedKey} onChange={(_event, data) => state.selectFeature(data.value)}>
         {navigationGroups.map(group => <optgroup key={group.key} label={group.title}>
           {group.features.map(feature => <option key={feature.key} value={feature.key}>{feature.title}</option>)}
         </optgroup>)}
       </Select>
     </Field>
-    <nav aria-label="Gruppi e funzionalità" className={styles.sidebar}>
+    <nav aria-label="Example groups and features" className={styles.sidebar}>
       {navigationGroups.map(group => {
         const open = state.expandedGroupKeys.includes(group.key);
         const selected = group.features.find(feature => feature.key === selectedKey);

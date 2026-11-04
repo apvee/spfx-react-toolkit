@@ -64,7 +64,7 @@ test('emits exact source bytes, literal lazy imports and one feature with source
   assert.deepEqual(Array.from(cat.executableExamples, entry => entry.title), ['Z first scenario', 'A second scenario']);
   assert.equal(cat.executableGroups.length, 1);
   assert.equal(cat.executableGroups[0].key, 'helpers');
-  assert.equal(cat.executableGroups[0].title, 'Helper e stili');
+  assert.equal(cat.executableGroups[0].title, 'Helpers and styles');
   assert.equal(cat.executableGroups[0].features.length, 1);
   const feature = cat.executableGroups[0].features[0];
   assert.equal(feature.title, 'count');

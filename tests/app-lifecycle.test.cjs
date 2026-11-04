@@ -88,7 +88,7 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   const top = require('./fixtures/executable-examples/cards-description-list.cjs').scenario('Inspect the actual Top placeholder provider');
   const implementation = file => compiled ? path.resolve(__dirname, '../packages/spfx-react-toolkit/lib', file.replace(/\.tsx?$/, '.js')) : file;
   const entry = { ...top.entry, load: () => Promise.resolve({ Demo: h.load(compiled ? top.file.replace('/src/', '/lib/').replace(/\.tsx$/, '.js') : top.file).Demo }) };
-  const groups = [{ key: 'core', title: 'Provider e contesto', features: [{ key: entry.featureKey, title: entry.featureTitle, scenarios: [entry] }] }];
+  const groups = [{ key: 'core', title: 'Providers and context', features: [{ key: entry.featureKey, title: entry.featureTitle, scenarios: [entry] }] }];
   const h = createHarness({
     '@microsoft/sp-core-library': { Log: { info() {} }, DisplayMode: { Read: 1, Edit: 2 } },
     '@microsoft/sp-application-base': { BaseApplicationCustomizer: NativeApplicationCustomizer, PlaceholderName: { Top: 0 } },
@@ -133,7 +133,7 @@ for (const compiled of [false, true]) test(`${compiled ? 'COMPILED' : 'SOURCE'} 
   // PageContext follows ServiceScope identity; a replacement scope represents native navigation.
   a.context.serviceScope = { ...a.context.serviceScope }; await flush(()=>notify(a)); assert.match(first.domElement.textContent,/Changed web/);
   const beforeReset = JSON.stringify(a.properties);
-  h.act(()=>[...first.domElement.querySelectorAll('button')].find(x=>x.textContent==='Ripristina scenario').click());
+  h.act(()=>[...first.domElement.querySelectorAll('button')].find(x=>x.textContent==='Reset scenario').click());
   assert.equal(JSON.stringify(a.properties),beforeReset); assert.equal(themeHandlers.get(a).size,1);
   const b = new Customizer(); roots.push(b); await flush(()=>b.onInit()); await committed(placeholders[1].domElement, 'SPFxApplicationCustomizerProvider active:');
   assert.match(placeholders[1].domElement.textContent,/AppCustomizer native-2 \| Web native-2 \| Test message/);
@@ -163,7 +163,7 @@ test('SDK/provider doubles: disposal before the generated lazy completion never 
     }}}; }
   }
   const entry={id:'delayed-native-top',title:'Delayed Top',featureKey:'top',featureTitle:'Top',metadata:{host:'applicationCustomizer',hostAdapter:'applicationCustomizerTop',contentPlacement:'configuration',observe:'Wait for an actual lazy module.'},load:()=>new Promise(resolve=>{resolveModule=resolve;})};
-  const groups=[{key:'core',title:'Provider e contesto',features:[{key:'top',title:'Top',scenarios:[entry]}]}];
+  const groups=[{key:'core',title:'Providers and context',features:[{key:'top',title:'Top',scenarios:[entry]}]}];
   let h;
   const toolkit={SPFxApplicationCustomizerProvider:props=>{h.React.useEffect(()=>{mounted++;return()=>{cleaned++;};},[]);return props.children;},useSPFxFluent9ThemeInfo:()=>({theme:require('@fluentui/react-components').webLightTheme}),useSPFxPageContext:()=>({cultureInfo:{isRightToLeft:false}})};
   h=createHarness({'@microsoft/sp-core-library':{Log:{info(){}}},'@microsoft/sp-application-base':{BaseApplicationCustomizer:NativeApplicationCustomizer,PlaceholderName:{Top:0}},'@apvee/spfx-react-toolkit':toolkit,'../generated/jsdoc-examples/catalogue':{executableGroups:groups},SpFxReactToolkitTestApplicationCustomizerStrings:{Title:'Delayed'}});

@@ -247,9 +247,9 @@ for (const [kind, feature] of [['text', 'useSPFxPnPSearch'], ['vertical', 'Searc
   const select = name => { const node = [...f.container.querySelectorAll('[data-example-feature]')].find(node => node.textContent === name); assert.ok(node, name); f.h.act(() => Simulate.click(node)); };
   select(feature); await drain(f); assert.equal(f.calls.length, 0);
   const original = kind === 'text' ? f.container.querySelector('input') : [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Documents');
-  const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Ripristina scenario'); assert.ok(reset);
+  const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Reset scenario'); assert.ok(reset);
   if (kind === 'text') f.change('Search SharePoint...', 'explorer'); f.click(kind === 'text' ? 'Search' : 'Search All'); const i = await queryIndex(f);
-  reset.focus(); f.click('Ripristina scenario'); await drain(f); assert.equal([...f.container.querySelectorAll('button')].find(node => node.textContent === 'Ripristina scenario'), reset);
+  reset.focus(); f.click('Reset scenario'); await drain(f); assert.equal([...f.container.querySelectorAll('button')].find(node => node.textContent === 'Reset scenario'), reset);
   assert.equal(kind === 'text' ? f.container.querySelector('input') : [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Documents'), original); assert.equal(document.activeElement, reset);
   await finish(f, i, json(page('Retired Explorer result'))); assert.doesNotMatch(f.container.textContent, /Retired Explorer result/);
   select(kind === 'text' ? 'SearchVerticals' : 'useSPFxPnPSearch'); await drain(f); assert.equal(f.calls.length, i + 1);
@@ -402,9 +402,9 @@ for (const kind of ['facet','suggestions']) test('g2 real Explorer Reset keeps n
   const f = fixture(t, kind, { explorer: true }); const { Simulate } = require('react-dom/test-utils'); await drain(f);
   const feature = [...f.container.querySelectorAll('[data-example-feature]')].find(node => node.textContent === 'useSPFxPnPSearch'); f.h.act(() => Simulate.click(feature)); await drain(f);
   const scenarioSelect = f.container.querySelector('[aria-label="Scenario"]'); assert.ok(scenarioSelect); f.h.act(() => Simulate.change(scenarioSelect, { target: { value: scenario(titles[kind], owner('useSPFxPnPSearch')).entry.id } })); await drain(f); assert.equal(f.calls.length, 0);
-  const native = f.container.querySelector(kind === 'facet' ? 'select[aria-label="Match values within each facet"]' : 'input'); const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Ripristina scenario');
+  const native = f.container.querySelector(kind === 'facet' ? 'select[aria-label="Match values within each facet"]' : 'input'); const reset = [...f.container.querySelectorAll('button')].find(node => node.textContent === 'Reset scenario');
   let i = 0; if (kind === 'facet') { f.click('Search All Content'); i = await queryIndex(f); } else { f.click('Start suggestions'); suggestEdit(f, 'held'); await waitSuggest(f); }
-  reset.focus(); f.click('Ripristina scenario'); await drain(f); assert.equal([...f.container.querySelectorAll('button')].find(node => node.textContent === 'Ripristina scenario') === reset, true); assert.equal(f.container.querySelector(kind === 'facet' ? 'select[aria-label="Match values within each facet"]' : 'input') === native, true); assert.equal(document.activeElement === reset, true);
+  reset.focus(); f.click('Reset scenario'); await drain(f); assert.equal([...f.container.querySelectorAll('button')].find(node => node.textContent === 'Reset scenario') === reset, true); assert.equal(f.container.querySelector(kind === 'facet' ? 'select[aria-label="Match values within each facet"]' : 'input') === native, true); assert.equal(document.activeElement === reset, true);
   await finish(f, i, kind === 'facet' ? json(facetsPage('Retired Explorer facet')) : json({ Queries: ['Retired Explorer suggestion'] })); assert.doesNotMatch(f.container.textContent, /Retired Explorer/);
 });
 test('facet finite native shape does not widen g1 properties filters or protocol', async t => {

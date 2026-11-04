@@ -112,8 +112,8 @@ function scenarios(h) {
     };
   }
   const a = entry('a'), b = entry('b'), c = entry('c', 'beta', 'hooks');
-  const groups = [{ key: 'controls', title: 'Controlli', features: [{ key: 'alpha', title: 'Alpha feature', scenarios: [a, b] }] },
-    { key: 'hooks', title: 'Hook', features: [{ key: 'beta', title: 'Beta feature', scenarios: [c] }] }];
+  const groups = [{ key: 'controls', title: 'Controls', features: [{ key: 'alpha', title: 'Alpha feature', scenarios: [a, b] }] },
+    { key: 'hooks', title: 'Hooks', features: [{ key: 'beta', title: 'Beta feature', scenarios: [c] }] }];
   return { groups, mounts, cleanups, loads, completions, entry };
 }
 
@@ -128,12 +128,12 @@ test('explorer groups, central scenarios, focus and reset preserve one real exam
     assert.ok(rules.some(rule => rule.includes('@container (max-width: 600px)') && rule.includes('display:none')), 'narrow container hides sidebar via classes');
     assert.ok(rules.some(rule => rule.includes('@container (max-width: 600px)') && rule.includes('display:flex')), 'narrow container exposes grouped mobile select');
     const input = h.host.querySelector('input'); h.change(input, 'edited');
-    h.click(h.button('Hook')); h.click(h.button('Controlli'));
+    h.click(h.button('Hooks')); h.click(h.button('Controls'));
     assert.deepEqual(h.currentState.expandedGroupKeys, ['hooks'], 'groups expand independently');
-    assert.match(h.button('Controlli').textContent, /Alpha feature/, 'collapsed active group identifies its feature');
+    assert.match(h.button('Controls').textContent, /Alpha feature/, 'collapsed active group identifies its feature');
     assert.equal(h.host.querySelector('input'), input); assert.equal(input.value, 'edited');
     assert.equal(s.cleanups.length, 0, 'collapse does not reset content');
-    const mobile = h.host.querySelector('select[aria-label="Funzionalità"]');
+    const mobile = h.host.querySelector('select[aria-label="Feature"]');
     assert.equal(mobile.querySelectorAll('optgroup').length, 2);
     for (const select of [mobile, h.host.querySelector('select[aria-label="Scenario"]')]) {
       for (const element of [select, select.parentElement]) {
@@ -154,7 +154,7 @@ test('explorer groups, central scenarios, focus and reset preserve one real exam
     assert.equal(s.cleanups.filter(id => id === 'a').length, 2);
     assert.equal(h.host.querySelectorAll('[data-example]').length, 1);
     h.click(h.button('Start work'));
-    const reset = h.button('Ripristina scenario'); reset.focus(); h.click(reset);
+    const reset = h.button('Reset scenario'); reset.focus(); h.click(reset);
     const liveInput = h.host.querySelector('input');
     assert.equal(document.activeElement, reset); assert.equal(h.host.querySelector('output').getAttribute('data-revision'), '1');
     h.act(() => s.completions[0]()); assert.equal(liveInput.value, 'baseline', 'scenario invalidates pending work on reset');
@@ -173,9 +173,9 @@ test('explorer groups, central scenarios, focus and reset preserve one real exam
 test('empty and removed generated selections have honest fallbacks', async () => {
   const h = harness();
   try {
-    h.render([]); assert.match(h.host.textContent, /Nessuno scenario disponibile/);
+    h.render([]); assert.match(h.host.textContent, /No scenarios available/);
     const s = scenarios(h); h.render(s.groups); await h.flush();
-    h.change(h.host.querySelector('select[aria-label="Funzionalità"]'), 'alpha');
+    h.change(h.host.querySelector('select[aria-label="Feature"]'), 'alpha');
     h.change(h.host.querySelector('select[aria-label="Scenario"]'), 'b'); await h.flush();
     h.render([{ ...s.groups[0], features: [{ ...s.groups[0].features[0], scenarios: [s.groups[0].features[0].scenarios[0]] }] }]); await h.flush();
     assert.equal(h.host.querySelector('[data-example]').getAttribute('data-example'), 'a');

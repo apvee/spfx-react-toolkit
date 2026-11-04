@@ -120,12 +120,12 @@ async function select(page, key) {
   };
   if (Object.hasOwn(sourceCases, key)) {
     const [title, scenario] = sourceCases[key];
-    const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+    const mobile = page.getByRole('combobox', { name: 'Feature', exact: true });
     if (await mobile.isVisible()) {
       await mobile.selectOption(await mobile.locator('option').filter({ hasText: new RegExp(`^${title}$`) }).getAttribute('value'));
     } else {
-      const nav = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
-      const group = nav.getByRole('button', { name: key === 'providers' ? /^Provider e contesto/ : ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Servizi/ : (['search-text', 'search-vertical', 'pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hook/ : /^Controlli/ }).first();
+      const nav = page.getByRole('navigation', { name: 'Example groups and features' });
+      const group = nav.getByRole('button', { name: key === 'providers' ? /^Providers and context/ : ['pnp-context-service', 'pnp-service', 'pnp-list-service', 'site-service', 'tenant-property-service', 'tenant-service', 'configuration-service'].includes(key) ? /^Services/ : (['search-text', 'search-vertical', 'pnp-crud', 'pnp-operations', 'pnp-context', 'imports', 'styles', 'site', 'tenant-properties', 'tenant', 'configuration'].includes(key) || key.startsWith('pnp-list-') || key.startsWith('runtime-') || key.startsWith('context')) ? /^Hooks/ : /^Controls/ }).first();
       if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
       await nav.getByRole('button', { name: title, exact: true }).click();
     }
@@ -162,7 +162,19 @@ async function singleExample(page, key, checkpoint = 'initial') {
   const panel = activePanel(page);
   check(`${name}: one demo section`, await panel.locator('[data-demo-section]').count(), 1);
   check(`${name}: one configuration card`, await panel.locator('[data-demo-configuration]').count(), 1);
-  check(`${name}: one principal subject or current result`, await panel.locator('[data-demo-subject],[data-demo-result]').count(), 1);
+  const placement = await panel.locator('[data-demo-section]').getAttribute('data-demo-content-placement');
+  if (placement === 'configuration') {
+    check(`${name}: no separate visual subject`, await panel.locator('[data-demo-subject]').count(), 0);
+    const results = await panel.locator('[data-demo-result]').count();
+    check(`${name}: at most one published result`, results <= 1, true);
+    if (results === 0) {
+      const statuses = await panel.locator('[data-demo-configuration] [role=status]').evaluateAll(nodes =>
+        nodes.filter(node => !node.closest('.fui-AccordionPanel')).map(node => node.textContent?.trim()));
+      check(`${name}: meaningful current status before publishing results`, statuses.some(Boolean), true);
+    }
+  } else {
+    check(`${name}: one principal subject or current result`, await panel.locator('[data-demo-subject],[data-demo-result]').count(), 1);
+  }
   const principalRoots = {
     cards: '.fui-Card:not([data-demo-configuration])',
     'content-card': '.fui-Card:not([data-demo-configuration])',
@@ -222,9 +234,11 @@ async function interact(page, key) {
   switch (key) {
     case 'content-card': {
       const card = panel.locator('[data-cards-demo=content-card]');
-      const before = await card.getAttribute('aria-checked');
+      const selection = card.locator(':scope > input[type=checkbox]');
+      check('ContentCard exposes one native selection checkbox', await selection.count(), 1);
+      const before = await selection.isChecked();
       await card.click({ position: { x: 5, y: 5 } });
-      check('ContentCard accepts controlled native selection', await card.getAttribute('aria-checked') !== before, true);
+      check('ContentCard accepts controlled native selection', await selection.isChecked(), !before);
       break;
     }
     case 'card-retention': {
@@ -780,13 +794,17 @@ async function main() {
     await liveTheme(page);
     await page.evaluate(() => window.demoFixtureHost.update({ theme: 'light', dir: 'ltr' }));
     await page.setViewportSize({ width: 320, height: 1000 }); await settle(page);
-    const featureSelect = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
-    const keyboardOptions = await featureSelect.locator('option').evaluateAll(options => options.map(option => option.value));
+    const featureSelect = page.getByRole('combobox', { name: 'Feature', exact: true });
+    const keyboardOptions = await featureSelect.locator('option').evaluateAll(options => options.map(option => ({ value: option.value, title: option.textContent })));
     check('Generated keyboard navigation has multiple features', keyboardOptions.length > 1, true);
-    await featureSelect.selectOption(keyboardOptions[0]); await featureSelect.focus();
+    await featureSelect.selectOption(keyboardOptions[0].value);
+    // macOS headless Chrome does not navigate native select popups with ArrowDown,
+    // even for plain HTML. Exercise native keyboard typeahead and Tab instead.
     for (let index = 1; index < Math.min(4, keyboardOptions.length); index++) {
-      await page.keyboard.press('ArrowDown'); await settle(page);
-      check(`Keyboard reaches generated feature ${index + 1}`, await featureSelect.inputValue(), keyboardOptions[index]);
+      const option = keyboardOptions[index];
+      await featureSelect.focus(); await page.keyboard.type(option.title); await page.keyboard.press('Tab');
+      await page.getByRole('region', { name: option.title, exact: true }).getByRole('heading', { name: option.title, exact: true }).waitFor();
+      check(`Keyboard reaches generated feature ${index + 1}`, await featureSelect.inputValue(), option.value);
     }
     await capture(page, 'keyboard-navigation-320');
     for (const zoom of [1, 2]) {

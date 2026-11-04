@@ -465,7 +465,7 @@ test('CRUD actual Explorer reset preserves input identity and departure invalida
     f.click('Load');
     await drain(f);
     const input = f.container.querySelector('[aria-label="List Title"]');
-    f.click('Ripristina scenario');
+    f.click('Reset scenario');
     assert.equal(f.container.querySelector('[aria-label="List Title"]') === input, true, 'Explorer Reset retains the mounted input');
     assert.equal(input.value, '');
     const context = [...f.container.querySelectorAll('[data-example-feature]')].find(n => n.textContent === 'useSPFxContext');

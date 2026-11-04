@@ -14,12 +14,12 @@ async function checkLegacyPermissionResult(panel, check) {
 // Local browser acceptance uses real generated modules/controls/Shell. Only SPFx
 // native services and HTTP transport are doubled by the integrated fixture.
 async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
-  const navigation = page.getByRole('navigation', { name: 'Gruppi e funzionalità' });
+  const navigation = page.getByRole('navigation', { name: 'Example groups and features' });
   const group = name => navigation.getByRole('button', { name: new RegExp(`^${name}`) }).first();
   const selectedPanel = title => page.getByRole('region', { name: title, exact: true });
-  const reset = () => page.getByRole('button', { name: 'Ripristina scenario', exact: true });
+  const reset = () => page.getByRole('button', { name: 'Reset scenario', exact: true });
   async function feature(title) {
-    const family = ['WebPartShell', 'Pagination'].includes(title) ? 'Controlli' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'Servizi' : 'Hook';
+    const family = ['WebPartShell', 'Pagination'].includes(title) ? 'Controls' : ['createSPFxPnPContextService', 'createSPFxPnPService', 'createSPFxPnPListService', 'createSPFxSiteKeyValueStoreService', 'createSPFxTenantPropertyService', 'createSPFxTenantKeyValueStoreService', 'createSPFxConfigurationStoreService'].includes(title) ? 'Services' : 'Hooks';
     if (await group(family).getAttribute('aria-expanded') !== 'true') await group(family).click();
     await navigation.getByRole('button', { name: title, exact: true }).click();
     await selectedPanel(title).locator('[data-demo-section]').waitFor();
@@ -37,7 +37,7 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
     }
     await panel.locator('[data-demo-section]').waitFor(); await settle(page);
     check(`${name}: one mounted scenario`, await page.locator('[data-demo-section]').count(), 1);
-    check(`${name}: observation available`, (await panel.textContent()).includes('Cosa osservare:'), true);
+    check(`${name}: observation available`, (await panel.textContent()).includes('What to observe:'), true);
     check(`${name}: diagnostics initially closed`, await panel.getByRole('button', { name: 'Advanced diagnostics', exact: true }).getAttribute('aria-expanded'), 'false');
     return panel;
   }
@@ -53,13 +53,13 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   check('JSDoc filter: accepted features', await navigation.locator('[data-example-feature]').count(), Object.keys(pilotTitles).length);
   check('JSDoc filter: controls, hooks and services groups', await navigation.locator('button[aria-expanded]').count(), 3);
   let panel = await feature('WebPartShell');
-  await group('Hook').click();
-  check('Opening hooks leaves controls open', await group('Controlli').getAttribute('aria-expanded'), 'true');
+  await group('Hooks').click();
+  check('Opening hooks leaves controls open', await group('Controls').getAttribute('aria-expanded'), 'true');
   const heading = await panel.getByRole('heading', { level: 2 }).elementHandle();
-  await group('Controlli').click();
-  check('Closed group identifies active selection', (await group('Controlli').textContent()).includes('WebPartShell'), true);
+  await group('Controls').click();
+  check('Closed group identifies active selection', (await group('Controls').textContent()).includes('WebPartShell'), true);
   check('Closing group preserves scenario DOM', await heading.evaluate(element => element.isConnected), true); await heading.dispose();
-  check('Independent hooks remain open', await group('Hook').getAttribute('aria-expanded'), 'true');
+  check('Independent hooks remain open', await group('Hooks').getAttribute('aria-expanded'), 'true');
   check('Group expansion and collapse issue no business requests', await calls(), 0);
 
   panel = await scenario('WebPartShell', pilotTitles.WebPartShell[0]);
@@ -271,10 +271,10 @@ async function jsdocPilotsBrowser({ page, check, settle, overflow, capture }) {
   await capture(page, 'jsdoc-list-read');
 
   await page.setViewportSize({ width: 320, height: 900 }); await settle(page);
-  const mobile = page.getByRole('combobox', { name: 'Funzionalità', exact: true });
+  const mobile = page.getByRole('combobox', { name: 'Feature', exact: true });
   check('320px mobile feature selector visible', await mobile.isVisible(), true);
   check('320px desktop navigation hidden', await navigation.isVisible(), false);
-  check('Mobile optgroups', await mobile.locator('optgroup').evaluateAll(nodes => nodes.map(node => node.label)), ['Controlli', 'Hook']);
+  check('Mobile optgroups', await mobile.locator('optgroup').evaluateAll(nodes => nodes.map(node => node.label)), ['Controls', 'Hooks']);
   const pagination = await mobile.locator('option').filter({ hasText: /^Pagination$/ }).getAttribute('value');
   await mobile.selectOption(pagination); await mobile.focus(); await page.keyboard.press('Tab');
   check('Keyboard reaches central scenario selector', await page.getByRole('combobox', { name: 'Scenario', exact: true }).evaluate(element => element === document.activeElement), true);

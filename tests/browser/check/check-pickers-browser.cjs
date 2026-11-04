@@ -2,6 +2,7 @@ const { startFixtureServer } = require('../helpers/fixture-server.cjs');
 const { withBrowserCleanup } = require('../helpers/browser-runtime.cjs');
 const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
+// The raw-webpack fixture selects the default en-US native resource dictionaries.
 const root = path.resolve(__dirname, '../../..'), directory = path.join(root, 'temp/pickers-browser'), evidence = path.resolve(process.env.PICKERS_BROWSER_EVIDENCE || path.join(root, '.docs/maintenance/evidence/pickers/dropdown'));
 async function main(defer) {
   fs.mkdirSync(evidence, { recursive: true });
@@ -24,9 +25,9 @@ async function main(defer) {
       const subject = cases.filter({ has: page.locator(`h2:text-is("${name}-combobox-single-wide")`) });
       const slowTrigger = subject.locator('.fui-Dropdown__button');
       await slowTrigger.click();
-      await page.getByRole('status').filter({ hasText: 'Caricamento…' }).waitFor();
-      check(`${name} slow initial read reports loading instead of empty`, (await page.getByRole('status').allTextContents()).some(text => text.includes('Digita almeno')), false);
-      await rows().first().waitFor(); await page.getByText('Caricamento…', { exact: true }).waitFor({ state: 'hidden' });
+      await page.getByRole('status').filter({ hasText: 'Loading…' }).waitFor();
+      check(`${name} slow initial read reports loading instead of empty`, (await page.getByRole('status').allTextContents()).some(text => text.includes('Type at least')), false);
+      await rows().first().waitFor(); await page.getByText('Loading…', { exact: true }).waitFor({ state: 'hidden' });
       await page.waitForFunction(() => window.pickerFixture.stats.pending === 0);
       const beforeRows = await rows().allTextContents();
       const beforeCalls = await page.evaluate(() => [window.pickerFixture.stats.sp, window.pickerFixture.stats.graph]);
@@ -44,7 +45,7 @@ async function main(defer) {
       check(`${name} cosmetic/equivalent/reopen retains trigger DOM`, await slowTrigger.evaluate(node => node === window.pickerRetainedInput), true);
       check(`${name} settled reopen retains menu rows`, await rows().allTextContents(), beforeRows);
       check(`${name} cosmetic/equivalent/reopen reuses transport reads`, await page.evaluate(() => [window.pickerFixture.stats.sp, window.pickerFixture.stats.graph]), beforeCalls);
-      check(`${name} settled reopen has no loading/empty flash`, frames.some(text => /Caricamento|Digita almeno|Nessun risultato/.test(text)), false);
+      check(`${name} settled reopen has no loading/empty flash`, frames.some(text => /Loading|Type at least|No results/.test(text)), false);
       await page.keyboard.press('Escape');
     }
     await page.evaluate(() => { window.pickerFixture.state.readDelayMs = 0; });
@@ -53,7 +54,7 @@ async function main(defer) {
       const input = card.locator('.fui-Dropdown__button, .fui-TagPickerInput');
       await input.click(); await rows().first().waitFor();
       if (id.includes('combobox')) {
-        const search = page.getByRole('searchbox', { name: `${id}: cerca`, exact: true });
+        const search = page.getByRole('searchbox', { name: `${id}: search`, exact: true });
         check(`${id} search has its own accessible name`, await search.count(), 1);
         check(`${id} search and trigger IDs are distinct`, await search.getAttribute('id') !== await input.getAttribute('id'), true);
       }
@@ -141,11 +142,11 @@ async function main(defer) {
         check('single selected reactivation keeps popup', await search.count(), 1);
       } else {
         await search.fill('Site 2'); await rows().filter({ hasText: 'Site 2' }).click(); await settle();
-        check('multi native summary', await trigger.textContent(), '2 elementi selezionati');
+        check('multi native summary', await trigger.textContent(), '2 items selected');
         await page.locator('.fui-Option:visible[aria-checked="true"]').first().click(); await settle();
         check('multi selected row removes independently of query', (await selectedValues(subject)).length, 1);
       }
-      await search.fill('Site'); await page.getByRole('button', { name: 'Cancella ricerca', exact: true }).click();
+      await search.fill('Site'); await page.getByRole('button', { name: 'Clear search', exact: true }).click();
       check(`${mode} query clear only clears search`, await search.inputValue(), '');
       check(`${mode} query clear retains selection`, (await selectedValues(subject)).length, 1);
       const beforeIme = await events();
@@ -184,7 +185,7 @@ async function main(defer) {
       if (mode === 'multi') {
         await action(subject, 'limit').click(); await trigger.click(); await rows().last().click(); await frames();
         check('multi selection limit retains existing value', (await selectedValues(subject)).length, 1);
-        check('multi selection limit exposes validation', await subject.getByText('Il limite di selezione è stato raggiunto.', { exact: true }).count(), 1);
+        check('multi selection limit exposes validation', await subject.getByText('The selection limit has been reached.', { exact: true }).count(), 1);
         await page.keyboard.press('Escape'); await action(subject, 'limit').click();
       }
       await action(subject, 'clear').click();
@@ -199,11 +200,11 @@ async function main(defer) {
       for (const presentation of ['combobox', 'tagPicker']) for (const mode of ['single', 'multi']) {
         const subject = card(`${name}-${presentation}-${mode}-wide`), queryInput = subject.locator('.fui-Dropdown__button, .fui-TagPickerInput');
         await queryInput.click(); await query().fill('zzzznomatch');
-        await page.getByRole('status').filter({ hasText: 'Nessun risultato per questa ricerca' }).waitFor();
-        check(`${name}-${presentation}-${mode} completed empty query feedback`, await page.getByRole('status').last().textContent(), 'Nessun risultato per questa ricerca');
+        await page.getByRole('status').filter({ hasText: 'No results for this search' }).waitFor();
+        check(`${name}-${presentation}-${mode} completed empty query feedback`, await page.getByRole('status').last().textContent(), 'No results for this search');
         await query().fill('x');
-        check(`${name}-${presentation}-${mode} minimum guidance is the placeholder`, await query().getAttribute('placeholder'), 'Digita almeno 2 caratteri per cercare');
-        check(`${name}-${presentation}-${mode} minimum guidance has no duplicate status`, await page.getByRole('status').filter({ hasText: 'Digita almeno 2 caratteri per cercare' }).count(), 0);
+        check(`${name}-${presentation}-${mode} minimum guidance is the placeholder`, await query().getAttribute('placeholder'), 'Type at least 2 characters to search');
+        check(`${name}-${presentation}-${mode} minimum guidance has no duplicate status`, await page.getByRole('status').filter({ hasText: 'Type at least 2 characters to search' }).count(), 0);
         await query().fill(''); await page.keyboard.press('Escape');
       }
     }
@@ -213,11 +214,11 @@ async function main(defer) {
       await input.click(); await rows().first().click();
       await page.waitForFunction(id => document.querySelector(`[data-picker-case="${id}"] [data-case-selection]`).textContent !== '[]', `${name}-combobox-single-wide`);
       const selected = await subject.locator('[data-case-selection]').textContent();
-      await input.click(); await page.getByText('Selezionato', { exact: true }).waitFor();
+      await input.click(); await page.getByText('Selected item', { exact: true }).waitFor();
       const checked = page.locator('.fui-Option:visible[aria-selected="true"]');
       check(`${name} current single row checked once`, await checked.count(), 1);
       check(`${name} current single check visible`, await checked.locator('.fui-Option__checkIcon').count(), 1);
-      await query().fill('unrelated'); await page.getByText('Selezionato', { exact: true }).waitFor();
+      await query().fill('unrelated'); await page.getByText('Selected item', { exact: true }).waitFor();
       check(`${name} single selection retained during unrelated search`, await checked.count(), 1);
       await checked.click();
       check(`${name} clicking current value preserves selection`, await subject.locator('[data-case-selection]').textContent(), selected);
@@ -242,46 +243,46 @@ async function main(defer) {
     const list = card('ListPicker-combobox-multi-wide'), listInput = list.locator('.fui-Dropdown__button');
     await action(list, 'empty').click(); await listInput.click(); await rows().first().waitFor();
     check('metadata catalog default thirty', await rows().count(), 30);
-    check('catalog lookahead hint', (await page.getByRole('status').last().textContent()).includes('Sono disponibili altri elementi'), true);
+    check('catalog lookahead hint', (await page.getByRole('status').last().textContent()).includes('More items are available'), true);
     await query().fill('LIST 34'); await rows().first().waitFor();
     await page.waitForFunction(() => [...document.querySelectorAll('.fui-Option')].filter(n => n.getBoundingClientRect().width).length === 1);
     check('case insensitive search beyond initial thirty', (await rows().first().textContent()).includes('List 34'), true);
     await rows().first().click(); await page.waitForFunction(() => document.querySelector('[data-picker-case="ListPicker-combobox-multi-wide"] [data-case-selection]').textContent !== '[]');
-    await query().fill('unrelated'); await page.getByText('Selezionati', { exact: true }).waitFor();
+    await query().fill('unrelated'); await page.getByText('Selected items', { exact: true }).waitFor();
     check('selected remains checked with unrelated query', await rows().first().getAttribute('aria-checked'), 'true');
     await rows().first().click(); await page.waitForFunction(() => document.querySelector('[data-picker-case="ListPicker-combobox-multi-wide"] [data-case-selection]').textContent === '[]');
     check('multi Dropdown deselection without matching search', JSON.parse(await list.locator('[data-case-selection]').textContent()), []);
     await page.keyboard.press('Escape');
     const contextual = card('SitePicker-combobox-multi-wide'), contextInput = contextual.locator('.fui-Dropdown__button');
     await action(contextual, 'empty').click(); await action(contextual, 'context-sites').click(); await contextInput.click();
-    await page.getByText('Sito corrente', { exact: true }).waitFor(); await page.getByText('Hub associato', { exact: true }).waitFor();
+    await page.getByText('Current site', { exact: true }).waitFor(); await page.getByText('Associated hub', { exact: true }).waitFor();
     check('Site contextual suggestions available without query', await rows().count(), 2);
     await query().fill('NO MATCH');
-    await page.getByText('Sito corrente', { exact: true }).waitFor();
-    await page.getByText('Hub associato', { exact: true }).waitFor();
+    await page.getByText('Current site', { exact: true }).waitFor();
+    await page.getByText('Associated hub', { exact: true }).waitFor();
     check('Site fixed choices survive unrelated typed search', await rows().count(), 2);
-    await page.getByRole('status').filter({ hasText: 'Nessun risultato per questa ricerca' }).waitFor();
-    check('fixed choices do not mask empty query feedback', await page.getByRole('status').last().textContent(), 'Nessun risultato per questa ricerca');
+    await page.getByRole('status').filter({ hasText: 'No results for this search' }).waitFor();
+    check('fixed choices do not mask empty query feedback', await page.getByRole('status').last().textContent(), 'No results for this search');
     await query().fill('Site 0');
-    await page.getByRole('status').filter({ hasText: 'Nessun altro risultato per questa ricerca' }).waitFor();
-    check('matching fixed site is not reported as zero matches', await page.getByRole('status').last().textContent(), 'Nessun altro risultato per questa ricerca');
+    await page.getByRole('status').filter({ hasText: 'No other results for this search' }).waitFor();
+    check('matching fixed site is not reported as zero matches', await page.getByRole('status').last().textContent(), 'No other results for this search');
     await query().fill('');
     await page.keyboard.press('Escape'); await action(contextual, 'update').click(); await contextInput.click();
-    check('full consumer set cannot hide contextual choices', await page.getByText('Sito corrente', { exact: true }).count(), 1);
-    check('hub remains with full consumer set', await page.getByText('Hub associato', { exact: true }).count(), 1);
+    check('full consumer set cannot hide contextual choices', await page.getByText('Current site', { exact: true }).count(), 1);
+    check('hub remains with full consumer set', await page.getByText('Associated hub', { exact: true }).count(), 1);
     check('contextual choices retain consumer model precedence', (await rows().filter({ hasText: 'Renamed Site 0' }).count()), 1);
 
     await rows().filter({ hasText: 'Site 0' }).first().click();
     await page.waitForFunction(() => document.querySelector('[data-picker-case="SitePicker-combobox-multi-wide"] [data-case-selection]').textContent !== '[]');
     check('Site current suggestion selectable and deduplicated', await page.locator('.fui-Option:visible[aria-checked="true"]').count(), 1);
     const contextRequests = await page.evaluate(() => window.pickerFixture.stats.sp);
-    await page.keyboard.press('Escape'); await contextInput.click(); await page.getByText('Hub associato', { exact: true }).waitFor();
+    await page.keyboard.press('Escape'); await contextInput.click(); await page.getByText('Associated hub', { exact: true }).waitFor();
     check('Site suggestions reopen reuses requests', await page.evaluate(() => window.pickerFixture.stats.sp), contextRequests);
     await page.keyboard.press('Escape');
     const site = card('SitePicker-combobox-single-wide'), input = site.locator('.fui-Dropdown__button');
     await input.click(); await rows().first().click(); await page.waitForFunction(() => document.querySelector('[data-picker-case="SitePicker-combobox-single-wide"] [data-case-selection]').textContent !== '[]');
     const selection = await site.locator('[data-case-selection]').textContent(); check('site JSON reference selected', JSON.parse(selection)[0].kind, 'site');
-    check('no separate clear-all button', await site.getByRole('button', { name: 'Svuota selezione', exact: true }).count(), 0);
+    check('one accessible native selection-clear button', await site.getByRole('button', { name: 'Clear selection', exact: true }).count(), 1);
     await site.locator('.fui-Dropdown__clearButton').click();
     await page.waitForFunction(() => document.querySelector('[data-picker-case="SitePicker-combobox-single-wide"] [data-case-selection]').textContent === '[]');
     check('native Dropdown clear emits empty references', JSON.parse(await site.locator('[data-case-selection]').textContent()), []);
@@ -295,8 +296,8 @@ async function main(defer) {
     check('renamed consumer option updates menu', (await rows().first().textContent()).includes('Renamed'), true);
     check('cosmetic consumer models reuse eligibility requests', await page.evaluate(() => window.pickerFixture.stats.sp), before);
     await page.keyboard.press('Escape'); await action(site, 'empty').click(); await action(site, 'clear').click(); await input.click();
-    check('empty set guides search through its placeholder', await query().getAttribute('placeholder'), 'Digita almeno 2 caratteri per cercare');
-    check('empty set has no duplicate minimum guidance', await page.getByRole('status').filter({ hasText: 'Digita almeno 2 caratteri per cercare' }).count(), 0);
+    check('empty set guides search through its placeholder', await query().getAttribute('placeholder'), 'Type at least 2 characters to search');
+    check('empty set has no duplicate minimum guidance', await page.getByRole('status').filter({ hasText: 'Type at least 2 characters to search' }).count(), 0);
     await query().fill('Site'); await rows().first().waitFor(); check('typed search includes nonconsumer sources', await rows().count(), 7);
     await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter');
     await page.waitForFunction(() => document.querySelector('[data-picker-case="SitePicker-combobox-single-wide"] [data-case-selection]').textContent !== '[]');
@@ -304,9 +305,9 @@ async function main(defer) {
     await page.keyboard.press('Escape');
     const paging = card('SitePicker-tagPicker-multi-narrow'), pagingInput = paging.locator('.fui-TagPickerInput');
     await action(paging, 'pages').click(); await pagingInput.click(); await pagingInput.fill('Site');
-    await page.getByRole('status').filter({ hasText: 'Ricerca parziale: affina la ricerca.' }).waitFor();
+    await page.getByRole('status').filter({ hasText: 'Partial search: refine your search.' }).waitFor();
     check('partial query shows bounded first page', await rows().count(), 2);
-    await paging.getByRole('button', { name: 'Altri risultati', exact: true }).click();
+    await paging.getByRole('button', { name: 'More results', exact: true }).click();
     check('loadMore retains the query', await pagingInput.inputValue(), 'Site');
     check('loadMore never changes selection', await selectedValues(paging), []);
     if (await pagingInput.getAttribute('aria-expanded') !== 'true') await pagingInput.click();
@@ -315,7 +316,7 @@ async function main(defer) {
     await pagingInput.fill(''); await page.keyboard.press('Escape'); await action(paging, 'pages').click();
     const principal = card('PrincipalPicker-tagPicker-multi-wide'), principalInput = principal.locator('.fui-TagPickerInput');
     await action(principal, 'empty').click(); await action(principal, 'personal').click(); await principalInput.click(); await rows().first().waitFor();
-    await page.getByText('Persone suggerite', { exact: true }).waitFor(); await page.getByText('I tuoi gruppi', { exact: true }).waitFor();
+    await page.getByText('Suggested people', { exact: true }).waitFor(); await page.getByText('Your groups', { exact: true }).waitFor();
     check('personal sources overall cap', await rows().count() <= 5, true); check('directory roles excluded', (await rows().allTextContents()).some(text => text.includes('directoryRole')), false);
     await rows().filter({ hasText: 'User 1' }).first().click();
     await page.waitForFunction(() => document.querySelector('[data-picker-case="PrincipalPicker-tagPicker-multi-wide"] [data-case-selection]').textContent !== '[]');
@@ -323,10 +324,10 @@ async function main(defer) {
     await rows().first().waitFor();
     check('TagPicker selected exclusion is observed in an open popup', await rows().count() > 0, true);
     check('TagPicker selected identity not duplicated in popup', await rows().filter({ hasText: 'User 1' }).count(), 0);
-    check('TagPicker has no selected section', await page.getByText('Selezionati', { exact: true }).count(), 0);
+    check('TagPicker has no selected section', await page.getByText('Selected items', { exact: true }).count(), 0);
     await page.screenshot({ path: path.join(evidence, 'principal-tagpicker-selected.png') });
     const userValue = JSON.parse(await principal.locator('[data-case-selection]').textContent())[0]; check('person aggregate id not promoted', userValue.entra.id.startsWith('person'), false);
-    await action(principal, 'both').click(); await principal.getByRole('button', { name: 'Risolvi ID', exact: true }).click();
+    await action(principal, 'both').click(); await principal.getByRole('button', { name: 'Resolve IDs', exact: true }).click();
     await page.waitForFunction(() => JSON.parse(document.querySelector('[data-picker-case="PrincipalPicker-tagPicker-multi-wide"] [data-case-selection]').textContent)[0]?.sharePoint?.id === 2);
     check('explicit both ID resolution retains Entra and SP IDs', JSON.parse(await principal.locator('[data-case-selection]').textContent())[0].entra.id, userValue.entra.id);
     check('read-only resolution did not ensureUser', await page.evaluate(() => window.pickerFixture.stats.ensure), 0);
@@ -479,7 +480,7 @@ async function main(defer) {
       await frames();
       nativeCheck(`${name} equivalent props reuse hydration requests`, await page.evaluate(() => window.pickerFixture.native.requests.length), beforeReads + hydrationRequests.length);
       await nativeInput.click(); await nativeInput.fill('zzzznomatch');
-      await page.getByRole('status').filter({ hasText: 'Nessun risultato per questa ricerca' }).last().waitFor();
+      await page.getByRole('status').filter({ hasText: 'No results for this search' }).last().waitFor();
       await page.keyboard.press('Escape');
       await page.evaluate(() => { window.pickerFixture.native.blockReads(); window.pickerFixture.native.update('refresh'); window.pickerFixture.native.update('selection'); });
       await frames();
@@ -498,7 +499,7 @@ async function main(defer) {
         nativeCheck(`${name} ${mode} initial state bypasses skeleton`, await skeleton.getAttribute('aria-busy'), 'false');
         nativeCheck(`${name} ${mode} has no overlay`, await overlay.count(), 0);
         if (mode === 'label' || mode === 'mixed') nativeCheck(`${name} ${mode} retains readable snapshot`, await native.getByText('Retained display snapshot', { exact: true }).isVisible(), true);
-        if (mode === 'mixed') nativeCheck(`${name} mixed unknown label has loading text`, await native.getByText('Caricamento…', { exact: true }).isVisible(), true);
+        if (mode === 'mixed') nativeCheck(`${name} mixed unknown label has loading text`, await native.getByText('Loading…', { exact: true }).isVisible(), true);
         await releaseNative(); await page.evaluate(() => window.pickerFixture.native.dispose());
       }
     }
@@ -528,7 +529,7 @@ async function main(defer) {
     await releaseNative();
     nativeCheck('terminal failure exits initial skeleton', await overlay.count(), 0);
     nativeCheck('terminal failure exposes native validation', await native.locator('.fui-Field__validationMessage').getByText('Simulated SharePoint failure', { exact: true }).isVisible(), true);
-    nativeCheck('terminal failure exposes retry action', await native.getByRole('button', { name: 'Riprova', exact: true }).isVisible(), true);
+    nativeCheck('terminal failure exposes retry action', await native.getByRole('button', { name: 'Retry', exact: true }).isVisible(), true);
     await nativeInput.click(); await page.getByRole('status').filter({ hasText: 'Simulated SharePoint failure' }).waitFor();
     nativeCheck('terminal hydration error is readable', await page.getByRole('status').filter({ hasText: 'Simulated SharePoint failure' }).isVisible(), true);
     await page.keyboard.press('Escape');

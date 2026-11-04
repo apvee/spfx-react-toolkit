@@ -88,7 +88,7 @@ test('actual WebPart host initializes and counts a mixed catalogue whose first e
  await h.act(async()=>{await Promise.resolve();});
  assert.equal(selected,'mixed');assert.deepEqual(loads,['none']);
  assert.equal(view.container.querySelectorAll('[data-example-feature]').length,1);
- assert.match(view.container.textContent,/1 funzionalità generate · 4 scenari disponibili per WebPart/);
+ assert.match(view.container.textContent,/1 generated features · 4 scenarios available for WebPart/);
  assert.equal(view.container.querySelector('select[aria-label="Scenario"]').options.length,4);
  assert.doesNotMatch(view.container.textContent,/Inspect the actual Top/);
 });
