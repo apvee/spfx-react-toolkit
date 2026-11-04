@@ -60,7 +60,7 @@ The optional Grid failure probe requires `DATA_GRID_CHART_PROBE=1` on both the G
 
 ### Focused manual fixtures
 
-Run these commands from the repository root after [installing the pinned workspace dependencies](setup.md#layout-and-build-boundary). Use the ordinary root npm commands for library/app builds and verification; the direct Node commands below are focused diagnostic tools. Compiled fixtures require `npm run build:library` first. Fixtures importing emitted sample examples require the versioned generated outputs; run explicit `npm run generated:sync` and `npm run generated:check` only after changing canonical inputs, then rebuild affected compiled code. Running these fixtures needs neither `npm run serve` nor an authenticated workbench. Rebuild the matching fixture after input changes; different Only modes overwrite the same temporary bundle.
+Run these commands from the repository root after [installing the pinned workspace dependencies](setup.md#layout-and-build-boundary). Use the ordinary root npm commands for library/app builds and verification; the direct Node commands below are focused diagnostic tools. Run `npm run build:library` before the fixture builders below, including migrated-slots source and PnP confirmation: their native-resource alias preflight checks every resource inventory entry for its selected emitted AMD asset under library `lib/controls/.../loc`. Selecting source implementation or replacing hooks does not bypass those emitted-resource prerequisites. No app build is required for these focused fixtures. Fixtures importing emitted sample examples require the versioned generated outputs; run explicit `npm run generated:sync` and `npm run generated:check` only after changing canonical inputs, then rebuild affected compiled code. Running these fixtures needs neither `npm run serve` nor an authenticated workbench. Rebuild the matching fixture after input changes; different Only modes overwrite the same temporary bundle.
 
 The following procedures retain eight separate tools: one FileFolder builder, the migrated-slots builder/checker, the pickers builder/checker, the PnP confirmation builder/checker and the Cards checker. Builders write `index.html`, `fixture.js` and source maps under ignored root `temp`; a successful bundle is not browser acceptance. Checkers fail with a nonzero exit on an assertion or runtime failure. Preserve raw stdout/stderr, mode, bundle identity and exit status alongside any JSON/screenshots: some checkers write their final report only after all assertions pass. Use distinct evidence directories to preserve prior runs.
 
@@ -99,9 +99,9 @@ The helper binds `127.0.0.1` on an allocated port. Stop this process with Ctrl+C
 The [builder](../../../tests/browser/build/build-migrated-slots-browser.cjs) and [checker](../../../tests/browser/check/check-migrated-slots-browser.cjs) accept the same positional `source` or `compiled` argument; omission means `source`, and any other value fails:
 
 ```bash
+npm run build:library
 node tests/browser/build/build-migrated-slots-browser.cjs source
 node tests/browser/check/check-migrated-slots-browser.cjs source
-npm run build:library
 node tests/browser/build/build-migrated-slots-browser.cjs compiled
 node tests/browser/check/check-migrated-slots-browser.cjs compiled
 ```
@@ -125,11 +125,12 @@ The builder writes `temp/pickers-browser` with 56 compiled control/provider/Flue
 The [PnP confirmation builder](../../../tests/browser/build/build-pnp-confirmation-browser.cjs) and [checker](../../../tests/browser/check/check-pnp-confirmation-browser.cjs) have no mode argument:
 
 ```bash
+npm run build:library
 node tests/browser/build/build-pnp-confirmation-browser.cjs
 node tests/browser/check/check-pnp-confirmation-browser.cjs
 ```
 
-The builder writes `temp/pnp-confirmation-browser`. This is an emitted source Demo with actual Fluent Dialog and source styling; its [toolkit boundary](../../../tests/fixtures/pnp-confirmation-browser/toolkit-boundary.ts) replaces the entire PnP hook/context. It does not execute the real CRUD hook, create a PnP client or prove transport/provider behavior. The checker exercises captured delete consent, cancellation, Escape and focus restoration, and rejects non-loopback requests. It owns its allocated server/browser, accepts `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH` with the pickers defaults, and uses `PNP_CONFIRMATION_EVIDENCE` (default `.docs/maintenance/evidence/pnp-confirmation`). Cleanup writes `browser-results.json`, including partial checks/diagnostics/network, even on scenario failure; screenshots are recorded as reached. No library/app build is required for this source-and-hook-double fixture.
+The builder writes `temp/pnp-confirmation-browser`. This is an emitted source Demo with actual Fluent Dialog and source styling; its [toolkit boundary](../../../tests/fixtures/pnp-confirmation-browser/toolkit-boundary.ts) replaces the entire PnP hook/context. It does not execute the real CRUD hook, create a PnP client or prove transport/provider behavior. The checker exercises captured delete consent, cancellation, Escape and focus restoration, and rejects non-loopback requests. It owns its allocated server/browser, accepts `PLAYWRIGHT_MODULE_PATH` and `CHROME_EXECUTABLE_PATH` with the pickers defaults, and uses `PNP_CONFIRMATION_EVIDENCE` (default `.docs/maintenance/evidence/pnp-confirmation`). Cleanup writes `browser-results.json`, including partial checks/diagnostics/network, even on scenario failure; screenshots are recorded as reached. The library build supplies emitted native AMD resources for the builder preflight; the fixture still uses source styling and hook doubles, and requires no app build.
 
 #### Cards source and compiled
 
