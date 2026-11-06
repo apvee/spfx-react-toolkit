@@ -140,7 +140,7 @@ export interface SPFxTenantKeyValueStoreService {
  * }
  * ```
  *
- * @example Round trip numeric looking text through a tenant service
+ * @scenario Round trip numeric looking text through a tenant service
  * ```tsx
  * import * as React from 'react';
  * import { makeStyles, Button, Checkbox, Field, Input, Text } from '@fluentui/react-components';

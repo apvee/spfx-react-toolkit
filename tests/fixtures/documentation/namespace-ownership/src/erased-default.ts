@@ -2,7 +2,7 @@
  * A default export retained only as a type.
  * @packageDocumentation
  * @docPage helpers/styles
- * @example Erased default recipe
+ * @scenario Erased default recipe
  * ```tsx
  * import * as React from 'react';
  * export function Demo(): React.ReactElement { return <div>Erased default</div>; }

@@ -3,6 +3,7 @@
   "tagDefinitions": [
     { "tagName": "@useWhen", "syntaxKind": "block", "allowMultiple": true },
     { "tagName": "@avoidWhen", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@scenario", "syntaxKind": "block", "allowMultiple": true },
     { "tagName": "@docPage", "syntaxKind": "block" },
     { "tagName": "@default", "syntaxKind": "block" },
     { "tagName": "@template", "syntaxKind": "block", "allowMultiple": true },

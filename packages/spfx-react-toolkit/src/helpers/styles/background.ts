@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { background } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = background.canvas;
  * ```
  *
- * @example Select background role descriptors — actual surface and disabled aria
+ * @scenario Select background role descriptors — actual surface and disabled aria
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

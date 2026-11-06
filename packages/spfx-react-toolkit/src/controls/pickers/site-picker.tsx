@@ -23,7 +23,8 @@ import { PickerRenderer } from './picker-renderer.internal';
  * ```tsx
  * import * as React from 'react';
  * import { SitePicker } from '@apvee/spfx-react-toolkit';
- * <SitePicker label="Sito" mode="site" includeCurrentSite includeHubSite />
+ *
+ * <SitePicker label="Sito" mode="site" includeCurrentSite includeHubSite />;
  * ```
  *
  * @useWhen A user must select site collection references, registered hubs or associated sites.
@@ -44,7 +45,7 @@ import { PickerRenderer } from './picker-renderer.internal';
  * }
  * ```
  *
- * @example Explore site selection and contextual search
+ * @scenario Explore site selection and contextual search
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

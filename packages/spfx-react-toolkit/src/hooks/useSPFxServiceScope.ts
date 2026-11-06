@@ -96,7 +96,7 @@ export interface SPFxServiceScopeInfo {
  * }
  * ```
  *
- * @example Inspect the native registered service scope
+ * @scenario Inspect the native registered service scope
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxServiceScope } from '@apvee/spfx-react-toolkit';

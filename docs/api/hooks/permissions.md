@@ -413,182 +413,20 @@ import { useSPFxCrossSitePermissions } from '@apvee/spfx-react-toolkit';
 import { SPPermission } from '@microsoft/sp-page-context';
 
 function ItemPermissionStatus() {
-  const info = useSPFxCrossSitePermissions({ scope: 'item', listTitle: 'Tasks', itemId: 42 });
-  return <span>{info.error?.message ?? (info.isLoading ? 'Loading' : String(info.hasPermission(SPPermission.editListItems)))}</span>;
+  const info = useSPFxCrossSitePermissions({
+    scope: 'item',
+    listTitle: 'Tasks',
+    itemId: 42
+  });
+  return (
+    <span>
+      {info.error?.message ??
+        (info.isLoading
+          ? 'Loading'
+          : String(info.hasPermission(SPPermission.editListItems)))}
+    </span>
+  );
 }
-```
-
-#### Check staged web list item and folder permissions
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input, Select } from '@fluentui/react-components';
-import { SPHttpClient } from '@microsoft/sp-http';
-import { SPPermission } from '@microsoft/sp-page-context';
-import { useSPFxContext, useSPFxPageContext, useSPFxServiceScope, useSPFxCrossSitePermissions, type SPFxScopedPermissionsOptions } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-function sameScope(a: readonly unknown[], b: readonly unknown[]): boolean { return a.length === b.length && a.every((value, index) => Object.is(value, b[index])); }
-function usePermissionScope(): readonly unknown[] {
-  const provider = useSPFxContext();
-  const page = useSPFxPageContext();
-  const scope = useSPFxServiceScope();
-  let client: SPHttpClient | undefined;
-  try { client = scope.consume(SPHttpClient.serviceKey); } catch { client = undefined; }
-  return [provider, provider.spfxContext, provider.kind, provider.instanceId, provider.spfxContext.instanceId,
-    page, scope.serviceScope, scope.serviceScope?.consume, client, page.web.absoluteUrl, page.user.loginName, page.user.email];
-}
-type Run = { id: number; revision: number; scope: readonly unknown[]; target: SPFxScopedPermissionsOptions };
-function PermissionResult({ run, retire }: { run: Run; retire: (id: number) => void }): React.ReactElement {
-  const scope = usePermissionScope();
-  const result = useSPFxCrossSitePermissions(run.target);
-  const current = sameScope(run.scope, scope);
-  React.useEffect(() => { if (!current) retire(run.id); }, [current, retire, run.id]);
-  if (!current) return <p>Scope changed. Run again.</p>;
-  return <section aria-label="Scoped permission result">
-    <p aria-label="Applied target">{JSON.stringify(run.target)}</p>
-    {result.error ? <p role="alert">Error: {result.error.message}</p>
-      : result.isLoading ? <p>Loading scoped permissions</p>
-      : result.permissions === undefined ? <p>Waiting for current permission mask</p>
-      : <p>{result.hasPermission(SPPermission.viewListItems) ? 'Allowed: view list items' : 'Denied: view list items'}</p>}
-    <p>Mask available: {String(result.permissions !== undefined)}</p>
-  </section>;
-}
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const [domain, setDomain] = React.useState<'web' | 'list' | 'item' | 'folder'>('web');
-  const [webUrl, setWebUrl] = React.useState('');
-  const [selector, setSelector] = React.useState<'title' | 'id' | 'path'>('title');
-  const [list, setList] = React.useState('Tasks');
-  const [itemId, setItemId] = React.useState('1');
-  const [folderPath, setFolderPath] = React.useState('/sites/team/Shared Documents/Reports');
-  const nativeScope = usePermissionScope();
-  const [state, setState] = React.useState<{ run?: Run; expired: boolean }>({ expired: false });
-  const sequence = React.useRef(0);
-  const previous = React.useRef(resetRevision);
-  const alive = React.useRef(true);
-  const latest = React.useRef({ scope: nativeScope, revision: resetRevision });
-  latest.current = { scope: nativeScope, revision: resetRevision };
-  React.useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
-  const retire = React.useCallback((id: number) => { if (alive.current) setState(value => value.run?.id === id ? { expired: true } : value); }, []);
-  const run = state.run;
-  const current = run !== undefined && run.revision === resetRevision && sameScope(run.scope, nativeScope);
-  React.useEffect(() => {
-    if (run && !current) {
-      if (run.revision !== resetRevision) setState(value => value.run?.id === run.id ? { expired: false } : value);
-      else retire(run.id);
-    }
-  }, [run, current, resetRevision, retire]);
-  React.useEffect(() => {
-    if (previous.current !== resetRevision) {
-      previous.current = resetRevision; setState({ expired: false }); setDomain('web'); setWebUrl(''); setSelector('title'); setList('Tasks'); setItemId('1'); setFolderPath('/sites/team/Shared Documents/Reports');
-    }
-  }, [resetRevision]);
-  const check = (): void => {
-    if (!alive.current || latest.current.revision !== resetRevision || !sameScope(nativeScope, latest.current.scope)) return;
-    const selectedWeb = webUrl.trim() || undefined;
-    const selectedList = selector === 'id' ? { listId: list.trim() } : selector === 'path' ? { listPath: list.trim() } : { listTitle: list.trim() };
-    const target: SPFxScopedPermissionsOptions = domain === 'web' ? { scope: 'web', webUrl: selectedWeb }
-      : domain === 'list' ? { scope: 'list', webUrl: selectedWeb, ...selectedList }
-      : domain === 'item' ? { scope: 'item', webUrl: selectedWeb, ...selectedList, itemId: Number(itemId) }
-      : { scope: 'folder', webUrl: selectedWeb, ...selectedList, folderPath: folderPath.trim() };
-    setState({ run: { id: ++sequence.current, revision: resetRevision, scope: nativeScope.slice(), target }, expired: false });
-  };
-  const regions: DemoRegions = {
-    controls: <><Field label="Scope"><Select aria-label="Scope" value={domain} onChange={(_, data) => setDomain(data.value === 'list' || data.value === 'item' || data.value === 'folder' ? data.value : 'web')}><option value="web">Web</option><option value="list">List</option><option value="item">Item</option><option value="folder">Folder</option></Select></Field>
-      <Field label="Web URL (empty uses current web)"><Input aria-label="Web URL" value={webUrl} onChange={(_, data) => setWebUrl(data.value)} /></Field>
-      {domain !== 'web' && <><Field label="List selector"><Select aria-label="List selector" value={selector} onChange={(_, data) => setSelector(data.value === 'id' || data.value === 'path' ? data.value : 'title')}><option value="title">Title</option><option value="id">GUID</option><option value="path">Decoded web-relative path</option></Select></Field>
-        <Field label="List value"><Input aria-label="List value" value={list} onChange={(_, data) => setList(data.value)} /></Field></>}
-      {domain === 'item' && <Field label="Positive integer item ID"><Input aria-label="Item ID" value={itemId} onChange={(_, data) => setItemId(data.value)} /></Field>}
-      {domain === 'folder' && <Field label="Decoded server-relative folder path"><Input aria-label="Folder path" value={folderPath} onChange={(_, data) => setFolderPath(data.value)} /></Field>}</>,
-    commands: <Button onClick={check}>Run / repeat</Button>,
-    children: current && run ? <PermissionResult key={run.id} run={run} retire={retire} /> : <p>{state.expired ? 'Scope changed. Run again.' : 'Idle. Configure a target, then Run.'}</p>,
-    diagnostics: <p>Only Run applies drafts. Repeat creates a fresh query child; identical pending native requests may share a promise, while settled repeats request fresh masks. Draft edits preserve the displayed applied target. Current web may use its native mask without REST. Item IDs must be positive integers. Folder checks validate selected list membership; mismatch is an error, never denial. Reset/departure invalidate display ownership without cancelling requests. SharePoint remains the authorization authority.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run and repeat web, list, item and folder checks with title, GUID or decoded-path selectors; compare applied targets, loading, errors and actual allowed or denied masks.' };
-```
-
-#### Check staged legacy site web and list permissions
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input } from '@fluentui/react-components';
-import { SPHttpClient } from '@microsoft/sp-http';
-import { SPPermission } from '@microsoft/sp-page-context';
-import { useSPFxContext, useSPFxPageContext, useSPFxServiceScope, useSPFxCrossSitePermissions, type SPFxCrossSitePermissionsOptions } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-function sameScope(a: readonly unknown[], b: readonly unknown[]): boolean { return a.length === b.length && a.every((value, index) => Object.is(value, b[index])); }
-function usePermissionScope(): readonly unknown[] {
-  const provider = useSPFxContext();
-  const page = useSPFxPageContext();
-  const scope = useSPFxServiceScope();
-  let client: SPHttpClient | undefined;
-  try { client = scope.consume(SPHttpClient.serviceKey); } catch { client = undefined; }
-  return [provider, provider.spfxContext, provider.kind, provider.instanceId, provider.spfxContext.instanceId,
-    page, scope.serviceScope, scope.serviceScope?.consume, client, page.web.absoluteUrl, page.user.loginName, page.user.email];
-}
-type Run = { id: number; revision: number; scope: readonly unknown[]; siteUrl: string; options: SPFxCrossSitePermissionsOptions };
-function PermissionResult({ run, retire }: { run: Run; retire: (id: number) => void }): React.ReactElement {
-  const scope = usePermissionScope();
-  const result = useSPFxCrossSitePermissions(run.siteUrl, run.options);
-  const current = sameScope(run.scope, scope);
-  React.useEffect(() => { if (!current) retire(run.id); }, [current, retire, run.id]);
-  if (!current) return <p>Scope changed. Check again.</p>;
-  return <section aria-label="Legacy permission result">
-    <p>Applied site: {run.siteUrl || 'No URL'}; Selected web: {run.options.webUrl ?? run.siteUrl}; List: {run.options.listId ?? 'Not selected'}</p>
-    {result.error ? <p role="alert">Error: {result.error.message}</p>
-      : !run.siteUrl ? <p>Idle. Enter a site URL.</p>
-      : result.isLoading ? <p>Loading legacy permissions</p>
-      : result.webPermissions === undefined ? <p>Waiting for current permission masks</p>
-      : <dl>
-        <dt>Manage Web</dt><dd>{String(result.hasWebPermission(SPPermission.manageWeb))}</dd>
-        <dt>Manage Lists</dt><dd>{String(result.hasWebPermission(SPPermission.manageLists))}</dd>
-        <dt>Add List Items</dt><dd>{String(result.hasWebPermission(SPPermission.addListItems))}</dd>
-        <dt>Site view list items</dt><dd>{String(result.hasSitePermission(SPPermission.viewListItems))}</dd>
-        <dt>List view list items</dt><dd>{String(result.hasListPermission(SPPermission.viewListItems))}</dd>
-      </dl>}
-    <p>Site mask: {result.sitePermissions ? 'Available' : 'Unavailable'}; Web mask: {result.webPermissions ? 'Available' : 'Unavailable'}; List mask: {result.listPermissions ? 'Available' : 'Unavailable'}</p>
-  </section>;
-}
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const [siteUrl, setSiteUrl] = React.useState('');
-  const [webUrl, setWebUrl] = React.useState('');
-  const [listId, setListId] = React.useState('');
-  const nativeScope = usePermissionScope();
-  const [state, setState] = React.useState<{ run?: Run; expired: boolean }>({ expired: false });
-  const sequence = React.useRef(0);
-  const previous = React.useRef(resetRevision);
-  const alive = React.useRef(true);
-  const latest = React.useRef({ scope: nativeScope, revision: resetRevision });
-  latest.current = { scope: nativeScope, revision: resetRevision };
-  React.useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
-  const retire = React.useCallback((id: number) => { if (alive.current) setState(value => value.run?.id === id ? { expired: true } : value); }, []);
-  const run = state.run;
-  const current = run !== undefined && run.revision === resetRevision && sameScope(run.scope, nativeScope);
-  React.useEffect(() => {
-    if (run && !current) {
-      if (run.revision !== resetRevision) setState(value => value.run?.id === run.id ? { expired: false } : value);
-      else retire(run.id);
-    }
-  }, [run, current, resetRevision, retire]);
-  React.useEffect(() => { if (previous.current !== resetRevision) { previous.current = resetRevision; setState({ expired: false }); setSiteUrl(''); setWebUrl(''); setListId(''); } }, [resetRevision]);
-  const check = (): void => {
-    if (!alive.current || latest.current.revision !== resetRevision || !sameScope(nativeScope, latest.current.scope)) return;
-    setState({ run: { id: ++sequence.current, revision: resetRevision, scope: nativeScope.slice(), siteUrl: siteUrl.trim(), options: { webUrl: webUrl.trim() || undefined, listId: listId.trim() || undefined } }, expired: false });
-  };
-  const regions: DemoRegions = {
-    controls: <><Field label="Site URL"><Input aria-label="Site URL" value={siteUrl} onChange={(_, data) => setSiteUrl(data.value)} /></Field>
-      <Field label="Selected web URL (optional)"><Input aria-label="Selected web URL" value={webUrl} onChange={(_, data) => setWebUrl(data.value)} /></Field>
-      <Field label="List GUID (optional)"><Input aria-label="List GUID" value={listId} onChange={(_, data) => setListId(data.value)} /></Field></>,
-    commands: <Button onClick={check}>Check / repeat</Button>,
-    children: current && run ? <PermissionResult key={run.id} run={run} retire={retire} /> : <p>{state.expired ? 'Scope changed. Check again.' : 'Idle. Stage a URL, then Check.'}</p>,
-    diagnostics: <p>Draft edits never query or relabel the applied target. A repeat after settlement requests fresh masks; identical repeats while a native request is pending may share that promise. Blank URL is idle; invalid URL/GUID is an error without a grant. The site mask describes the collection root web. Reset/departure discard display ownership; native requests already sent can still settle. SharePoint authorizes actual operations.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Stage the legacy site, selected web and optional list GUID, then Check or repeat to inspect separate masks, pending state and errors without applying draft edits.' };
 ```
 
 ### Signatures (5)
@@ -708,7 +546,7 @@ Contract: see [SPFxCrossSitePermissionsInfo.hasWebPermission](permissions.md#spf
 
 ### Source (8)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts:345](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#L345)
+[packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts:356](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxCrossSitePermissions.ts#L356)
 
 ## SPFxPermissionsInfo
 
@@ -951,36 +789,10 @@ import { SPPermission } from '@microsoft/sp-page-context';
 
 function PermissionStatus() {
   const { hasWebPermission } = useSPFxPermissions();
-  return <span>{hasWebPermission(SPPermission.addListItems) ? 'Can add' : 'Read only'}</span>;
+  return (
+    <span>{hasWebPermission(SPPermission.addListItems) ? 'Can add' : 'Read only'}</span>
+  );
 }
-```
-
-#### Inspect native current page permission masks
-
-```tsx
-import * as React from 'react';
-import { useSPFxPermissions } from '@apvee/spfx-react-toolkit';
-import { SPPermission } from '@microsoft/sp-page-context';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxPermissions();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxPermissions result">
-        <dt>Manage Web</dt><dd>{String(info.hasWebPermission(SPPermission.manageWeb))}</dd>
-        <dt>Manage Lists</dt><dd>{String(info.hasWebPermission(SPPermission.manageLists))}</dd>
-        <dt>Add List Items</dt><dd>{String(info.hasWebPermission(SPPermission.addListItems))}</dd>
-        <dt>Site mask available</dt><dd>{String(info.sitePermissions !== undefined)}</dd>
-        <dt>Web mask available</dt><dd>{String(info.webPermissions !== undefined)}</dd>
-        <dt>List mask available</dt><dd>{String(info.listPermissions !== undefined)}</dd>
-        <dt>Site view list items</dt><dd>{String(info.hasSitePermission(SPPermission.viewListItems))}</dd>
-        <dt>List view list items</dt><dd>{String(info.hasListPermission(SPPermission.viewListItems))}</dd>
-      </dl>,
-    diagnostics: <p>Native masks perform no REST request. Missing masks produce false checks; the server still authorizes each operation.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Permissions values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (9)
@@ -1030,7 +842,7 @@ Contract: see [SPFxPermissionsInfo.hasWebPermission](permissions.md#spfxpermissi
 
 ### Source (13)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts:112](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#L112)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts:114](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPermissions.ts#L114)
 
 ## PermissionListSelector
 

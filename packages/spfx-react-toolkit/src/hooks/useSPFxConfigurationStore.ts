@@ -59,10 +59,17 @@ export interface SPFxConfigurationStoreResult extends SPFxConfigurationStoreServ
  * function PageSize() {
  *   const store = useSPFxConfigurationStore({ mode: 'layered' });
  *   const save = async () => {
- *     try { await store.save('my-app:pageSize', 50, { scope: 'site' }); }
- *     catch (error) { console.error(error); }
+ *     try {
+ *       await store.save('my-app:pageSize', 50, { scope: 'site' });
+ *     } catch (error) {
+ *       console.error(error);
+ *     }
  *   };
- *   return <button disabled={!store.isReady || store.isWriting} onClick={save}>Save site override</button>;
+ *   return (
+ *     <button disabled={!store.isReady || store.isWriting} onClick={save}>
+ *       Save site override
+ *     </button>
+ *   );
  * }
  * ```
  *
@@ -115,7 +122,7 @@ export interface SPFxConfigurationStoreResult extends SPFxConfigurationStoreServ
  *
 
  *
- * @example Compare layered configuration and physical inventories
+ * @scenario Compare layered configuration and physical inventories
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input, Select, Text, makeStyles } from '@fluentui/react-components';

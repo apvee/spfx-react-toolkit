@@ -188,7 +188,7 @@ export interface SPFxLoggerInfo {
  *
  * @useWhen application events need structured host, user and correlation fields.
  *
- * @example Write native log levels and inspect recent calls
+ * @scenario Write native log levels and inspect recent calls
  * ```tsx
  * // Requires the matching SPFx provider with native PageContext. Commands use the default console sink with synthetic messages; no host metadata is copied into UI history. A supplied region renderer owns collapsed diagnostics. Reset clears local UI only. No log is emitted on mount.
  * import * as React from 'react';

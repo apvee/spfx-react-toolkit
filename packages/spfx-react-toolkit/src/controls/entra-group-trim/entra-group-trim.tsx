@@ -126,13 +126,14 @@ const ErrorFallback: React.ComponentType<EntraGroupTrimBranchProps> = createAcce
  * ```tsx
  * import * as React from 'react';
  * import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+ *
  * <EntraGroupTrim groups={[{ name: 'Engineering' }]} groupType="M365">
  *   Team content
  *   <EntraGroupTrim.Fallback>No membership</EntraGroupTrim.Fallback>
- * </EntraGroupTrim>
+ * </EntraGroupTrim>;
  * ```
  *
- * @example Stage Entra relationships and observe protected lifetimes
+ * @scenario Stage Entra relationships and observe protected lifetimes
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, makeStyles } from '@fluentui/react-components';

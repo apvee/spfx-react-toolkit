@@ -528,11 +528,11 @@ With `unmountOnClose=true`, native presence/motion removes content on close. Wit
 
 <!-- toolkit:include symbol="Pagination" section="example" title="Request the next load-more batch" -->
 
-<!-- toolkit:include symbol="Pagination" section="example" title="Browse controlled rows" -->
+<!-- toolkit:include symbol="Pagination" section="scenario" title="Browse controlled rows" -->
 
-<!-- toolkit:include symbol="Pagination" section="example" title="Browse controlled rows with pending completion" -->
+<!-- toolkit:include symbol="Pagination" section="scenario" title="Browse controlled rows with pending completion" -->
 
-<!-- toolkit:include symbol="Pagination" section="example" title="Show an empty controlled result" -->
+<!-- toolkit:include symbol="Pagination" section="scenario" title="Show an empty controlled result" -->
 
 ### Choose the site-zone fallback
 

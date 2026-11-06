@@ -1,5 +1,5 @@
 /** Native fixture.
- * @example Native fixture
+ * @scenario Native fixture
  * ```tsx
  * import * as React from 'react';
  * import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';

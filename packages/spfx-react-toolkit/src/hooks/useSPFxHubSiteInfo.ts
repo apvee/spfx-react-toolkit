@@ -74,7 +74,7 @@ export interface SPFxHubSiteInfo {
  *
  * @useWhen navigation needs the current hub association and its resolved hub URL.
  *
- * @example Start a scope bound hub association lookup
+ * @scenario Start a scope bound hub association lookup
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';

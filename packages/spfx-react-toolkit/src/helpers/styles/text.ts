@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { text } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = text.wrap;
  * ```
  *
- * @example Select wrapping and truncation descriptors — long bounded text
+ * @scenario Select wrapping and truncation descriptors — long bounded text
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

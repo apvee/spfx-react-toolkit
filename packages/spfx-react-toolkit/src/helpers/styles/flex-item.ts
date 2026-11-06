@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { flexItem } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = flexItem.grow;
  * ```
  *
- * @example Select flex item growth and shrink — target item among constrained siblings
+ * @scenario Select flex item growth and shrink — target item among constrained siblings
  * ```tsx
  * import * as React from 'react';
  * import { Checkbox, Field, Select } from '@fluentui/react-components';

@@ -34,23 +34,38 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * import { PropertyPaneListPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
  * import type { ListPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
  *
- * interface Properties { values?: ListPickerValue[]; }
+ * interface Properties {
+ *   values?: ListPickerValue[];
+ * }
  * export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
  *   public render(): void {
  *     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
  *   }
  *   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
- *     return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
- *       PropertyPaneListPicker('values', {
- *         instance: this, key: 'list-field', value: this.properties.values ?? [],
- *         label: 'List',
- *       }),
- *     ] }] }] };
+ *     return {
+ *       pages: [
+ *         {
+ *           groups: [
+ *             {
+ *               groupName: 'Selection',
+ *               groupFields: [
+ *                 PropertyPaneListPicker('values', {
+ *                   instance: this,
+ *                   key: 'list-field',
+ *                   value: this.properties.values ?? [],
+ *                   label: 'List'
+ *                 })
+ *               ]
+ *             }
+ *           ]
+ *         }
+ *       ]
+ *     };
  *   }
  * }
  * ```
  *
- * @example Select native list references
+ * @scenario Select native list references
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';

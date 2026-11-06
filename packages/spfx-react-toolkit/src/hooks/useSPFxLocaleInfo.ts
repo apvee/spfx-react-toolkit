@@ -187,7 +187,7 @@ export interface SPFxLocaleInfo {
  *
  * @useWhen formatting or layout must follow the host content/UI culture and audited regional metadata.
  *
- * @example Compare host cultures and seasonal site times
+ * @scenario Compare host cultures and seasonal site times
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

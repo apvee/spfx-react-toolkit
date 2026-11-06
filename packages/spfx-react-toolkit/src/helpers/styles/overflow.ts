@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { overflow } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = overflow.visible;
  * ```
  *
- * @example Select overflow behavior on both axes — bounded wide/tall content; include axis choices as real public nested members
+ * @scenario Select overflow behavior on both axes — bounded wide/tall content; include axis choices as real public nested members
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { maxHeight } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = maxHeight.none;
  * ```
  *
- * @example Select maximum height descriptors — none/pixels on tall content
+ * @scenario Select maximum height descriptors — none/pixels on tall content
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { padding } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = padding.none;
  * ```
  *
- * @example Select all side padding descriptors — visible outer boundary/inner text
+ * @scenario Select all side padding descriptors — visible outer boundary/inner text
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

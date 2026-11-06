@@ -36,9 +36,10 @@ import type { FormattedTextProps } from './formatted-text.types';
  * ```tsx
  * import * as React from 'react';
  * import { FormattedText } from '@apvee/spfx-react-toolkit';
+ *
  * <FormattedText as="h2" variant="title2" maxLines={2}>
  *   Read the **updates** in [documentation](./docs).
- * </FormattedText>
+ * </FormattedText>;
  * ```
  *
  * @example Mixed content in a fragment
@@ -57,7 +58,7 @@ import type { FormattedTextProps } from './formatted-text.types';
  * @useWhen Semantic text needs toolkit typography, bounded inline Markdown or overflow presentation.
  * @avoidWhen Use EditableText when the user must edit and serialize rich text.
  *
- * @example Explore semantic text and inline Markdown
+ * @scenario Explore semantic text and inline Markdown
  * ```tsx
  * // This standalone React scenario uses the host Fluent theme and Griffel renderer.
  * import * as React from 'react';

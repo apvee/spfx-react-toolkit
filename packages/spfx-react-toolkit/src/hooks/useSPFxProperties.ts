@@ -62,15 +62,26 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * import * as React from 'react';
  * import { useSPFxProperties } from '@apvee/spfx-react-toolkit';
  *
- * interface MyProperties { title: string; description: string; }
+ * interface MyProperties {
+ *   title: string;
+ *   description: string;
+ * }
  *
  * function RenameButton() {
  *   const { properties, updateProperties } = useSPFxProperties<MyProperties>();
- *   return <button onClick={() => updateProperties(previous => ({
- *     ...previous,
- *     title: `${previous?.title ?? ''} Updated`,
- *     description: previous?.description ?? ''
- *   }))}>{properties?.title ?? 'Rename'}</button>;
+ *   return (
+ *     <button
+ *       onClick={() =>
+ *         updateProperties(previous => ({
+ *           ...previous,
+ *           title: `${previous?.title ?? ''} Updated`,
+ *           description: previous?.description ?? ''
+ *         }))
+ *       }
+ *     >
+ *       {properties?.title ?? 'Rename'}
+ *     </button>
+ *   );
  * }
  * ```
  *
@@ -182,7 +193,7 @@ export interface SPFxPropertiesInfo<TProps = unknown> {
  * }
  * ```
  *
- * @example Edit the current host description with merge and updater
+ * @scenario Edit the current host description with merge and updater
  * ```tsx
  * // Requires the matching SPFx provider and a host whose description is optional text. The minimal interface is not the full sample property shape. The merge and complete replacing updater preserve other current keys. Reset is local; it never writes properties.
  * import * as React from 'react';

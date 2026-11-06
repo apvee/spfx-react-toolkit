@@ -2,7 +2,7 @@
  * Source-owned Private recipe.
  * @packageDocumentation
  * @docPage helpers/styles
- * @example Private recipe
+ * @scenario Private recipe
  * ```tsx
  * import * as React from 'react';
  * export function Demo(): React.ReactElement { return <div>Visible namespace</div>; }

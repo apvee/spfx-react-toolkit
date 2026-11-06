@@ -69,13 +69,15 @@ export interface SPFxTeamsInfo {
  *
  * function ApplicationTheme() {
  *   const { supported, theme } = useSPFxTeams();
- *   return <span>{supported ? theme ?? 'Theme unavailable' : 'SDK context unavailable'}</span>;
+ *   return (
+ *     <span>{supported ? (theme ?? 'Theme unavailable') : 'SDK context unavailable'}</span>
+ *   );
  * }
  * ```
  *
  * @useWhen a component needs the acquired application SDK context and its published runtime theme.
  *
- * @example Observe application SDK readiness and theme
+ * @scenario Observe application SDK readiness and theme
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxTeams } from '@apvee/spfx-react-toolkit';

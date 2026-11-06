@@ -57,13 +57,18 @@ function createPrincipalGraphAccess(): PrincipalGraphAccess {
  * ```tsx
  * import * as React from 'react';
  * import { PrincipalPicker } from '@apvee/spfx-react-toolkit';
- * <PrincipalPicker label="Destinatari" principalTypes={['user','microsoft365Group']} userIdentity={{mode:'both',ensureUser:false}} />
+ *
+ * <PrincipalPicker
+ *   label="Destinatari"
+ *   principalTypes={['user', 'microsoft365Group']}
+ *   userIdentity={{ mode: 'both', ensureUser: false }}
+ * />;
  * ```
  *
  * @useWhen A user must select people or configured SharePoint/Entra group categories with verified scoped identities.
  * @avoidWhen Use advisory access trims for membership decisions; a picker selection is not an authorization check.
  *
- * @example Explore principal discovery and explicit identity resolution
+ * @scenario Explore principal discovery and explicit identity resolution
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

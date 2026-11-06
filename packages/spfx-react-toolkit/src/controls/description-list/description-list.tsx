@@ -78,7 +78,8 @@ DescriptionListRoot.displayName = 'DescriptionList';
  * ```tsx
  * import * as React from 'react';
  * import { DescriptionList } from '@apvee/spfx-react-toolkit';
- * <DescriptionList items={[{ id: 'owner', label: 'Owner', value: 'Ada Lovelace' }]} />
+ *
+ * <DescriptionList items={[{ id: 'owner', label: 'Owner', value: 'Ada Lovelace' }]} />;
  * ```
  *
  * @useWhen One record has read-only named values requiring native term/definition semantics.
@@ -114,7 +115,7 @@ DescriptionListRoot.displayName = 'DescriptionList';
  * }
  * ```
  *
- * @example Inspect responsive metadata with data and compound APIs
+ * @scenario Inspect responsive metadata with data and compound APIs
  * ```tsx
  * import * as React from 'react';
  * import { Badge, Button, Field, Checkbox, FluentProvider, Link, Select, makeStyles, useId } from '@fluentui/react-components';

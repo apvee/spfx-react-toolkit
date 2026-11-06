@@ -209,7 +209,7 @@ export interface SPFxHttpClientInfo {
  * }
  * ```
  *
- * @example Load an external todo with tracked invocation state
+ * @scenario Load an external todo with tracked invocation state
  * ```tsx
  * import * as React from 'react';
  * import { Button, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';

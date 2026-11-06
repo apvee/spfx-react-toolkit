@@ -38,7 +38,7 @@ import { useEventCallback } from '@fluentui/react-utilities';
  * @typeParam Return - Callback return type, including a promise when fn is async.
  * @remarks
  * Before the first isomorphic layout effect, invocation throws; during a later render it can still call the previous implementation. A state update does not immediately change the implementation before commit. An async call keeps its starting closure across await; later commits affect later invocations only. No loading, rejection handling or cancellation is added. The shared `@fluentui/react-utilities` peer supplies the hook and needs no provider.
- * @example Report current count through a retained callback
+ * @scenario Report current count through a retained callback
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';
@@ -106,7 +106,7 @@ import { useEventCallback } from '@fluentui/react-utilities';
  *   observe: 'Increment twice, then invoke the original callback: it reports 2. Increment again; the observed value changes only when invoked.',
  * };
  * ```
- * @example Retain callback identity through rerenders
+ * @scenario Retain callback identity through rerenders
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';

@@ -75,8 +75,12 @@ function sourceRoutes(artifacts) { return Object.keys(artifacts).filter(route =>
 function moduleRoutes(artifacts) { return Object.keys(artifacts).filter(route => route.endsWith('.tsx')); }
 function apply(root, expected, mode) { return writer().applyGeneratedArtifacts(root, expected, mode, api().executableExamplesPolicy(config)); }
 
-test('emits exact source bytes, literal lazy imports and one feature with source-ordered scenarios', async t => {
+test('shows the first public example and keeps exact executable bytes and source-ordered scenarios', async t => {
   const root = temporary(t);
+  const source = path.join(root, config.sourceRoot, 'index.ts');
+  const firstExample = "import { count } from '@fixture/artifacts';\nconst result: number = count(3);\n";
+  fs.writeFileSync(source, fs.readFileSync(source, 'utf8').replace(' * @scenario Z first scenario',
+    ' * @example A later public example\n * ```ts\n * const another = 7;\n * ```\n * @scenario Z first scenario'));
   const before = snapshot(root);
   const artifacts = api().generateExecutableArtifacts(root, config);
   assert.deepEqual(snapshot(root), before);
@@ -96,15 +100,16 @@ test('emits exact source bytes, literal lazy imports and one feature with source
   assert.equal(feature.title, 'count');
   assert.deepEqual(Array.from(feature.scenarios, entry => entry.id), Array.from(cat.executableExamples, entry => entry.id));
   for (const entry of cat.executableExamples) {
-    const example = context.model.examples.find(item => item.ownerKey === entry.ownerKey && item.title === entry.title);
+    const example = context.model.scenarios.find(item => item.ownerKey === entry.ownerKey && item.title === entry.title);
     assert.equal(artifacts[outputRoot + '/' + entry.id + '.tsx'], marker + '\n' + example.code);
     assert.ok(cat.source.includes(`import(/* webpackChunkName: 'spfx-jsdoc-${entry.id}' */ "./${entry.id}")`));
     assert.equal(typeof entry.load, 'function');
     assert.equal(typeof entry.loadSource, 'function');
     const loaded = await entry.loadSource();
     assert.deepEqual(Object.keys(loaded), ['code']);
-    assert.equal(loaded.code, example.code);
+    assert.equal(loaded.code, firstExample);
     assert.deepEqual({ ...entry.source }, example.source);
+    assert.deepEqual({ ...entry.exampleSource }, { file: config.sourceRoot + '/index.ts', line: 9 });
     assert.ok(!cat.source.includes(example.code), 'eager catalogue must not contain snippet payload');
     assert.ok(!cat.source.includes('must not execute during generation'));
     const sourceText = artifacts[outputRoot + '/' + entry.id + '.source.ts'];
@@ -119,7 +124,9 @@ test('emits exact source bytes, literal lazy imports and one feature with source
   assert.match(cat.source, /import type .*React/);
   const { renderExecutableExamples } = require('../scripts/docs/executable-examples-render.cjs');
   const { collectExecutableExamples } = require('../scripts/docs/executable-examples-model.cjs');
-  const projected = collectExecutableExamples(root, context.model, config).examples;
+  const projected = collectExecutableExamples(root, context.model, config).examples.map(entry => ({
+    ...entry, publicExample: context.model.contracts[entry.ownerKey].examples[0],
+  }));
   const first = projected.find(entry => entry.title === 'Z first scenario');
   const second = projected.find(entry => entry.title === 'A second scenario');
   const other = { ...first, id: 'a'.repeat(64), ownerKey: 'other', featureKey: 'other', featureTitle: 'Another', groupKey: 'controls', groupRoute: 'docs/api/controls/other.md' };
@@ -154,7 +161,7 @@ test('source payloads remain string typed and share a common catalogue entry typ
     return checker.getTypeAtLocation(code.name).flags === ts.TypeFlags.String;
   });
   assert.deepEqual({ sourceTypes, elementUnionArms: element.isUnion() ? element.types.length : 1 },
-    { sourceTypes: [true, true], elementUnionArms: 1 }, 'different exact source payloads must not produce incompatible literal loader types');
+    { sourceTypes: [true, true], elementUnionArms: 1 }, 'public example payloads must keep a common string loader type');
 });
 
 test('body changes retain identity; title changes and removals clean up paired owned routes', t => {
@@ -162,12 +169,17 @@ test('body changes retain identity; title changes and removals clean up paired o
   const initial = api().generateExecutableArtifacts(root, config);
   apply(root, initial, 'write');
   const file = path.join(root, config.sourceRoot, 'index.ts');
-  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('count(3)', 'count(4)'));
+  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('>{count(3)}', '>{count(4)}'));
   const body = api().generateExecutableArtifacts(root, config);
   assert.deepEqual(Object.keys(body), Object.keys(initial));
   const bodyDiff = writer().compareGeneratedArtifacts(root, body, api().executableExamplesPolicy(config));
   const changedEntry = catalogue(initial).executableExamples.find(entry => entry.title === 'Z first scenario');
-  assert.deepEqual(bodyDiff.changed.sort(), [outputRoot + '/' + changedEntry.id + '.source.ts', outputRoot + '/' + changedEntry.id + '.tsx']);
+  assert.deepEqual(bodyDiff.changed, [outputRoot + '/' + changedEntry.id + '.tsx']);
+  const editedScenario = fs.readFileSync(file, 'utf8');
+  fs.writeFileSync(file, editedScenario.replace('const result: number = count(3);', 'const result: number = count(8);'));
+  const publicEdit = api().generateExecutableArtifacts(root, config);
+  assert.deepEqual(Object.keys(publicEdit).filter(route => publicEdit[route] !== body[route]), sourceRoutes(body));
+  fs.writeFileSync(file, editedScenario);
   fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('Z first scenario', 'Renamed scenario'));
   const renamed = api().generateExecutableArtifacts(root, config);
   const diff = writer().compareGeneratedArtifacts(root, renamed, api().executableExamplesPolicy(config));
@@ -175,7 +187,7 @@ test('body changes retain identity; title changes and removals clean up paired o
   assert.deepEqual(diff.orphan.sort(), [outputRoot + '/' + changedEntry.id + '.source.ts', outputRoot + '/' + changedEntry.id + '.tsx']);
   apply(root, renamed, 'write');
   for (const route of diff.orphan) assert.equal(fs.existsSync(path.join(root, route)), false);
-  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replaceAll('export function Demo', 'export function OrdinaryDemo').replaceAll('export const demo', 'export const ordinaryMetadata'));
+  fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace(/^ \* @scenario Renamed scenario[\s\S]*?(?=^ \*\/$)/m, ''));
   const removed = api().generateExecutableArtifacts(root, config);
   const removalDiff = writer().compareGeneratedArtifacts(root, removed, api().executableExamplesPolicy(config));
   assert.equal(removalDiff.orphan.length, 4);
@@ -303,12 +315,12 @@ test('preserves authored trailing blank lines in executable modules while check 
   fs.writeFileSync(source, original.replace("observe: 'Three is visible.' };\n * ```", "observe: 'Three is visible.' };\n *\n *\n * ```"));
   const { buildValidatedDocumentationContext } = require('../scripts/docs/documentation-context.cjs');
   const context = buildValidatedDocumentationContext(root, config);
-  const example = context.model.examples.find(entry => entry.title === 'Z first scenario');
+  const example = context.model.scenarios.find(entry => entry.title === 'Z first scenario');
   assert.ok(example.code.endsWith('\n\n\n'));
   const artifacts = api().renderExecutableArtifacts(root, context, config);
   const entry = catalogue(artifacts).executableExamples.find(item => item.title === example.title);
   assert.equal(artifacts[outputRoot + '/' + entry.id + '.tsx'], marker + '\n' + example.code);
-  assert.equal((await entry.loadSource()).code, example.code);
+  assert.equal((await entry.loadSource()).code, context.model.contracts[entry.ownerKey].examples[0].code);
   apply(root, artifacts, 'write');
   const before = snapshot(root);
   assert.equal(apply(root, artifacts, 'check').ok, true);
@@ -370,6 +382,7 @@ test('SPFx lazy chunks have deterministic names derived only from scenario ident
     publicNames: ['Widget'], source: { file: 'src/widget.tsx', line: index + 1 },
     metadata: { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Observe the widget.' },
     code: 'export function Demo() { throw new Error("Never execute during generation"); }\n',
+    publicExample: { code: 'const widget = "Public example";\n', source: { file: 'src/widget.tsx', line: 12 } },
   }));
   const artifacts = renderExecutableExamples(examples);
   const parsed = importNodes(artifacts[outputRoot + '/catalogue.ts']);
@@ -390,5 +403,24 @@ test('SPFx lazy chunks have deterministic names derived only from scenario ident
     assert.ok(movedText.includes(`webpackChunkName: 'spfx-jsdoc-${id}'`), 'source movement does not rename Demo chunks');
     assert.ok(movedText.includes(`webpackChunkName: 'spfx-jsdoc-source-${id}'`), 'source movement does not rename source chunks');
     assert.equal(renderExecutableExamples(moved)[outputRoot + '/' + id + '.source.ts'], artifacts[outputRoot + '/' + id + '.source.ts']);
+  }
+});
+
+for (const [name, beforeText, afterText, diagnostic] of [
+  ['malformed scenarios', "host: 'none'", "host: 'invalid'", 'EXECUTABLE_METADATA'],
+  ['legacy executable examples', '@scenario A second scenario', '@example A second scenario', 'EXECUTABLE_LEGACY_EXAMPLE'],
+]) test(`docs-only CLI rejects ${name} before writing or checking artifacts`, t => {
+  const h = require('./fixtures/generated-tooling/helpers.cjs');
+  const root = h.mirror(t);
+  const source = path.join(root, config.sourceRoot, 'index.ts');
+  const original = fs.readFileSync(source, 'utf8');
+  assert.ok(original.includes(beforeText));
+  fs.writeFileSync(source, original.replace(beforeText, afterText));
+  const before = snapshot(root);
+  for (const args of [[], ['--check']]) {
+    const result = h.run(root, args, { TOOLKIT_DOCS_MODE: 'write' }, 'documentation.cjs');
+    assert.equal(result.status, 1, result.stdout + result.stderr);
+    assert.match(result.stderr, new RegExp(diagnostic));
+    assert.deepEqual(snapshot(root), before);
   }
 });

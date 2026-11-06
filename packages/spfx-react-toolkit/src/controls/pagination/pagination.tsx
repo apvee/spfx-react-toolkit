@@ -35,15 +35,25 @@ type PaginationAction = 'first' | 'previous' | 'next' | 'last' | 'loadMore';
  * ```tsx
  * import * as React from 'react';
  * import { Pagination } from '@apvee/spfx-react-toolkit';
+ *
  * const hasMore = true;
  * const loadingMore = false;
- * async function loadMore(): Promise<void> { console.log('Next batch requested'); }
- * function reportError(error: unknown): void { console.error(error); }
- * <Pagination pagination={{ type: 'loadMore', hasNextPage: hasMore }} loading={loadingMore}
- *   onPaginationChange={() => { void loadMore().catch(reportError); }} />
+ * async function loadMore(): Promise<void> {
+ *   console.log('Next batch requested');
+ * }
+ * function reportError(error: unknown): void {
+ *   console.error(error);
+ * }
+ * <Pagination
+ *   pagination={{ type: 'loadMore', hasNextPage: hasMore }}
+ *   loading={loadingMore}
+ *   onPaginationChange={() => {
+ *     void loadMore().catch(reportError);
+ *   }}
+ * />;
  * ```
  *
- * @example Browse controlled rows
+ * @scenario Browse controlled rows
  * ```tsx
  * import * as React from 'react';
  * import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
@@ -110,7 +120,7 @@ type PaginationAction = 'first' | 'previous' | 'next' | 'last' | 'loadMore';
  * };
  * ```
  *
- * @example Browse controlled rows with pending completion
+ * @scenario Browse controlled rows with pending completion
  * ```tsx
  * import * as React from 'react';
  * import { Button, Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
@@ -207,7 +217,7 @@ type PaginationAction = 'first' | 'previous' | 'next' | 'last' | 'loadMore';
  * };
  * ```
  *
- * @example Show an empty controlled result
+ * @scenario Show an empty controlled result
  * ```tsx
  * import * as React from 'react';
  * import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
@@ -277,7 +287,7 @@ type PaginationAction = 'first' | 'previous' | 'next' | 'last' | 'loadMore';
  * @useWhen The application owns page data and needs controlled offset, cursor or load-more request controls.
  * @avoidWhen The widget must fetch or slice data or store cursor tokens itself; those responsibilities belong in the consumer.
  *
- * @example Browse orders across pagination modes
+ * @scenario Browse orders across pagination modes
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Checkbox, FluentProvider, Select } from '@fluentui/react-components';

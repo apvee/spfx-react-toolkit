@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { borderRadius } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = borderRadius.none;
  * ```
  *
- * @example Select border radius descriptors — visible bounded surface
+ * @scenario Select border radius descriptors — visible bounded surface
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

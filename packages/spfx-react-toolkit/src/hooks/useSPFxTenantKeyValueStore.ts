@@ -227,11 +227,17 @@ export interface SPFxTenantKeyValueStoreResult {
  *       setFailure(failure instanceof Error ? failure.message : String(failure));
  *     }
  *   };
- *   return <>
- *     <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>Load setting</button>
- *     {(failure ?? store.error?.message) && <span role="alert">{failure ?? store.error?.message}</span>}
- *     <pre>{JSON.stringify(result)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={!store.isReady || store.isLoading} onClick={() => void run()}>
+ *         Load setting
+ *       </button>
+ *       {(failure ?? store.error?.message) && (
+ *         <span role="alert">{failure ?? store.error?.message}</span>
+ *       )}
+ *       <pre>{JSON.stringify(result)}</pre>
+ *     </>
+ *   );
  * }
  * ```
  *
@@ -265,7 +271,7 @@ export interface SPFxTenantKeyValueStoreResult {
  * }
  * ```
  *
- * @example Explore tenant records and exact text persistence
+ * @scenario Explore tenant records and exact text persistence
  * ```tsx
  * import * as React from 'react';
  * import { makeStyles, Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input, Select, Text } from '@fluentui/react-components';

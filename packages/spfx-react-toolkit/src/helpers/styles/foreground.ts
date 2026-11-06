@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { foreground } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = foreground.primary;
  * ```
  *
- * @example Select foreground role descriptors — actual text and disabled aria
+ * @scenario Select foreground role descriptors — actual text and disabled aria
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

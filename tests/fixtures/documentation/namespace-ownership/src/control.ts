@@ -2,7 +2,7 @@
  * Source-owned Control header recipe.
  * @packageDocumentation
  * @docPage helpers/styles
- * @example Control header recipe
+ * @scenario Control header recipe
  * ```tsx
  * import * as React from 'react';
  * export function Demo(): React.ReactElement { return <div>Visible namespace</div>; }
@@ -11,7 +11,7 @@
  */
 /**
  * Source-owned Control declaration recipe.
- * @example Control declaration recipe
+ * @scenario Control declaration recipe
  * ```tsx
  * import * as React from 'react';
  * export function Demo(): React.ReactElement { return <div>Visible namespace</div>; }

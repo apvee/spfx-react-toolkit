@@ -515,19 +515,39 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPaneFileFolderPicker } from '@apvee/spfx-react-toolkit/property-pane/file-folder-picker';
 import type { FileFolderPickerValue } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
-interface Properties { documents?: FileFolderPickerValue[]; }
+
+interface Properties {
+  documents?: FileFolderPickerValue[];
+}
 export default class DocumentsWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.documents?.length ?? 0} references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Documents', groupFields: [
-      PropertyPaneFileFolderPicker('documents', {
-        instance: this, key: 'documents-picker', value: this.properties.documents ?? [],
-        label: 'Documents', preset: 'focused', multiselect: true,
-        scope: { kind: 'siteCollection' }, itemTypes: 'files', extensions: ['.pdf'],
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Documents',
+              groupFields: [
+                PropertyPaneFileFolderPicker('documents', {
+                  instance: this,
+                  key: 'documents-picker',
+                  value: this.properties.documents ?? [],
+                  label: 'Documents',
+                  preset: 'focused',
+                  multiselect: true,
+                  scope: { kind: 'siteCollection' },
+                  itemTypes: 'files',
+                  extensions: ['.pdf']
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
 ```

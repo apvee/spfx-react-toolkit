@@ -47,13 +47,17 @@ export interface SPFxInstanceInfo {
  *
  * function InstanceLabel() {
  *   const { id, kind } = useSPFxInstanceInfo();
- *   return <span>{kind}: {id}</span>;
+ *   return (
+ *     <span>
+ *       {kind}: {id}
+ *     </span>
+ *   );
  * }
  * ```
  *
  * @useWhen an instance-scoped key or diagnostic entry needs the current provider identity.
  *
- * @example Inspect the provider instance identity
+ * @scenario Inspect the provider instance identity
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxInstanceInfo } from '@apvee/spfx-react-toolkit';

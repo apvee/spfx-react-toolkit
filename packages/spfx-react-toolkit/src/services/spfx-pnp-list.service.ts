@@ -403,7 +403,7 @@ function collectCreatedIds(settled: PromiseSettledResult<unknown>[]): { ids: num
  * }
  * ```
  *
- * @example Read and page an explicitly selected list service
+ * @scenario Read and page an explicitly selected list service
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, makeStyles } from '@fluentui/react-components';

@@ -127,9 +127,7 @@ export interface SPFxTenantPropertyResult<T> {
  *   const { data, isLoading, error } = useSPFxTenantProperty<string>('appVersion');
  *
  *   if (isLoading) return <span>Loading version...</span>;
- *   if (error) return <div role="alert">
- *     Failed to load: {error.message}
- *   </div>;
+ *   if (error) return <div role="alert">Failed to load: {error.message}</div>;
  *
  *   return <span>Current Version: {data ?? 'Not Set'}</span>;
  * }
@@ -259,7 +257,7 @@ export interface SPFxTenantPropertyResult<T> {
  * }
  * ```
  *
- * @example Read tenant version and counter with explicit activation
+ * @scenario Read tenant version and counter with explicit activation
  * ```tsx
  * import * as React from 'react';
  * import { makeStyles, Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Text } from '@fluentui/react-components';

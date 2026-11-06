@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { marginBlock } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = marginBlock.none;
  * ```
  *
- * @example Select block margin descriptors — actual adjacent blocks
+ * @scenario Select block margin descriptors — actual adjacent blocks
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

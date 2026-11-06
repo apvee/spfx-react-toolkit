@@ -91,9 +91,13 @@ StageRoot.displayName = 'Stage';
  *
  * <Stage presentation="dialog" trigger={<button type="button">Edit</button>}>
  *   <Stage.Header title="Profile" closeLabel="Close" />
- *   <Stage.Body><input aria-label="Name" /></Stage.Body>
- *   <Stage.Footer><button type="button">Save</button></Stage.Footer>
- * </Stage>
+ *   <Stage.Body>
+ *     <input aria-label="Name" />
+ *   </Stage.Body>
+ *   <Stage.Footer>
+ *     <button type="button">Save</button>
+ *   </Stage.Footer>
+ * </Stage>;
  * ```
  * @useWhen One explicit modal or anchored presentation must host the same structured content.
  * @avoidWhen An open surface must switch immediately between presentation modes as the viewport changes; Stage latches presentation until the next session.
@@ -148,7 +152,7 @@ StageRoot.displayName = 'Stage';
  * @remarks
  * ### Form ownership and pending work
  * Put the same-suite Form.Root inside the portaled surface so Body fields and Footer Submit share one native DOM form. React context from an outer Root alone cannot establish DOM form ownership. Submit through the suite's Root/Submit gate; direct methods.handleSubmit bypasses that gate. Read proxied isDirty/isSubmitting during rendering before callbacks use them. Await application persistence before resetting the baseline and closing. Keep close requests controlled while pending, and show inline discard confirmation rather than nesting a modal. Stage itself has no RHF dependency.
- * @example Edit a report with guarded Stage dismissal
+ * @scenario Edit a report with guarded Stage dismissal
  * ```tsx
  * import * as React from 'react';
  * import {

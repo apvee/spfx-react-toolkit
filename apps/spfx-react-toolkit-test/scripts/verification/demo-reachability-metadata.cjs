@@ -53,10 +53,11 @@ function proveMetadataReplicas({ root, reachable, resolve, checker, demand, prob
               owners(physical);
             }
             const diagnostics = [];
-            const examples = comments.flatMap(comment => parseContract(comment.getText(), { file, line: physical.getLineAndCharacterOfPosition(comment.getStart()).line + 1 }, data.ownerKey, diagnostics).examples).filter(example => example.title === data.title);
-            if (diagnostics.length || examples.length !== 1 || examples[0].language !== 'tsx') throw new Error('Missing or ambiguous physical TSX owner/title contract.');
-            const example = examples[0];
-            if (example.source.line !== data.source.line || output.text !== ownership + '\n' + example.code) throw new Error('Exact copied code/source position disagree with physical owner.');
+            const contracts = comments.map(comment => parseContract(comment.getText(), { file, line: physical.getLineAndCharacterOfPosition(comment.getStart()).line + 1 }, data.ownerKey, diagnostics));
+            const scenarios = contracts.flatMap(contract => contract.scenarios).filter(scenario => scenario.title === data.title);
+            if (diagnostics.length || scenarios.length !== 1 || scenarios[0].language !== 'tsx') throw new Error('Missing or ambiguous physical TSX owner/title contract.');
+            const scenario = scenarios[0];
+            if (scenario.source.line !== data.source.line || output.text !== ownership + '\n' + scenario.code) throw new Error('Exact copied code/source position disagree with physical owner.');
             const id = createHash('sha256').update(JSON.stringify([data.ownerKey, data.title])).digest('hex');
             if (data.id !== id || path.basename(output.fileName) !== id + '.tsx') throw new Error('Owner/title identity and lazy target disagree.');
             const sourceLoader = node.properties.find(item => item.name?.getText().replace(/^["']|["']$/g, '') === 'loadSource');
@@ -71,7 +72,9 @@ function proveMetadataReplicas({ root, reachable, resolve, checker, demand, prob
             if (sourceComments.length !== 1 || sourceComments[0].kind !== ts.SyntaxKind.MultiLineCommentTrivia || sourceComments[0].text !== `/* webpackChunkName: 'spfx-jsdoc-source-${id}' */`) throw new Error('Source replica requires only its exact webpack chunk block comment.');
             const sourceOutput = resolve(sourceImport.arguments[0].text, source);
             if (!sourceOutput || !reachable.has(sourceOutput) || path.normalize(sourceOutput.fileName) !== path.normalize(path.join(path.dirname(output.fileName), id + '.source.ts'))) throw new Error('Source replica must be the reachable same-ID sibling of its Demo.');
-            if (sourceOutput.text !== ownership + '\n' + `export const code: string = ${JSON.stringify(example.code)};\n`) throw new Error('Source replica must export only the exact canonical JSON string.');
+            const publicExample = contracts.flatMap(contract => contract.examples)[0];
+            if (!publicExample || JSON.stringify(data.exampleSource) !== JSON.stringify(publicExample.source)) throw new Error('Example code provenance disagrees with the first @example on the physical owner.');
+            if (sourceOutput.text !== ownership + '\n' + `export const code: string = ${JSON.stringify(publicExample.code)};\n`) throw new Error('Source replica must export only the exact canonical @example JSON string.');
             // Integrity reads source bytes without demanding its code export or
             // loader member. Runtime consumers must keep those slots live.
             const symbol = checker.getExportsOfModule(output.symbol).find(item => item.name === 'demo');
@@ -85,7 +88,7 @@ function proveMetadataReplicas({ root, reachable, resolve, checker, demand, prob
             for (const member of actual.valueDeclaration.initializer.properties) artifactMembers.add(member);
             // These exact catalogue provenance fields are read by this physical
             // integrity contract, separately from application presentation.
-            for (const member of node.properties) if (member.name && ['id', 'ownerKey', 'title', 'source', 'metadata'].includes(member.name.getText().replace(/^["']|["']$/g, ''))) {
+            for (const member of node.properties) if (member.name && ['id', 'ownerKey', 'title', 'source', 'exampleSource', 'metadata'].includes(member.name.getText().replace(/^["']|["']$/g, ''))) {
               artifactMembers.add(member);
               if (member.initializer && ts.isObjectLiteralExpression(member.initializer)) for (const child of member.initializer.properties) artifactMembers.add(child);
             }
@@ -101,7 +104,7 @@ function proveMetadataReplicas({ root, reachable, resolve, checker, demand, prob
     const declaration = arrays.find(item => item.name.getText() === 'executableExamples');
     if (!declaration) continue;
     try {
-      const fields = ['id', 'ownerKey', 'title', 'groupRoute', 'groupKey', 'featureKey', 'featureTitle', 'publicNames', 'source', 'metadata', 'load', 'loadSource'];
+      const fields = ['id', 'ownerKey', 'title', 'groupRoute', 'groupKey', 'featureKey', 'featureTitle', 'publicNames', 'source', 'exampleSource', 'metadata', 'load', 'loadSource'];
       if (!declaration.initializer || !ts.isArrayLiteralExpression(declaration.initializer) || declaration.initializer.elements.length !== entries.length || !declaration.initializer.elements.every(node => entries.some(entry => entry.node === node))) throw new Error('Catalogue array must contain exactly the physically proven entries.');
       for (const entry of entries) {
         const keys = entry.node.properties.map(property => property.name?.getText().replace(/^["']|["']$/g, '')).sort();

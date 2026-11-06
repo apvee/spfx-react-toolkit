@@ -34,18 +34,33 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * import { PropertyPaneSitePicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
  * import type { SitePickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
  *
- * interface Properties { values?: SitePickerValue[]; }
+ * interface Properties {
+ *   values?: SitePickerValue[];
+ * }
  * export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
  *   public render(): void {
  *     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
  *   }
  *   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
- *     return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
- *       PropertyPaneSitePicker('values', {
- *         instance: this, key: 'site-field', value: this.properties.values ?? [],
- *         label: 'Site',
- *       }),
- *     ] }] }] };
+ *     return {
+ *       pages: [
+ *         {
+ *           groups: [
+ *             {
+ *               groupName: 'Selection',
+ *               groupFields: [
+ *                 PropertyPaneSitePicker('values', {
+ *                   instance: this,
+ *                   key: 'site-field',
+ *                   value: this.properties.values ?? [],
+ *                   label: 'Site'
+ *                 })
+ *               ]
+ *             }
+ *           ]
+ *         }
+ *       ]
+ *     };
  *   }
  * }
  * ```
@@ -105,7 +120,7 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * }
  * ```
  *
- * @example Select native site references
+ * @scenario Select native site references
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';
@@ -224,7 +239,7 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native Site picker, open this WebPart's actual property pane, select site references and inspect the saved values; selection and Reset do not open the pane or query." };
  * ```
  *
- * @example Configure native metadata and file cascade
+ * @scenario Configure native metadata and file cascade
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';

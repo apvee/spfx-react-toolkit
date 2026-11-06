@@ -78,7 +78,7 @@ test('source-owned Pagination pilots and advanced modes retain independent confo
   const source = fs.readFileSync(path.resolve(__dirname, '../packages/spfx-react-toolkit/src/controls/pagination/pagination.tsx'), 'utf8');
   const catalogue = fs.readFileSync(path.join(base, 'generated/jsdoc-examples/catalogue.ts'), 'utf8');
   for (const title of ['Browse controlled rows', 'Browse controlled rows with pending completion', 'Show an empty controlled result', 'Browse orders across pagination modes']) {
-    assert.ok(source.includes(`@example ${title}\n`));
+    assert.ok(source.includes(`@scenario ${title}\n`));
     assert.ok(catalogue.includes(`"title": "${title}"`));
   }
   for (const mode of ['unknown', 'cursor', 'loadMore']) assert.ok(readPanel().includes(`value="${mode}"`), `${mode} residual remains active`);

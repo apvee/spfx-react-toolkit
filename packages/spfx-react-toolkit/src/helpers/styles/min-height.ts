@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { minHeight } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = minHeight.zero;
  * ```
  *
- * @example Select minimum height descriptors — zero/pixels with visible content
+ * @scenario Select minimum height descriptors — zero/pixels with visible content
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

@@ -28,9 +28,10 @@ import type { RelativeTimeProps } from './relative-time.types';
  * ```tsx
  * import * as React from 'react';
  * import { FormattedText, RelativeTime } from '@apvee/spfx-react-toolkit';
+ *
  * <FormattedText variant="caption1" subtle>
  *   <RelativeTime dateTime="2026-01-01T12:00:00Z" locale="it-IT" timeZone="Europe/Rome" />
- * </FormattedText>
+ * </FormattedText>;
  * ```
  *
  * @useWhen An absolute instant should display a localized relative label and optional full-date description.
@@ -62,7 +63,7 @@ import type { RelativeTimeProps } from './relative-time.types';
  * }
  * ```
  *
- * @example Explore relative clocks and fallback slots
+ * @scenario Explore relative clocks and fallback slots
  * ```tsx
  * // This standalone React scenario uses the host Fluent theme and Griffel renderer.
  * import * as React from 'react';

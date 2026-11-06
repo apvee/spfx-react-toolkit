@@ -119,13 +119,14 @@ const ErrorFallback: React.ComponentType<SharePointGroupTrimBranchProps> = creat
  * ```tsx
  * import * as React from 'react';
  * import { SharePointGroupTrim } from '@apvee/spfx-react-toolkit';
+ *
  * <SharePointGroupTrim groups={[{ name: 'Readers' }]}>
  *   Team content
  *   <SharePointGroupTrim.Fallback>No membership</SharePointGroupTrim.Fallback>
- * </SharePointGroupTrim>
+ * </SharePointGroupTrim>;
  * ```
  *
- * @example Stage direct SharePoint group membership and observe protected lifetimes
+ * @scenario Stage direct SharePoint group membership and observe protected lifetimes
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, makeStyles } from '@fluentui/react-components';

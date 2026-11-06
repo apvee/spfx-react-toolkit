@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { flex } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = flex.row;
  * ```
  *
- * @example Select flex direction and wrapping — actual sized item row/column/wrap
+ * @scenario Select flex direction and wrapping — actual sized item row/column/wrap
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

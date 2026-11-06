@@ -54,10 +54,18 @@ export interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
  * ```tsx
  * import * as React from 'react';
  * import { BaseListViewCommandSet } from '@microsoft/sp-listview-extensibility';
- * import { SPFxListViewCommandSetProvider, SPFxListViewCommandSetProviderProps } from '@apvee/spfx-react-toolkit';
+ * import {
+ *   SPFxListViewCommandSetProvider,
+ *   SPFxListViewCommandSetProviderProps
+ * } from '@apvee/spfx-react-toolkit';
  *
- * function hostTree(instance: BaseListViewCommandSet<{ title: string }>): React.ReactElement {
- *   const props: SPFxListViewCommandSetProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ * function hostTree(
+ *   instance: BaseListViewCommandSet<{ title: string }>
+ * ): React.ReactElement {
+ *   const props: SPFxListViewCommandSetProviderProps<{ title: string }> = {
+ *     instance,
+ *     children: <span>Host content</span>
+ *   };
  *   return <SPFxListViewCommandSetProvider {...props} />;
  * }
  * ```
@@ -95,7 +103,7 @@ export interface SPFxListViewCommandSetProviderProps<TProps extends {} = {}> {
  * }
  * ```
 
- * @example Compare Command Set provider availability with the current host
+ * @scenario Compare Command Set provider availability with the current host
  * ```tsx
  * import * as React from 'react';
  * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Badge, Field, Select, makeStyles, tokens } from '@fluentui/react-components';

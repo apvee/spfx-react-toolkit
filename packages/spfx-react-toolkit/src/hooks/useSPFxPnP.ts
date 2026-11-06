@@ -167,15 +167,21 @@ export interface SPFxPnPInfo {
  *       setFailure(failure instanceof Error ? failure.message : String(failure));
  *     }
  *   };
- *   return <>
- *     <button disabled={!pnp.isInitialized || pnp.isLoading} onClick={() => void run()}>Load web</button>
- *     {(failure ?? pnp.error?.message) && <span role="alert">{failure ?? pnp.error?.message}</span>}
- *     <pre>{JSON.stringify(result)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={!pnp.isInitialized || pnp.isLoading} onClick={() => void run()}>
+ *         Load web
+ *       </button>
+ *       {(failure ?? pnp.error?.message) && (
+ *         <span role="alert">{failure ?? pnp.error?.message}</span>
+ *       )}
+ *       <pre>{JSON.stringify(result)}</pre>
+ *     </>
+ *   );
  * }
  * ```
  *
- * @example Compare explicit invoke and batch reads
+ * @scenario Compare explicit invoke and batch reads
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, MessageBar, MessageBarActions, MessageBarBody, Select } from '@fluentui/react-components';

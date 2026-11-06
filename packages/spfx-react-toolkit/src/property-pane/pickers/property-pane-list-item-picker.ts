@@ -34,23 +34,40 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * import { PropertyPaneListItemPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
  * import type { ListItemPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
  *
- * interface Properties { values?: ListItemPickerValue[]; }
+ * interface Properties {
+ *   values?: ListItemPickerValue[];
+ * }
  * export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
  *   public render(): void {
  *     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
  *   }
  *   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
- *     return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
- *       PropertyPaneListItemPicker('values', {
- *         instance: this, key: 'list-item-field', value: this.properties.values ?? [],
- *         label: 'Items', list: 'Projects', textField: 'Title',
- *       }),
- *     ] }] }] };
+ *     return {
+ *       pages: [
+ *         {
+ *           groups: [
+ *             {
+ *               groupName: 'Selection',
+ *               groupFields: [
+ *                 PropertyPaneListItemPicker('values', {
+ *                   instance: this,
+ *                   key: 'list-item-field',
+ *                   value: this.properties.values ?? [],
+ *                   label: 'Items',
+ *                   list: 'Projects',
+ *                   textField: 'Title'
+ *                 })
+ *               ]
+ *             }
+ *           ]
+ *         }
+ *       ]
+ *     };
  *   }
  * }
  * ```
  *
- * @example Select native item references
+ * @scenario Select native item references
  * ```tsx
  * import * as React from 'react';
  * import { Button, Input } from '@fluentui/react-components';

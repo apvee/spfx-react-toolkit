@@ -73,7 +73,7 @@ test('CLI --check overrides write, rejects unknown env and arguments, and valida
 });
 test('library build keeps compilation/localization and CI checks explicit generated artifacts before build', () => {
   const metadata = require('../packages/spfx-react-toolkit/package.json');
-  assert.equal(metadata.scripts.build, 'node scripts/localization-resources.cjs --check-inventory && tsc -p tsconfig.json && node scripts/localization-resources.cjs --emit');
+  assert.equal(metadata.scripts.build, 'node scripts/localization-resources.cjs --check-inventory && node scripts/compile-library.cjs && node scripts/localization-resources.cjs --emit');
   assert.equal(metadata.scripts['pack:artifact'], 'node scripts/pack-library.cjs');
   const root = require('../package.json');
   assert.equal(root.scripts['pack:library'], 'npm run build:library && npm run pack:artifact --workspace @apvee/spfx-react-toolkit');

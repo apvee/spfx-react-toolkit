@@ -92,13 +92,17 @@ export interface SPFxContainerSizeInfo {
  *
  * function ContainerLabel() {
  *   const { size, width } = useSPFxContainerSize();
- *   return <span>{size}: {width}px</span>;
+ *   return (
+ *     <span>
+ *       {size}: {width}px
+ *     </span>
+ *   );
  * }
  * ```
  *
  * @useWhen a WebPart layout must switch on measured container width categories.
  *
- * @example Observe the measured container width category
+ * @scenario Observe the measured container width category
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxContainerSize } from '@apvee/spfx-react-toolkit';

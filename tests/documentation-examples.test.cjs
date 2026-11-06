@@ -213,7 +213,7 @@ test('finite historical exports resolve canonical public symbols from source wit
     positive.graph = graph;
     assert.deepEqual(check(mirror, positive), []);
     const executable = buildDocumentationModel(graph, config);
-    executable.examples = [{ ownerKey: graph.entities.find(entity => entity.qualifiedName === 'Pagination').key,
+    executable.scenarios = [{ ownerKey: graph.entities.find(entity => entity.qualifiedName === 'Pagination').key,
       title: 'Historical import contract', language: 'tsx', source: { file: 'historical.jsdoc', line: 1 },
       code: "import * as React from 'react';\nimport * as historicalWidth from '@apvee/spfx-react-toolkit/lib/width';\nexport function Demo(): React.ReactElement { return <div>{historicalWidth.px(240)}</div>; }\nexport const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Historical width is visible.' };" }];
     const collected = require('../scripts/docs/executable-examples-model.cjs').collectExecutableExamples(mirror, executable, config);
@@ -232,4 +232,15 @@ test('finite historical exports resolve canonical public symbols from source wit
     fs.writeFileSync(path.join(mirror,'lib/pagination.d.ts'), 'export declare const Pagination: never;\n');
     assert.deepEqual(check(mirror,positive), [], 'stale compiled declarations cannot change the source identity');
   } finally { fs.rmSync(mirror, { recursive: true, force: true }); }
+});
+
+test('checks scenario types, local imports and suppression with physical provenance', () => {
+  const scenario = { ownerKey: 'isolated', title: 'Scenario', language: 'tsx', source: { file: 'scenario.tsx', line: 20 },
+    code: "import { privateValue } from './private';\nconst wrong: number = 'text';\n// @ts-ignore\nconst hidden: number = 'text';" };
+  const diagnostics = check(fixture, { ...model, examples: [], scenarios: [scenario] });
+  assert.deepEqual(diagnostics.map(item => [item.code, item.file, item.line]), [
+    ['TS2307', 'scenario.tsx', 20],
+    ['TS2322', 'scenario.tsx', 21],
+    ['DOC_EXAMPLE_SUPPRESSION', 'scenario.tsx', 22],
+  ]);
 });

@@ -49,7 +49,7 @@ test('namespace runtime descendants retain merged functions and destructured imp
 
 test('namespace default expression exports own module and binding recipes while erased default types stay excluded', () => {
   assert.equal(binding('settings')?.runtimeExport, true);
-  assert.equal(model.contracts['src/settings.ts'].examples[0].ownerKey, 'src/settings.ts#<module>');
+  assert.equal(model.contracts['src/settings.ts'].scenarios[0].ownerKey, 'src/settings.ts#<module>');
   assert.strictEqual(model.contracts['src/settings.ts'], model.contracts['src/settings.ts#<module>']);
   const moduleRecipe = result.examples.find(item => item.title === 'Default expression recipe');
   const bindingRecipe = result.examples.find(item => item.title === 'Default binding recipe');
@@ -59,24 +59,24 @@ test('namespace default expression exports own module and binding recipes while 
   assert.equal(bindingRecipe.featureKey, moduleRecipe.featureKey);
   assert.deepEqual(moduleRecipe.publicNames, ['settings']);
   assert.equal(binding('erasedDefault')?.runtimeExport, false);
-  assert.equal(model.contracts['src/erased-default.ts'].examples[0].ownerKey, 'src/erased-default.ts');
+  assert.equal(model.contracts['src/erased-default.ts'].scenarios[0].ownerKey, 'src/erased-default.ts');
   assert.ok(!result.examples.some(item => item.title === 'Erased default recipe'));
   assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_RUNTIME_OWNER' && item.symbol === 'src/erased-default.ts'));
 });
 
 test('namespace module ownership uses the unique public runtime entity before parsing any file contract', () => {
   const contract = model.contracts['src/width.ts'];
-  assert.equal(contract.examples[0].ownerKey, 'src/width.ts#<module>');
+  assert.equal(contract.scenarios[0].ownerKey, 'src/width.ts#<module>');
   assert.strictEqual(contract, model.contracts['src/width.ts#<module>']);
   assert.deepEqual(contract.source, { file: 'src/width.ts', line: 1 });
-  assert.deepEqual(contract.examples[0].source, { file: 'src/width.ts', line: 7 });
-  assert.equal(model.examples.filter(item => item.title === 'Width recipe').length, 1);
+  assert.deepEqual(contract.scenarios[0].source, { file: 'src/width.ts', line: 7 });
+  assert.equal(model.scenarios.filter(item => item.title === 'Width recipe').length, 1);
   const reordered = buildDocumentationModel({ ...graph, entities: [...graph.entities].reverse() }, config);
-  assert.equal(reordered.contracts['src/width.ts'].examples[0].ownerKey, 'src/width.ts#<module>');
+  assert.equal(reordered.contracts['src/width.ts'].scenarios[0].ownerKey, 'src/width.ts#<module>');
   assert.equal(model.contracts['src/width.ts#px'].examples[0].ownerKey, 'src/width.ts#<module>::member:px');
   assert.equal(model.contracts['src/width.ts#auto'].examples[0].code, 'const ordinary = 42;\n');
   for (const file of ['erased', 'empty', 'types', 'ambient', 'cycle-a', 'private', 'declaration', 'control']) {
-    assert.equal(model.contracts[`src/${file}.ts`].examples[0].ownerKey, `src/${file}.ts`, file);
+    assert.equal(model.contracts[`src/${file}.ts`].scenarios[0].ownerKey, `src/${file}.ts`, file);
   }
   assert.equal(model.graph.entities.find(item => item.key === 'src/declaration.ts#Declared').namespaceRole, 'declaration');
 });
@@ -96,7 +96,7 @@ test('namespace executable owner and names exclude erased aliases without losing
   assert.equal(validBinding.ownerKey, '@fixture/namespace#aliasWidth');
   assert.equal(validBinding.featureKey, width.featureKey);
   // This snippet is self-contained; type-only import errors cannot hide the owner bug.
-  const erased = model.examples.find(item => item.title === 'Erased binding recipe');
+  const erased = model.scenarios.find(item => item.title === 'Erased binding recipe');
   assert.doesNotMatch(erased.code, /TypeWidth/);
   assert.deepEqual(result.diagnostics.filter(item => item.symbol === '@fixture/namespace#TypeWidth'), [{
     code: 'EXECUTABLE_RUNTIME_OWNER', file: 'src/index.ts', line: erased.source.line,
@@ -127,7 +127,7 @@ test('namespace ownership fails closed for contradictory physical module owners'
   malformed.entities.push({ ...original, key: 'src/width.ts#<contradictory-module>' });
   malformed.bindings.push({ ...binding('width'), entityKey: 'src/width.ts#<contradictory-module>' });
   const invalid = buildDocumentationModel(malformed, config);
-  assert.equal(invalid.contracts['src/width.ts'].examples[0].ownerKey, 'src/width.ts');
+  assert.equal(invalid.contracts['src/width.ts'].scenarios[0].ownerKey, 'src/width.ts');
   assert.ok(invalid.diagnostics.some(item => item.code === 'DOC_AMBIGUOUS_MODULE_OWNER' &&
     item.file === 'src/width.ts' && item.line === 1));
 });
@@ -135,7 +135,7 @@ test('namespace ownership fails closed for contradictory physical module owners'
 test('namespace identities and source bytes survive alias order, line changes and relocation', t => {
   const changed = structuredClone(model);
   changed.graph.bindings.reverse();
-  changed.examples.forEach(item => { item.source.line += 20; });
+  changed.scenarios.forEach(item => { item.source.line += 20; });
   const again = collectExecutableExamples(fixture, changed, config);
   const original = result.examples.find(item => item.title === 'Width recipe');
   const perturbed = again.examples.find(item => item.title === 'Width recipe');

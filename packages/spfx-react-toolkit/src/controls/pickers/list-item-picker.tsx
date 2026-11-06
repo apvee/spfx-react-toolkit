@@ -20,13 +20,19 @@ import { PickerRenderer } from './picker-renderer.internal';
  * ```tsx
  * import * as React from 'react';
  * import { ListItemPicker } from '@apvee/spfx-react-toolkit';
- * <ListItemPicker label="Documenti" list="Documents" textField="FileLeafRef" presentation="tagPicker" />
+ *
+ * <ListItemPicker
+ *   label="Documenti"
+ *   list="Documents"
+ *   textField="FileLeafRef"
+ *   presentation="tagPicker"
+ * />;
  * ```
  *
  * @useWhen A user must select serializable list-item or file/folder references from one configured list.
  * @avoidWhen Use FileFolderPicker for hosted file browsing across supported storage sources.
  *
- * @example Explore list item labels and query pages
+ * @scenario Explore list item labels and query pages
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { justifyContent } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = justifyContent.start;
  * ```
  *
- * @example Select main axis item alignment — spare inline space and real siblings
+ * @scenario Select main axis item alignment — spare inline space and real siblings
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

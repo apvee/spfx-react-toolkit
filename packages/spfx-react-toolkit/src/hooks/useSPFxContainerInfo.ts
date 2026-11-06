@@ -58,7 +58,7 @@ export interface SPFxContainerInfo {
  *
  * @useWhen a WebPart needs its host element and observed CSS-pixel dimensions.
  *
- * @example Observe the native container and tracked size
+ * @scenario Observe the native container and tracked size
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxContainerInfo } from '@apvee/spfx-react-toolkit';

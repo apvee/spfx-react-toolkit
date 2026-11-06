@@ -129,7 +129,7 @@ export interface PnPContextInfo {
  * }
  * ```
  *
- * @example Read current or cross-site web information
+ * @scenario Read current or cross-site web information
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';

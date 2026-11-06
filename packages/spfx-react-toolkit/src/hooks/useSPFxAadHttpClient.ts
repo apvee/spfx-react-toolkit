@@ -289,7 +289,7 @@ export interface SPFxAadHttpClientInfo {
  * }
  * ```
  *
- * @example Initialize a custom API client and call a path
+ * @scenario Initialize a custom API client and call a path
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';

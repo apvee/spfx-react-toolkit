@@ -83,29 +83,6 @@ function ModeLabel() {
 }
 ```
 
-#### Observe the native Read and Edit mode
-
-```tsx
-import * as React from 'react';
-import { useSPFxDisplayMode } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxDisplayMode();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxDisplayMode result">
-        <dt>Mode</dt><dd>{info.isEdit ? 'Edit' : 'Read'}</dd>
-        <dt>Native value</dt><dd>{String(info.mode)}</dd>
-        <dt>Read</dt><dd>{String(info.isRead)}</dd>
-        <dt>Edit</dt><dd>{String(info.isEdit)}</dd>
-      </dl>,
-    diagnostics: <p>The host owns mode changes. Missing runtime mode defaults to Read.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual DisplayMode values and explicit unavailable fields as the native host changes.' };
-```
-
 ### Signatures
 
 ```ts
@@ -169,27 +146,6 @@ function EditLabel() {
   const editing = useSPFxIsEdit();
   return <span>{editing ? 'Editing' : 'Reading'}</span>;
 }
-```
-
-#### Observe the native edit mode shortcut
-
-```tsx
-import * as React from 'react';
-import { useSPFxIsEdit } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxIsEdit();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxIsEdit result">
-        <dt>Mode</dt><dd>{info ? 'Edit' : 'Read'}</dd>
-        <dt>Is edit</dt><dd>{String(info)}</dd>
-      </dl>,
-    diagnostics: <p>This shortcut reads the native mode and does not edit the page.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual IsEdit values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (2)
@@ -407,15 +363,26 @@ import { useSPFxProperties } from '@apvee/spfx-react-toolkit/hooks';
 import * as React from 'react';
 import { useSPFxProperties } from '@apvee/spfx-react-toolkit';
 
-interface MyProperties { title: string; description: string; }
+interface MyProperties {
+  title: string;
+  description: string;
+}
 
 function RenameButton() {
   const { properties, updateProperties } = useSPFxProperties<MyProperties>();
-  return <button onClick={() => updateProperties(previous => ({
-    ...previous,
-    title: `${previous?.title ?? ''} Updated`,
-    description: previous?.description ?? ''
-  }))}>{properties?.title ?? 'Rename'}</button>;
+  return (
+    <button
+      onClick={() =>
+        updateProperties(previous => ({
+          ...previous,
+          title: `${previous?.title ?? ''} Updated`,
+          description: previous?.description ?? ''
+        }))
+      }
+    >
+      {properties?.title ?? 'Rename'}
+    </button>
+  );
 }
 ```
 
@@ -525,74 +492,6 @@ function ConfigurableForm() {
 }
 ```
 
-#### Edit the current host description with merge and updater
-
-```tsx
-// Requires the matching SPFx provider and a host whose description is optional text. The minimal interface is not the full sample property shape. The merge and complete replacing updater preserve other current keys. Reset is local; it never writes properties.
-import * as React from 'react';
-import { Button, Field, Input } from '@fluentui/react-components';
-import { useSPFxContext, useSPFxProperties } from '@apvee/spfx-react-toolkit';
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  children?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-}
-function standalone(regions: DemoRegions): React.ReactElement {
-  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
-}
-// Minimal prerequisite only: the actual host can have additional properties.
-interface HostProperties { description?: string; }
-export function Demo({ render = standalone, resetRevision = 0 }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-} = {}): React.ReactElement {
-  const { spfxContext } = useSPFxContext();
-  const { properties, setProperties, updateProperties } = useSPFxProperties<HostProperties>();
-  const current = properties?.description ?? '';
-  const [draft, setDraft] = React.useState(current);
-  const [message, setMessage] = React.useState<string>();
-  const lifetime = React.useMemo(() => ({ active: true, timer: undefined as number | undefined }),
-    [resetRevision, spfxContext, setProperties, updateProperties]);
-  React.useLayoutEffect(() => {
-    setMessage(undefined);
-    return () => {
-      lifetime.active = false;
-      if (lifetime.timer !== undefined) window.clearTimeout(lifetime.timer);
-    };
-  }, [lifetime]);
-  React.useEffect(() => { setDraft(current); }, [current, lifetime]);
-  const show = (text: string): void => {
-    if (lifetime.timer !== undefined) window.clearTimeout(lifetime.timer);
-    setMessage(text);
-    const timer = window.setTimeout(() => {
-      if (!lifetime.active || lifetime.timer !== timer) return;
-      lifetime.timer = undefined;
-      setMessage(undefined);
-    }, 3000);
-    lifetime.timer = timer;
-  };
-  const save = (): void => {
-    if (!lifetime.active) return;
-    setProperties({ description: draft });
-    show('Properties updated with setProperties().');
-  };
-  const append = (): void => {
-    if (!lifetime.active) return;
-    updateProperties(previous => ({ ...previous, description: `${previous?.description ?? ''} updated`.trim() }));
-    show('Properties updated with updateProperties().');
-  };
-  return render({
-    controls: <Field label="Description"><Input value={draft} onChange={(_, data) => setDraft(data.value)} /></Field>,
-    commands: <><Button onClick={save}>setProperties</Button><Button onClick={append}>updateProperties</Button></>,
-    status: message ? <p role="status">{message}</p> : undefined,
-    children: <output>Current Description: {current}</output>,
-  });
-}
-export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Edit Description, merge it, then append updated with the replacing updater; unrelated host keys remain. Reset adopts the current description and clears local feedback without writing the host.' };
-```
-
 ### Type (2)
 
 ```ts
@@ -639,4 +538,4 @@ Contract: see [SPFxPropertiesInfo.updateProperties](properties.md#spfxproperties
 
 ### Source (8)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts:252](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#L252)
+[packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts:263](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxProperties.ts#L263)

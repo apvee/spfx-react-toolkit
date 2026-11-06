@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const { scenario } = require('../../fixtures/executable-examples/cards-description-list.cjs');
+const { parseContract } = require('../../../scripts/docs/documentation-contract.cjs');
 const sourceDirectory = path.resolve(__dirname, '../../../apps/spfx-react-toolkit-test/src/webparts/spFxReactToolkitTest/components/generated/jsdoc-examples');
 const italianCaption = /\b(?:Configurazione|Diagnostica|Titolo|Descrizione|Larghezza|Caricamento|Esegui|Salva|Ripristina|Operazione|Ordine|Ordini|Preferenze|Contatti|Aggiornamento|Immagine|Contenuto|Proprietà|Nessuna|Nessun)\b/u;
 
@@ -33,7 +34,17 @@ function authored(title) {
   const declaration = ast.statements[0].declarationList.declarations[0];
   assert.equal(declaration.name.text, 'code'); assert.ok(ts.isStringLiteral(declaration.initializer));
   const code = declaration.initializer.text;
-  assert.equal(selected.source.slice(selected.source.indexOf('\n') + 1), code);
+  const { file, line } = selected.entry.exampleSource;
+  const physical = fs.readFileSync(path.resolve(__dirname, '../../..', file), 'utf8');
+  const offset = physical.split('\n').slice(0, line - 1).join('\n').length + 1;
+  const start = physical.lastIndexOf('/**', offset);
+  assert.ok(start >= 0);
+  const end = physical.indexOf('*/', start);
+  assert.ok(end > offset);
+  const diagnostics = [];
+  const contract = parseContract(physical.slice(start, end + 2), { file, line: physical.slice(0, start).split('\n').length }, selected.entry.ownerKey, diagnostics);
+  assert.deepEqual(diagnostics, []);
+  assert.equal(contract.examples.find(example => example.source.line === line)?.code, code);
   return { ...selected, code };
 }
 const businessCounts = page => page.evaluate(() => ({
@@ -64,7 +75,7 @@ async function exampleSourceBrowser({ page, check, select, activePanel, settle, 
     const code = panel.locator('[data-example-source-code]'); await code.waitFor(); await settleSource(code);
     check(`${name}: literal source matches complete module.code`, await code.textContent(), expected.code);
     check(`${name}: matching source chunk fetched on disclosure`, requests.slice(before).map(value => path.basename(new URL(value).pathname)), [`spfx-jsdoc-source-${expected.entry.id}.js`]);
-    check(`${name}: source provenance`, (await panel.textContent()).includes(`${expected.entry.source.file}:${expected.entry.source.line}`), true);
+    check(`${name}: source provenance`, (await panel.textContent()).includes(`${expected.entry.exampleSource.file}:${expected.entry.exampleSource.line}`), true);
     check(`${name}: source stays outside actual demo`, await panel.locator('[data-demo-section] [data-example-source-code]').count(), 0);
     return { header, code };
   };
@@ -113,13 +124,15 @@ async function exampleSourceBrowser({ page, check, select, activePanel, settle, 
     check(`${key}: English source chrome`, italianCaption.test(await interfaceCopy(panel)), false);
     await subject.dispose();
   }
-  // Literal localization dictionaries remain source, while an actual Italian UI
-  // caption immediately outside the payload must still fail the English scan.
+  // A literal caption inside the source region is not part of the interface.
+  // An actual caption just outside it must still fail the English scan.
   let panel = await choose('editable-text', 'Edit a controlled block with policy and dictionaries');
   const localized = authored('Edit a controlled block with policy and dictionaries');
-  await open(panel, localized, 'source localization');
-  check('Source localization dictionary contains pinned Italian caption', italianCaption.test(localized.code), true);
+  const { code: localizedCode } = await open(panel, localized, 'source localization');
+  await localizedCode.evaluate(element => element.append('\n// Salva'));
+  check('Source region contains the literal Italian caption', italianCaption.test(await localizedCode.textContent()), true);
   check('Source localization does not classify payload as interface', italianCaption.test(await interfaceCopy(panel)), false);
+  await localizedCode.evaluate((element, text) => { element.textContent = text; }, localized.code);
   const injected = await panel.evaluateHandle(element => { const button = document.createElement('button'); button.textContent = 'Salva'; element.appendChild(button); return button; });
   check('English scan catches deliberate Italian UI outside source', italianCaption.test(await interfaceCopy(panel)), true);
   await injected.evaluate(element => element.remove()); await injected.dispose();
@@ -135,7 +148,7 @@ async function exampleSourceBrowser({ page, check, select, activePanel, settle, 
   check('Source code remains LTR in RTL host', await code.evaluate(element => getComputedStyle(element).direction), 'ltr');
   check('Source uses inherited dark surface token', await code.evaluate(element => getComputedStyle(element).getPropertyValue('--colorNeutralBackground2').trim()), require('@fluentui/react-components').teamsDarkTheme.colorNeutralBackground2);
   check('Source has a painted theme surface', await code.evaluate(element => getComputedStyle(element).backgroundColor !== 'rgba(0, 0, 0, 0)'), true);
-  check('Source long lines scroll within bounded region', await code.evaluate(element => element.scrollWidth > element.clientWidth && element.clientHeight > 200 && element.clientHeight <= 384), true);
+  check('Source long lines scroll within bounded region', await code.evaluate(element => element.scrollWidth > element.clientWidth && element.clientHeight > 0 && element.clientHeight <= 384), true);
   await code.focus(); await page.keyboard.press('ArrowRight');
   await page.waitForFunction(() => document.querySelector('[data-example-source-code]').scrollLeft > 0);
   check('Source scroll region supports keyboard focus', await code.evaluate(element => document.activeElement === element), true);

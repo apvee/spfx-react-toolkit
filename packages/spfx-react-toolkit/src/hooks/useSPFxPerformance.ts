@@ -179,18 +179,22 @@ export interface SPFxPerformanceInfo {
  *       setPending(false);
  *     }
  *   };
- *   return <>
- *     <button disabled={pending} onClick={() => void run()}>Load data</button>
- *     {failure && <span role="alert">{failure}</span>}
- *     <pre>{JSON.stringify(result)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={pending} onClick={() => void run()}>
+ *         Load data
+ *       </button>
+ *       {failure && <span role="alert">{failure}</span>}
+ *       <pre>{JSON.stringify(result)}</pre>
+ *     </>
+ *   );
  * }
  * ```
  * @throws When called outside an SPFx provider.
  *
  * @useWhen diagnostics need timed operations enriched with host and correlation metadata.
  *
- * @example Measure a cancellable local timed operation
+ * @scenario Measure a cancellable local timed operation
  * ```tsx
  * // Requires the matching SPFx provider. Only Run starts timing. Local cancellation settles the owned await and suppresses stale success or failure, including cancellation before the timed callback begins. The hook clears its own unique start mark; measurement entries remain. No global timeline cleanup occurs.
  * import * as React from 'react';

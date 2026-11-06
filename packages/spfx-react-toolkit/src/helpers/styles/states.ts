@@ -14,11 +14,12 @@ import { createState } from './scopes.internal';
  * @example Basic usage
  * ```ts
  * import { responsive, hover, foreground } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = responsive.medium(hover(foreground.subtle));
  * ```
  * @useWhen Pointer hover feedback should apply only while the element matches :hover; application selection/disabled state stays caller-owned.
  *
- * @example Apply descriptors during native hover — pointer-controlled native Button
+ * @scenario Apply descriptors during native hover — pointer-controlled native Button
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, makeStyles } from '@fluentui/react-components';
@@ -78,11 +79,12 @@ export function hover(...inputs: readonly SxBaseDescriptor[]): SxStateDescriptor
  * @example Basic usage
  * ```ts
  * import { responsive, active, foreground } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = responsive.medium(active(foreground.subtle));
  * ```
  * @useWhen Pressed feedback should apply only while the element matches :active, rather than becoming persistent application state.
  *
- * @example Apply descriptors during native press — held press then release; invocation observation
+ * @scenario Apply descriptors during native press — held press then release; invocation observation
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, makeStyles } from '@fluentui/react-components';
@@ -142,11 +144,12 @@ export function active(...inputs: readonly SxBaseDescriptor[]): SxStateDescripto
  * @example Basic usage
  * ```ts
  * import { responsive, focusVisible, foreground } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = responsive.medium(focusVisible(foreground.subtle));
  * ```
  * @useWhen An existing focusable control needs additional feedback while the browser considers its focus visible; keep a visible native/control focus indicator.
  *
- * @example Apply descriptors during keyboard focus — native Tab focus and retained indicator
+ * @scenario Apply descriptors during keyboard focus — native Tab focus and retained indicator
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, makeStyles } from '@fluentui/react-components';

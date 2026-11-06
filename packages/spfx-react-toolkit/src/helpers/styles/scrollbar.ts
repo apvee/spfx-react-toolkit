@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { scrollbar } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = scrollbar.fluent;
  * ```
  *
- * @example Scroll with the Fluent scrollbar descriptor — both axes and native keyboard/drag
+ * @scenario Scroll with the Fluent scrollbar descriptor — both axes and native keyboard/drag
  * ```tsx
  * import * as React from 'react';
  * import { Checkbox, makeStyles } from '@fluentui/react-components';

@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { borderColor } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = borderColor.primary;
  * ```
  *
- * @example Select border color descriptors — keep explicit solid border/width
+ * @scenario Select border color descriptors — keep explicit solid border/width
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

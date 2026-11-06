@@ -64,22 +64,30 @@ type SearchQueryBuilderFn = (builder: ISearchBuilder) => ISearchBuilder;
  *   const findPeople = async () => {
  *     setFailure(undefined);
  *     try {
- *       setPeople(await search(builder => builder.text('john').sourceId(SearchVerticals.People)));
+ *       setPeople(
+ *         await search(builder => builder.text('john').sourceId(SearchVerticals.People))
+ *       );
  *     } catch (failure) {
  *       setFailure(failure instanceof Error ? failure.message : String(failure));
  *     }
  *   };
- *   return <>
- *     <button disabled={loading} onClick={() => void findPeople()}>Find people</button>
- *     {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
- *     <pre>{JSON.stringify(people)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={loading} onClick={() => void findPeople()}>
+ *         Find people
+ *       </button>
+ *       {(failure ?? error?.message) && (
+ *         <span role="alert">{failure ?? error?.message}</span>
+ *       )}
+ *       <pre>{JSON.stringify(people)}</pre>
+ *     </>
+ *   );
  * }
  * ```
  *
  * @useWhen a builder needs one of the listed SharePoint result-source identifiers.
  *
- * @example Search selected verticals with builder paging
+ * @scenario Search selected verticals with builder paging
  * ```tsx
  * import * as React from 'react';
  * import { Button, Link, makeStyles } from '@fluentui/react-components';
@@ -631,7 +639,10 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  * import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
  *
  * function SearchDocuments() {
- *   const search = useSPFxPnPSearch<{ Title: string }>({ pageSize: 25, refiners: 'FileType' });
+ *   const search = useSPFxPnPSearch<{ Title: string }>({
+ *     pageSize: 25,
+ *     refiners: 'FileType'
+ *   });
  *   const [documents, setDocuments] = React.useState<unknown>();
  *   const [failure, setFailure] = React.useState<string>();
  *   const findDocuments = async () => {
@@ -642,11 +653,17 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  *       setFailure(failure instanceof Error ? failure.message : String(failure));
  *     }
  *   };
- *   return <>
- *     <button disabled={search.loading} onClick={() => void findDocuments()}>Search</button>
- *     {(failure ?? search.error?.message) && <span role="alert">{failure ?? search.error?.message}</span>}
- *     <pre>{JSON.stringify(documents)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={search.loading} onClick={() => void findDocuments()}>
+ *         Search
+ *       </button>
+ *       {(failure ?? search.error?.message) && (
+ *         <span role="alert">{failure ?? search.error?.message}</span>
+ *       )}
+ *       <pre>{JSON.stringify(documents)}</pre>
+ *     </>
+ *   );
  * }
  * ```
  *
@@ -669,7 +686,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  * }
  * ```
  *
- * @example Search SharePoint text with explicit execution
+ * @scenario Search SharePoint text with explicit execution
  * ```tsx
  * import * as React from 'react';
  * import { Button, Input, Link, makeStyles } from '@fluentui/react-components';
@@ -770,7 +787,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Search or Enter runs the current nonempty text, shows its results or dismissible error, and reset or draft changes hide obsolete work without sending another query.' };
  * ```
  *
- * @example Filter search results with native refiner tokens
+ * @scenario Filter search results with native refiner tokens
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Label, Link, Select, makeStyles } from '@fluentui/react-components';
@@ -859,7 +876,7 @@ export interface SPFxPnPSearchInfo<T = Record<string, string>> {
  * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run Search All Content, toggle native refiner tokens, and change OR or AND to reset the view without sending a query.' };
  * ```
  *
- * @example Request debounced suggestions after explicit start
+ * @scenario Request debounced suggestions after explicit start
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, makeStyles } from '@fluentui/react-components';

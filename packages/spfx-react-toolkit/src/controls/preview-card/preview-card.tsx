@@ -25,7 +25,11 @@ import type { PreviewCardProps } from './preview-card.types';
  * import * as React from 'react';
  * import { PreviewCard } from '@apvee/spfx-react-toolkit/controls/preview-card';
  *
- * <PreviewCard title="Report" image={{ src: '/report.jpg', alt: 'Report cover' }} actions={<button>Open report</button>} />
+ * <PreviewCard
+ *   title="Report"
+ *   image={{ src: '/report.jpg', alt: 'Report cover' }}
+ *   actions={<button>Open report</button>}
+ * />;
  * ```
  * @useWhen A card needs generated cover media or custom preview content with explicit actions.
  * @example Report card with loading and notes
@@ -53,7 +57,7 @@ import type { PreviewCardProps } from './preview-card.types';
  * }
  * ```
  *
- * @example Inspect preview media and image recovery
+ * @scenario Inspect preview media and image recovery
  * ```tsx
  * import * as React from 'react';
  * import { Badge, Button, Checkbox, Field, Input, Select, FluentProvider, makeStyles, mergeClasses } from '@fluentui/react-components';
@@ -166,7 +170,7 @@ import type { PreviewCardProps } from './preview-card.types';
  * };
  * ```
  *
- * @example Retain caller data when switching card types
+ * @scenario Retain caller data when switching card types
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

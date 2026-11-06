@@ -43,116 +43,11 @@ import { EntraGroupTrim } from '@apvee/spfx-react-toolkit/controls/entra-group-t
 ```tsx
 import * as React from 'react';
 import { EntraGroupTrim } from '@apvee/spfx-react-toolkit';
+
 <EntraGroupTrim groups={[{ name: 'Engineering' }]} groupType="M365">
   Team content
   <EntraGroupTrim.Fallback>No membership</EntraGroupTrim.Fallback>
-</EntraGroupTrim>
-```
-
-#### Stage Entra relationships and observe protected lifetimes
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input, Select, makeStyles } from '@fluentui/react-components';
-import { EntraGroupTrim, type EntraGroupSelector, type EntraGroupType, type EntraGroupRelationship, useSPFxContext, useSPFxPageContext } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; children?: React.ReactNode; diagnostics?: React.ReactNode };
-type Draft = { selector: 'name' | 'id'; values: string; groupType: EntraGroupType; relationship: EntraGroupRelationship; match: 'all' | 'any' };
-type Attempt = Readonly<{ id: number; groups: readonly EntraGroupSelector[]; groupType: EntraGroupType; relationship: EntraGroupRelationship; match: 'all' | 'any' }>;
-type Observation = { mounts: number; unmounts: number; active: boolean; counter: number; attached: boolean };
-type Lifetime = { active: boolean; retired: boolean };
-const defaults: Draft = { selector: 'name', values: 'Project Readers', groupType: 'All', relationship: 'member', match: 'all' };
-const empty: Observation = { mounts: 0, unmounts: 0, active: false, counter: 0, attached: false };
-
-function ProtectedContent({ current, observe, className }: { current: () => boolean; observe: (event: 'mount' | 'unmount' | 'attach' | 'detach' | 'counter', lifetime: Lifetime, count?: number) => void; className: string }): React.ReactElement {
-  const [count, setCount] = React.useState(0);
-  const counter = React.useRef(0);
-  const live = React.useRef(false);
-  const lifetime = React.useRef<Lifetime>({ active: false, retired: false });
-  const node = React.useRef<HTMLDivElement>();
-  const callerRef = React.useCallback((element: HTMLDivElement | null) => {
-    if (lifetime.current.retired) return;
-    // React 17 ref detachment uses the legacy null sentinel; local absence is undefined.
-    node.current = element ?? undefined;
-    observe(element ? 'attach' : 'detach', lifetime.current);
-  }, [observe]);
-  React.useEffect(() => {
-    live.current = true;
-    observe('mount', lifetime.current);
-    // The real ref is attached before passive cleanup of a previous attempt.
-    if (node.current) observe('attach', lifetime.current);
-    return () => { live.current = false; observe('unmount', lifetime.current); lifetime.current.retired = true; };
-  }, [observe]);
-  const increment = (): void => {
-    if (!live.current || !current()) return;
-    counter.current++; setCount(counter.current); observe('counter', lifetime.current, counter.current);
-  };
-  return <div ref={callerRef} className={className} data-trim-demo="protected"><strong>Allowed: protected content is mounted.</strong><Button data-trim-demo="increment" onClick={increment}>Protected counter: {count}</Button></div>;
-}
-function Branch({ level, state }: { level: 'outer' | 'inner'; state: 'loading' | 'denied' | 'error' }): React.ReactElement {
-  return <p data-trim-demo="state" data-trim-level={level} data-trim-state={state}>{level}: {state === 'error' ? 'Error: check unavailable; inspect directory references, consent, payloads and transport.' : state === 'loading' ? 'Loading: checking current access.' : 'Denied: requested access was not observed.'}</p>;
-}
-const useStyles = makeStyles({ controls: { display: 'grid', gap: '12px' }, protected: { padding: '12px', border: '1px solid currentColor' }, diagnostics: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const classes = useStyles();
-  const owner = useSPFxContext(), page = useSPFxPageContext();
-  // Observe actual public host identities only; the trims remain decision authority.
-  const identity = [owner, owner.spfxContext, page, page.user.loginName, page.user.email, page.aadInfo?.userId?.toString(), page.web.absoluteUrl];
-  const boundary = React.useRef({ revision: resetRevision, identity, epoch: 0, runEpoch: 0, attempt: 0, mounted: true });
-  const [draft, setDraft] = React.useState<Draft>(defaults);
-  const [applied, setApplied] = React.useState<Attempt>();
-  const [observation, setObservation] = React.useState<Observation>(empty);
-  if (boundary.current.revision !== resetRevision || !identity.every((value, index) => Object.is(value, boundary.current.identity[index]))) {
-    const reset = boundary.current.revision !== resetRevision;
-    boundary.current = { revision: resetRevision, identity, epoch: boundary.current.epoch + (reset ? 1 : 0), runEpoch: boundary.current.runEpoch + 1, attempt: reset ? 0 : boundary.current.attempt, mounted: true };
-    if (reset) { setDraft(defaults); setApplied(undefined); setObservation(empty); }
-  }
-  const epoch = boundary.current.epoch, runEpoch = boundary.current.runEpoch, attempt = boundary.current.attempt;
-  React.useEffect(() => { boundary.current.mounted = true; return () => { boundary.current.mounted = false; boundary.current.epoch++; }; }, []);
-  const current = React.useCallback((): boolean => boundary.current.mounted && boundary.current.epoch === epoch && boundary.current.attempt === applied?.id, [epoch, applied]);
-  const observe = React.useCallback((event: 'mount' | 'unmount' | 'attach' | 'detach' | 'counter', lifetime: Lifetime, count = 0): void => {
-    if (!boundary.current.mounted || boundary.current.epoch !== epoch || lifetime.retired) return;
-    if (event === 'unmount') {
-      if (!lifetime.active) return;
-      lifetime.active = false;
-      setObservation(value => ({ ...value, unmounts: value.unmounts + 1, active: false, attached: false }));
-    } else if (current()) {
-      if (event === 'mount') { if (lifetime.active) return; lifetime.active = true; setObservation(value => ({ ...value, mounts: value.mounts + 1, active: true, counter: 0 })); }
-      else if (event === 'counter' && lifetime.active) setObservation(value => ({ ...value, counter: count }));
-      else if (event === 'attach' || event === 'detach') setObservation(value => ({ ...value, attached: event === 'attach' }));
-    }
-  }, [epoch, current]);
-  const run = (): void => {
-    if (!boundary.current.mounted || boundary.current.epoch !== epoch || boundary.current.runEpoch !== runEpoch || boundary.current.attempt !== attempt) return;
-    // Map every entry, including empty pieces, so the public validator owns errors.
-    const groups: readonly EntraGroupSelector[] = Object.freeze(draft.values.split(';').map(value => Object.freeze(draft.selector === 'id' ? { id: value.trim() } : { name: value.trim() })));
-    const id = boundary.current.attempt + 1;
-    boundary.current.attempt = id;
-    setApplied(Object.freeze({ id, groups, groupType: draft.groupType, relationship: draft.relationship, match: draft.match }));
-  };
-  const controls = <div className={classes.controls}>
-    <Field label="Group selector"><Select aria-label="Group selector" value={draft.selector} onChange={(_, data) => { const selector = data.value; if (selector === 'name' || selector === 'id') setDraft({ ...draft, selector }); }}><option value="name">Exact names</option><option value="id">GUIDs</option></Select></Field>
-    <Field label="Group values (semicolon-separated)"><Input aria-label="Group values" value={draft.values} onChange={(_, data) => setDraft({ ...draft, values: data.value })} /></Field>
-    <Field label="Group type"><Select aria-label="Group type" value={draft.groupType} onChange={(_, data) => { const groupType = data.value; if (groupType === 'All' || groupType === 'M365' || groupType === 'Security') setDraft({ ...draft, groupType }); }}><option>All</option><option>M365</option><option>Security</option></Select></Field>
-    <Field label="Relationship"><Select aria-label="Relationship" value={draft.relationship} onChange={(_, data) => { const relationship = data.value; if (relationship === 'member' || relationship === 'owner' || relationship === 'memberOrOwner') setDraft({ ...draft, relationship }); }}><option>member</option><option>owner</option><option>memberOrOwner</option></Select></Field>
-    <Field label="Match"><Select aria-label="Match" value={draft.match} onChange={(_, data) => { const match = data.value; if (match === 'all' || match === 'any') setDraft({ ...draft, match }); }}><option value="all">all</option><option value="any">any</option></Select></Field>
-  </div>;
-  const protectedContent = <ProtectedContent current={current} observe={observe} className={classes.protected} />;
-  const regions: DemoRegions = {
-    controls,
-    commands: <div><Button data-trim-demo="run" onClick={run}>Run</Button></div>,
-    status: <><p>Requires a matching SPFx provider and native Graph client. The sample requests User.Read and GroupMember.Read.All; tenant approval is separate. Security membership is transitive; M365 membership is direct. Hidden membership omissions do not prove absence. All + ID + member bypasses metadata: an unreturned GUID is Denied and cannot distinguish a missing group from nonmembership. Exact names resolve every page with type filtering before ambiguity; typed IDs require metadata. Ownership uses the Graph /me ID and every direct owners page. Synchronized groups, non-Unified mail-enabled groups and distribution groups do not support ownership; missing/ambiguous references, type mismatches and failed reads select Error even with any/memberOrOwner. Continuations support graph.microsoft.com only, not national-cloud hosts. Server authorization still governs protected operations. Host identity changes require a rerender with fresh context; Run repeats a settled check, without a settled cache or transport cancellation promise.</p><p data-trim-demo="mount-gauge">Protected mounts: {observation.mounts}; unmounts: {observation.unmounts}; active: {String(observation.active)}; ref attached: {String(observation.attached)}</p></>,
-    children: applied ? <EntraGroupTrim key={applied.id} groups={applied.groups} groupType={applied.groupType} relationship={applied.relationship} match={applied.match}>
-      {protectedContent}
-      <EntraGroupTrim.Loading><Branch level="outer" state="loading" /></EntraGroupTrim.Loading>
-      <EntraGroupTrim.Fallback><Branch level="outer" state="denied" /></EntraGroupTrim.Fallback>
-      <EntraGroupTrim.ErrorFallback><Branch level="outer" state="error" /></EntraGroupTrim.ErrorFallback>
-    </EntraGroupTrim> : <p data-trim-demo="idle">Idle: stage a target, then Run.</p>,
-    diagnostics: <pre className={classes.diagnostics} data-trim-demo="applied-target">{JSON.stringify({ attempt: applied?.id, groups: applied?.groups, groupType: applied?.groupType, relationship: applied?.relationship, match: applied?.match, ...observation }, undefined, 2)}</pre>,
-  };
-  return render ? render(regions) : <section>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</section>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run staged Entra group checks, then observe protected content only after the selected membership or ownership relationship allows it; drafts and Reset do not start checks.' };
+</EntraGroupTrim>;
 ```
 
 ### Signatures
@@ -272,7 +167,7 @@ Active children without a wrapper.
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:243](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L243)
+[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:244](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L244)
 
 ## EntraGroupTrim.ErrorFallback
 
@@ -344,7 +239,7 @@ FunctionComponent<EntraGroupTrimBranchProps>
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:285](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L285)
+[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:286](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L286)
 
 ## EntraGroupTrim.Fallback
 
@@ -416,7 +311,7 @@ FunctionComponent<EntraGroupTrimBranchProps>
 
 ### Source (3)
 
-[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:271](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L271)
+[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:272](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L272)
 
 ## EntraGroupTrim.Loading
 
@@ -488,7 +383,7 @@ FunctionComponent<EntraGroupTrimBranchProps>
 
 ### Source (4)
 
-[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:257](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L257)
+[packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx:258](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/entra-group-trim/entra-group-trim.tsx#L258)
 
 ## GroupTrim
 

@@ -53,7 +53,7 @@ export interface SPFxCorrelationInfo {
  *
  * @useWhen a support or telemetry record needs the request correlation identifier exposed by the host.
  *
- * @example Inspect current diagnostic identifiers
+ * @scenario Inspect current diagnostic identifiers
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';

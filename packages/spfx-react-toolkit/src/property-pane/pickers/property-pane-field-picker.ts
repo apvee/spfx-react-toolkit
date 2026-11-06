@@ -34,23 +34,39 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * import { PropertyPaneFieldPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
  * import type { FieldPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
  *
- * interface Properties { values?: FieldPickerValue[]; }
+ * interface Properties {
+ *   values?: FieldPickerValue[];
+ * }
  * export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
  *   public render(): void {
  *     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
  *   }
  *   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
- *     return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
- *       PropertyPaneFieldPicker('values', {
- *         instance: this, key: 'field-field', value: this.properties.values ?? [],
- *         label: 'Fields', list: 'Projects',
- *       }),
- *     ] }] }] };
+ *     return {
+ *       pages: [
+ *         {
+ *           groups: [
+ *             {
+ *               groupName: 'Selection',
+ *               groupFields: [
+ *                 PropertyPaneFieldPicker('values', {
+ *                   instance: this,
+ *                   key: 'field-field',
+ *                   value: this.properties.values ?? [],
+ *                   label: 'Fields',
+ *                   list: 'Projects'
+ *                 })
+ *               ]
+ *             }
+ *           ]
+ *         }
+ *       ]
+ *     };
  *   }
  * }
  * ```
  *
- * @example Select native field references
+ * @scenario Select native field references
  * ```tsx
  * import * as React from 'react';
  * import { Button, Input } from '@fluentui/react-components';

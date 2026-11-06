@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { gap } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = gap.none;
  * ```
  *
- * @example Select gap scales and pixel spacing — real multi-item flex/grid layout
+ * @scenario Select gap scales and pixel spacing — real multi-item flex/grid layout
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

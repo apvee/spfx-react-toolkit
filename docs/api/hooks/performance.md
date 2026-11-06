@@ -76,27 +76,6 @@ function TenantLabel() {
 }
 ```
 
-#### Inspect current diagnostic identifiers
-
-```tsx
-import * as React from 'react';
-import { useSPFxCorrelationInfo } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxCorrelationInfo();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxCorrelationInfo result">
-        <dt>Correlation ID</dt><dd>{info.correlationId ?? 'Unavailable'}</dd>
-        <dt>Tenant ID</dt><dd>{info.tenantId ?? 'Unavailable'}</dd>
-      </dl>,
-    diagnostics: <p>These native identifiers are diagnostic metadata; the hook does not inject headers or create tracing IDs.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual CorrelationInfo values and explicit unavailable fields as the native host changes.' };
-```
-
 ### Signatures
 
 ```ts
@@ -508,69 +487,6 @@ function SaveButton({ publish }: { publish: (entry: LogEntry) => void }) {
   const logger = useSPFxLogger(publish);
   return <button onClick={() => logger.info('Save selected', { action: 'save' })}>Save</button>;
 }
-```
-
-#### Write native log levels and inspect recent calls
-
-```tsx
-// Requires the matching SPFx provider with native PageContext. Commands use the default console sink with synthetic messages; no host metadata is copied into UI history. A supplied region renderer owns collapsed diagnostics. Reset clears local UI only. No log is emitted on mount.
-import * as React from 'react';
-import { Button, makeStyles, tokens } from '@fluentui/react-components';
-import { useSPFxContext, useSPFxLogger, useSx, padding } from '@apvee/spfx-react-toolkit';
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  children?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-}
-function standalone(regions: DemoRegions): React.ReactElement {
-  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
-}
-const useLogStyles = makeStyles({
-  message: { marginBottom: tokens.spacingVerticalXS, borderRadius: tokens.borderRadiusMedium, fontFamily: tokens.fontFamilyMonospace, fontSize: tokens.fontSizeBase200 },
-  info: { backgroundColor: tokens.colorNeutralBackground2 },
-  warning: { backgroundColor: tokens.colorStatusWarningBackground1 },
-  error: { backgroundColor: tokens.colorStatusDangerBackground1 },
-});
-type Call = { level: 'info' | 'warning' | 'error'; message: string };
-export function Demo({ render = standalone, resetRevision = 0 }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-} = {}): React.ReactElement {
-  const { spfxContext } = useSPFxContext();
-  const logger = useSPFxLogger();
-  const sx = useSx();
-  const styles = useLogStyles();
-  const [calls, setCalls] = React.useState<Call[]>([]);
-  const [failure, setFailure] = React.useState<string>();
-  const lifetime = React.useMemo(() => ({ active: true }), [resetRevision, spfxContext, logger]);
-  React.useLayoutEffect(() => {
-    setCalls([]);
-    setFailure(undefined);
-    return () => { lifetime.active = false; };
-  }, [lifetime]);
-  const write = (level: Call['level']): void => {
-    if (!lifetime.active) return;
-    const message = `SPFx toolkit demo ${level}`;
-    try {
-      if (level === 'warning') logger.warn(message);
-      else logger[level](message);
-      setFailure(undefined);
-      setCalls(previous => [...previous.slice(-4), { level, message }]);
-    } catch (error) {
-      setFailure(error instanceof Error ? error.message : String(error));
-    }
-  };
-  const latest = calls[calls.length - 1];
-  return render({
-    commands: <><Button onClick={() => write('info')}>Info</Button><Button onClick={() => write('warning')}>Warning</Button><Button onClick={() => write('error')}>Error</Button></>,
-    status: failure ? <p role="alert">{failure}</p> : undefined,
-    children: latest ? <div data-runtime-result className={sx(styles.message, styles[latest.level], padding.small)}><strong>{latest.level.toUpperCase()}</strong>: {latest.message}</div> : <p>Run a command to log a message.</p>,
-    diagnostics: calls.length ? <ol aria-label="Recent log calls">{calls.map((call, index) => <li key={index}>{call.level.toUpperCase()}: {call.message}</li>)}</ol> : undefined,
-  });
-}
-export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Info, Warning and Error call the native console logger with safe synthetic demo messages; the current result replaces its predecessor and collapsed diagnostics retain the last five UI calls. Reset clears only this UI history, not console output.' };
 ```
 
 ### Signatures (6)
@@ -1042,105 +958,16 @@ function MyComponent() {
       setPending(false);
     }
   };
-  return <>
-    <button disabled={pending} onClick={() => void run()}>Load data</button>
-    {failure && <span role="alert">{failure}</span>}
-    <pre>{JSON.stringify(result)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={pending} onClick={() => void run()}>
+        Load data
+      </button>
+      {failure && <span role="alert">{failure}</span>}
+      <pre>{JSON.stringify(result)}</pre>
+    </>
+  );
 }
-```
-
-#### Measure a cancellable local timed operation
-
-```tsx
-// Requires the matching SPFx provider. Only Run starts timing. Local cancellation settles the owned await and suppresses stale success or failure, including cancellation before the timed callback begins. The hook clears its own unique start mark; measurement entries remain. No global timeline cleanup occurs.
-import * as React from 'react';
-import { Button } from '@fluentui/react-components';
-import { useSPFxContext, useSPFxPerformance } from '@apvee/spfx-react-toolkit';
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  children?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-}
-function standalone(regions: DemoRegions): React.ReactElement {
-  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
-}
-interface Run {
-  timer?: number;
-  settle?: () => void;
-}
-export function Demo({ render = standalone, resetRevision = 0 }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-} = {}): React.ReactElement {
-  const { spfxContext } = useSPFxContext();
-  const performance = useSPFxPerformance();
-  const [pending, setPending] = React.useState(false);
-  const [result, setResult] = React.useState<string>();
-  const [duration, setDuration] = React.useState<number>();
-  const [failure, setFailure] = React.useState<string>();
-  const lifetime = React.useMemo(() => ({ active: true, run: undefined as Run | undefined }),
-    [resetRevision, spfxContext, performance]);
-  React.useLayoutEffect(() => {
-    setPending(false);
-    setResult(undefined);
-    setDuration(undefined);
-    setFailure(undefined);
-    return () => {
-      lifetime.active = false;
-      const run = lifetime.run;
-      lifetime.run = undefined;
-      if (run?.timer !== undefined) window.clearTimeout(run.timer);
-      // Cancelling our delay must also release the promise owned by time().
-      run?.settle?.();
-    };
-  }, [lifetime]);
-  const runOperation = async (): Promise<void> => {
-    if (!lifetime.active || lifetime.run) return;
-    const run: Run = {};
-    lifetime.run = run;
-    const current = (): boolean => lifetime.active && lifetime.run === run;
-    const finish = (): void => {
-      if (current()) { lifetime.run = undefined; setPending(false); }
-    };
-    setPending(true);
-    setFailure(undefined);
-    setResult(undefined);
-    setDuration(undefined);
-    try {
-      const timed = await performance.time('spfx-toolkit-demo', async () => {
-        // time invokes this in a continuation; Reset may already have cancelled it.
-        if (!current()) return undefined;
-        await new Promise<void>(resolve => {
-          run.settle = resolve;
-          run.timer = window.setTimeout(() => {
-            run.timer = undefined;
-            run.settle = undefined;
-            resolve();
-          }, 250);
-        });
-        return current() ? 'Timed operation completed' : undefined;
-      });
-      if (current()) {
-        setResult(timed.result);
-        setDuration(timed.durationMs);
-      }
-    } catch (error) {
-      if (current()) setFailure(error instanceof Error ? error.message : String(error));
-    } finally {
-      finish();
-    }
-  };
-  return render({
-    commands: <><Button disabled={pending} onClick={runOperation}>Run timed operation</Button></>,
-    status: failure ? <p role="alert">{failure}</p> : pending ? <p role="status">Timing operation…</p> : undefined,
-    children: <output>Last Result: {result ?? ''}</output>,
-    diagnostics: duration !== undefined ? <p>Duration: {duration.toFixed(2)}ms</p> : undefined,
-  });
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run measures a real local 250 ms wait and shows the actual result and duration (which may be zero when unsupported). Reset, host replacement and departure cancel the owned wait and suppress obsolete results; they do not clear unrelated browser timeline entries.' };
 ```
 
 ### Signatures (12)
@@ -1185,4 +1012,4 @@ Contract: see [SPFxPerformanceInfo.time](performance.md#spfxperformanceinfo).
 
 ### Source (18)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts:285](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#L285)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts:289](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPerformance.ts#L289)

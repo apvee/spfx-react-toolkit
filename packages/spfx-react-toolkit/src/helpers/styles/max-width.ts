@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { maxWidth } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = maxWidth.none;
  * ```
  *
- * @example Select maximum width descriptors — none/pixels on full-width content
+ * @scenario Select maximum width descriptors — none/pixels on full-width content
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

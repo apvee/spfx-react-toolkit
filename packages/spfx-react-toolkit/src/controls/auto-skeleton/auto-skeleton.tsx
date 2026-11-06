@@ -33,12 +33,16 @@ const emptyGeometry: readonly AutoSkeletonBone[] = [];
  * ```tsx
  * import * as React from 'react';
  * import { AutoSkeleton } from '@apvee/spfx-react-toolkit';
+ *
  * const isLoading = true;
  * const photoUrl = '/images/profile.png';
  * const name = 'Ada';
  * <AutoSkeleton loading={isLoading} animation="pulse">
- *   <section><img data-skeleton-shape="circle" src={photoUrl} alt="" /><p>{name}</p></section>
- * </AutoSkeleton>
+ *   <section>
+ *     <img data-skeleton-shape="circle" src={photoUrl} alt="" />
+ *     <p>{name}</p>
+ *   </section>
+ * </AutoSkeleton>;
  * ```
  *
  * @example Static placeholders
@@ -75,7 +79,7 @@ const emptyGeometry: readonly AutoSkeletonBone[] = [];
  * }
  * ```
  *
- * @example Explore mounted profile loading and native focus
+ * @scenario Explore mounted profile loading and native focus
  * ```tsx
  * // This standalone React scenario uses the host Fluent theme and Griffel renderer. The mount counter measures real content mounts; Reset restores the note without remounting retained content.
  * import * as React from 'react';

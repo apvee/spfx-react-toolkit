@@ -36,13 +36,13 @@ The [audited mapping and immutable provenance](localization.md#audited-time-zone
 
 <!-- toolkit:include symbol="getSPFxLocaleInfo" section="example" title="Choose an explicit missing site-zone policy" -->
 
-<!-- toolkit:include symbol="useSPFxLocaleInfo" section="example" title="Compare host cultures and seasonal site times" -->
+<!-- toolkit:include symbol="useSPFxLocaleInfo" section="scenario" title="Compare host cultures and seasonal site times" -->
 
 ## Explicit hub lookup and display scope
 
 Start mounts the actual hub hook for a captured native scope. The example checks that scope in both parent and child renders, including a child completion after an in-place native metadata change. Reset, departure and an observed scope change retire displayed results and require another Start. The native hook does not cancel requests, make its initial client base URL reactive or independently observe arbitrary PageContext mutations. After Start, its native effect can schedule a refresh before the wrapper retires the child; those requests may still settle. This example isolates display ownership, without changing that public runtime contract.
 
-<!-- toolkit:include symbol="useSPFxHubSiteInfo" section="example" title="Start a scope bound hub association lookup" -->
+<!-- toolkit:include symbol="useSPFxHubSiteInfo" section="scenario" title="Start a scope bound hub association lookup" -->
 
 ## Theme subscriptions and container measurement
 

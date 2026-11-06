@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { width } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = width.auto;
  * ```
  *
- * @example Select width descriptors — auto/full/pixels with a bounded horizontal region
+ * @scenario Select width descriptors — auto/full/pixels with a bounded horizontal region
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

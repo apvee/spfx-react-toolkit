@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { presets } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = presets.canvas;
  * ```
  *
- * @example Select paired color preset descriptors — foreground/background override composition
+ * @scenario Select paired color preset descriptors — foreground/background override composition
  * ```tsx
  * import * as React from 'react';
  * import { Checkbox, Field, Select } from '@fluentui/react-components';

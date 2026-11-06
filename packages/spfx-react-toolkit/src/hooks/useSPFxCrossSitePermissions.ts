@@ -166,12 +166,23 @@ export interface SPFxScopedPermissionsInfo {
  * import { SPPermission } from '@microsoft/sp-page-context';
  *
  * function ItemPermissionStatus() {
- *   const info = useSPFxCrossSitePermissions({ scope: 'item', listTitle: 'Tasks', itemId: 42 });
- *   return <span>{info.error?.message ?? (info.isLoading ? 'Loading' : String(info.hasPermission(SPPermission.editListItems)))}</span>;
+ *   const info = useSPFxCrossSitePermissions({
+ *     scope: 'item',
+ *     listTitle: 'Tasks',
+ *     itemId: 42
+ *   });
+ *   return (
+ *     <span>
+ *       {info.error?.message ??
+ *         (info.isLoading
+ *           ? 'Loading'
+ *           : String(info.hasPermission(SPPermission.editListItems)))}
+ *     </span>
+ *   );
  * }
  * ```
  *
- * @example Check staged web list item and folder permissions
+ * @scenario Check staged web list item and folder permissions
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select } from '@fluentui/react-components';
@@ -261,7 +272,7 @@ export interface SPFxScopedPermissionsInfo {
  * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run and repeat web, list, item and folder checks with title, GUID or decoded-path selectors; compare applied targets, loading, errors and actual allowed or denied masks.' };
  * ```
  *
- * @example Check staged legacy site web and list permissions
+ * @scenario Check staged legacy site web and list permissions
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input } from '@fluentui/react-components';

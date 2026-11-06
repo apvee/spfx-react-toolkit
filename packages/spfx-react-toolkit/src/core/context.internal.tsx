@@ -41,13 +41,17 @@ if (process.env.NODE_ENV !== 'production') {
  *
  * function HostLabel() {
  *   const { kind, instanceId } = useSPFxContext();
- *   return <span>{kind}: {instanceId}</span>;
+ *   return (
+ *     <span>
+ *       {kind}: {instanceId}
+ *     </span>
+ *   );
  * }
  * ```
  *
  * @useWhen a descendant needs the native host context or instance identity without subscribing to runtime state.
  *
- * @example Inspect the current native host identity
+ * @scenario Inspect the current native host identity
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxContext } from '@apvee/spfx-react-toolkit';

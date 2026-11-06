@@ -72,11 +72,19 @@ function validateProps(props: EditableTextProps): void {
  * ```tsx
  * import * as React from 'react';
  * import { EditableText } from '@apvee/spfx-react-toolkit';
+ *
  * function Summary(): React.ReactElement {
  *   const [html, setHtml] = React.useState<string>();
- *   return <EditableText mode="edit" value={html} fallbackText="Summary"
- *     allowedBlocks={['p', 'h2']} aria-label="Summary"
- *     onChange={data => setHtml(data.html)} />;
+ *   return (
+ *     <EditableText
+ *       mode="edit"
+ *       value={html}
+ *       fallbackText="Summary"
+ *       allowedBlocks={['p', 'h2']}
+ *       aria-label="Summary"
+ *       onChange={data => setHtml(data.html)}
+ *     />
+ *   );
  * }
  * ```
  *
@@ -156,7 +164,7 @@ function validateProps(props: EditableTextProps): void {
  * }
  * ```
  *
- * @example Edit a controlled block with policy and dictionaries
+ * @scenario Edit a controlled block with policy and dictionaries
  * ```tsx
  * // This standalone React scenario uses the host Fluent theme and Griffel renderer. Native resource module setup is required even with a complete dictionary. Read does not initialize this body editor; a surrounding Shell title can have its own session.
  * import * as React from 'react';

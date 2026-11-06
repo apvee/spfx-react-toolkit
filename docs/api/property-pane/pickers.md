@@ -46,140 +46,37 @@ import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPaneContentTypePicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { ContentTypePickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
 
-interface Properties { values?: ContentTypePickerValue[]; }
+interface Properties {
+  values?: ContentTypePickerValue[];
+}
 export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
-      PropertyPaneContentTypePicker('values', {
-        instance: this, key: 'content-type-field', value: this.properties.values ?? [],
-        label: 'Content types', scope: 'list', list: 'Projects',
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Selection',
+              groupFields: [
+                PropertyPaneContentTypePicker('values', {
+                  instance: this,
+                  key: 'content-type-field',
+                  value: this.properties.values ?? [],
+                  label: 'Content types',
+                  scope: 'list',
+                  list: 'Projects'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
-```
-
-#### Select native content type references
-
-```tsx
-import * as React from 'react';
-import { Button } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
-import { PropertyPaneContentTypePicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import type { ContentTypePickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-
-interface SourceProperties { pickerContentTypes?: ContentTypePickerValue[]; }
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-function createContentTypeController(host: NativePropertyPaneEnvironment<SourceProperties>): NativePropertyPaneController {
-  return {
-    getConfiguration: () => ({ pages: [{
-      header: { description: 'Select saved content type references, then use native Close. Reset is not native Discard.' },
-      groups: [{ isGroupNameHidden: true, groupFields: [
-        PropertyPaneContentTypePicker('pickerContentTypes', {
-          instance: host.instance, key: 'picker-content-types', value: host.readProperties().pickerContentTypes ?? [], label: 'Content types', scope: 'site',
-        }),
-      ] }],
-    }] }),
-    fieldChanged: () => {},
-    configurationComplete: () => {},
-    changesApplied: () => {},
-    dispose: () => {},
-  };
-}
-
-// The initialized host owns actual native Edit/Close and SDK persistence.
-// This structural port is private example tooling. Configure the ordinary native
-// recipe's localization resources; existing host authentication and permissions
-// govern queries. The factory installs its own WebPart provider and renderer.
-// Site scope resolves the initialized web's owning collection root; no list is needed.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [saved, setSaved] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousRevision.current === resetRevision) return;
-    previousRevision.current = resetRevision;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    setSaved(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [resetRevision]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || resetRevision !== previousRevision.current) return;
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      return createContentTypeController(host);
-    });
-    if (result.status === 'blocked') {
-      lease.current = undefined;
-      setStatus(result.reason);
-      return;
-    }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, select Content types, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || resetRevision !== previousRevision.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read().pickerContentTypes ?? [], undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    commands: <><Button onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved content type references</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use the actual native Edit and Close controls. Selection, preparation and Reset do not open or close the pane. Reset cancels only an unproduced preparation and local observations; it cannot discard accepted native changes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <pre>{saved ?? 'Use Inspect saved content type references after an actual native selection.'}</pre>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native ContentType picker, open this WebPart's actual Edit property pane, select content type references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query." };
 ```
 
 ### Type
@@ -233,7 +130,7 @@ Native custom field for `groupFields`; the latest SPFx change callback receives 
 
 ### Source
 
-[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts:174](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#L174)
+[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts:191](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-content-type-picker.ts#L191)
 
 ## PropertyPaneFieldPicker
 
@@ -273,150 +170,36 @@ import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPaneFieldPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { FieldPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
 
-interface Properties { values?: FieldPickerValue[]; }
+interface Properties {
+  values?: FieldPickerValue[];
+}
 export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
-      PropertyPaneFieldPicker('values', {
-        instance: this, key: 'field-field', value: this.properties.values ?? [],
-        label: 'Fields', list: 'Projects',
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Selection',
+              groupFields: [
+                PropertyPaneFieldPicker('values', {
+                  instance: this,
+                  key: 'field-field',
+                  value: this.properties.values ?? [],
+                  label: 'Fields',
+                  list: 'Projects'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
-```
-
-#### Select native field references
-
-```tsx
-import * as React from 'react';
-import { Button, Input } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
-import { PropertyPaneFieldPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import type { FieldPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-
-interface SourceProperties { pickerFields?: FieldPickerValue[]; }
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-function createFieldController(host: NativePropertyPaneEnvironment<SourceProperties>, list: string): NativePropertyPaneController {
-  return {
-    getConfiguration: () => ({ pages: [{
-      header: { description: 'Select saved field references, then use native Close. Reset is not native Discard.' },
-      groups: [{ isGroupNameHidden: true, groupFields: [
-        PropertyPaneFieldPicker('pickerFields', {
-          instance: host.instance, key: 'picker-fields', value: host.readProperties().pickerFields ?? [], label: 'Fields', list,
-        }),
-      ] }],
-    }] }),
-    fieldChanged: () => {},
-    configurationComplete: () => {},
-    changesApplied: () => {},
-    dispose: () => {},
-  };
-}
-
-// The initialized host owns actual native Edit/Close and SDK persistence.
-// This structural port is private example tooling. Configure the ordinary native
-// recipe's localization resources; existing host authentication and permissions
-// govern queries. The factory installs its own WebPart provider and renderer.
-// This example deliberately chooses list fields. The Field API also permits
-// omitted list for site columns; the prerequisite here is not an API requirement.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [listTitle, setListTitle] = React.useState('');
-  const [saved, setSaved] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousRevision.current === resetRevision) return;
-    previousRevision.current = resetRevision;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    setListTitle('');
-    setSaved(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [resetRevision]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || resetRevision !== previousRevision.current) return;
-    const list = listTitle.trim();
-    if (!list) { setStatus('Enter a real exact list title before preparing.'); return; }
-    // Freeze this chosen configuration; later draft edits do not alter the native session.
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      return createFieldController(host, list);
-    });
-    if (result.status === 'blocked') {
-      lease.current = undefined;
-      setStatus(result.reason);
-      return;
-    }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, select Fields, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || resetRevision !== previousRevision.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read().pickerFields ?? [], undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    controls: <>
-      <label>Exact list title<Input aria-label="Exact list title" value={listTitle} onChange={event => setListTitle(event.target.value)} /></label>
-      <p>Enter an existing exact list title in the initialized current web; even a GUID-looking string is a title. Draft collection and preparation perform no queries.</p>
-    </>,
-    commands: <><Button disabled={!listTitle.trim()} onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved field references</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use the actual native Edit and Close controls. Selection, preparation and Reset do not open or close the pane. Reset cancels only an unproduced preparation and local observations; it cannot discard accepted native changes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <pre>{saved ?? 'Use Inspect saved field references after an actual native selection.'}</pre>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native Field picker, open this WebPart's actual Edit property pane, select field references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query." };
 ```
 
 ### Type (2)
@@ -462,7 +245,7 @@ Native custom field for `groupFields`; the latest SPFx change callback receives 
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts:182](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#L182)
+[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts:198](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-field-picker.ts#L198)
 
 ## PropertyPaneListItemPicker
 
@@ -502,152 +285,37 @@ import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPaneListItemPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { ListItemPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
 
-interface Properties { values?: ListItemPickerValue[]; }
+interface Properties {
+  values?: ListItemPickerValue[];
+}
 export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
-      PropertyPaneListItemPicker('values', {
-        instance: this, key: 'list-item-field', value: this.properties.values ?? [],
-        label: 'Items', list: 'Projects', textField: 'Title',
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Selection',
+              groupFields: [
+                PropertyPaneListItemPicker('values', {
+                  instance: this,
+                  key: 'list-item-field',
+                  value: this.properties.values ?? [],
+                  label: 'Items',
+                  list: 'Projects',
+                  textField: 'Title'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
-```
-
-#### Select native item references
-
-```tsx
-import * as React from 'react';
-import { Button, Input } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
-import { PropertyPaneListItemPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import type { ListItemPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-
-interface SourceProperties { pickerItems?: ListItemPickerValue[]; }
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-function createListItemController(host: NativePropertyPaneEnvironment<SourceProperties>, list: string, textField: string): NativePropertyPaneController {
-  return {
-    getConfiguration: () => ({ pages: [{
-      header: { description: 'Select saved item references, then use native Close. Reset is not native Discard.' },
-      groups: [{ isGroupNameHidden: true, groupFields: [
-        PropertyPaneListItemPicker('pickerItems', {
-          instance: host.instance, key: 'picker-items', value: host.readProperties().pickerItems ?? [], label: 'Items', list, textField,
-        }),
-      ] }],
-    }] }),
-    fieldChanged: () => {},
-    configurationComplete: () => {},
-    changesApplied: () => {},
-    dispose: () => {},
-  };
-}
-
-// The initialized host owns actual native Edit/Close and SDK persistence.
-// This structural port is private example tooling. Configure the ordinary native
-// recipe's localization resources; existing host authentication and permissions
-// govern queries. The factory installs its own WebPart provider and renderer.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [listTitle, setListTitle] = React.useState('');
-  const [textField, setTextField] = React.useState('Title');
-  const [saved, setSaved] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousRevision.current === resetRevision) return;
-    previousRevision.current = resetRevision;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    setListTitle('');
-    setTextField('Title');
-    setSaved(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [resetRevision]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || resetRevision !== previousRevision.current) return;
-    const list = listTitle.trim();
-    const field = textField.trim();
-    if (!list || !field) { setStatus('Enter a real exact list title and its verified internal display field before preparing.'); return; }
-    // Freeze this chosen configuration; later draft edits do not alter the native session.
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      return createListItemController(host, list, field);
-    });
-    if (result.status === 'blocked') {
-      lease.current = undefined;
-      setStatus(result.reason);
-      return;
-    }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, select Items, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || resetRevision !== previousRevision.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read().pickerItems ?? [], undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    controls: <>
-      <label>Exact list title<Input aria-label="Exact list title" value={listTitle} onChange={event => setListTitle(event.target.value)} /></label>
-      <label>Verified internal display field<Input aria-label="Verified internal display field" value={textField} onChange={event => setTextField(event.target.value)} /></label>
-      <p>Enter an existing exact list title in the initialized current web; even a GUID-looking string is a title. Verify that this list has the chosen internal display field; Title is only an initial suggestion. Draft collection and preparation perform no queries.</p>
-    </>,
-    commands: <><Button disabled={!listTitle.trim() || !textField.trim()} onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved item references</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use the actual native Edit and Close controls. Selection, preparation and Reset do not open or close the pane. Reset cancels only an unproduced preparation and local observations; it cannot discard accepted native changes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <pre>{saved ?? 'Use Inspect saved item references after an actual native selection.'}</pre>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native ListItem picker, open this WebPart's actual Edit property pane, select item references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query." };
 ```
 
 ### Type (3)
@@ -699,7 +367,7 @@ Native custom field for `groupFields`; the latest SPFx change callback receives 
 
 ### Source (3)
 
-[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts:184](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#L184)
+[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts:201](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-item-picker.ts#L201)
 
 ## PropertyPaneListPicker
 
@@ -739,140 +407,35 @@ import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPaneListPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { ListPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
 
-interface Properties { values?: ListPickerValue[]; }
+interface Properties {
+  values?: ListPickerValue[];
+}
 export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
-      PropertyPaneListPicker('values', {
-        instance: this, key: 'list-field', value: this.properties.values ?? [],
-        label: 'List',
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Selection',
+              groupFields: [
+                PropertyPaneListPicker('values', {
+                  instance: this,
+                  key: 'list-field',
+                  value: this.properties.values ?? [],
+                  label: 'List'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
-```
-
-#### Select native list references
-
-```tsx
-import * as React from 'react';
-import { Button } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
-import { PropertyPaneListPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import type { ListPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-
-interface SourceProperties { pickerLists?: ListPickerValue[]; }
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-function createListController(host: NativePropertyPaneEnvironment<SourceProperties>): NativePropertyPaneController {
-  return {
-    getConfiguration: () => ({ pages: [{
-      header: { description: 'Select saved list references, then use native Close. Reset is not native Discard.' },
-      groups: [{ isGroupNameHidden: true, groupFields: [
-        PropertyPaneListPicker('pickerLists', {
-          instance: host.instance, key: 'picker-lists', value: host.readProperties().pickerLists ?? [], label: 'Lists',
-        }),
-      ] }],
-    }] }),
-    fieldChanged: () => {},
-    configurationComplete: () => {},
-    changesApplied: () => {},
-    dispose: () => {},
-  };
-}
-
-// The initialized host owns actual native Edit/Close and SDK persistence.
-// This structural port is private example tooling. Configure the ordinary native
-// recipe's localization resources; existing host authentication and permissions
-// govern queries. The factory installs its own WebPart provider and renderer.
-// Omitted webUrl uses the initialized provider's current web and public defaults.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [saved, setSaved] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousRevision.current === resetRevision) return;
-    previousRevision.current = resetRevision;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    setSaved(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [resetRevision]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || resetRevision !== previousRevision.current) return;
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      return createListController(host);
-    });
-    if (result.status === 'blocked') {
-      lease.current = undefined;
-      setStatus(result.reason);
-      return;
-    }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, select Lists, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || resetRevision !== previousRevision.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read().pickerLists ?? [], undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    commands: <><Button onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved list references</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use the actual native Edit and Close controls. Selection, preparation and Reset do not open or close the pane. Reset cancels only an unproduced preparation and local observations; it cannot discard accepted native changes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <pre>{saved ?? 'Use Inspect saved list references after an actual native selection.'}</pre>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native List picker, open this WebPart's actual Edit property pane, select list references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query." };
 ```
 
 ### Type (4)
@@ -918,7 +481,7 @@ Native custom field for `groupFields`; the latest SPFx change callback receives 
 
 ### Source (4)
 
-[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts:172](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#L172)
+[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts:187](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-list-picker.ts#L187)
 
 ## DistributiveOmit
 
@@ -1102,143 +665,35 @@ import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPanePrincipalPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { PrincipalPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
 
-interface Properties { values?: PrincipalPickerValue[]; }
+interface Properties {
+  values?: PrincipalPickerValue[];
+}
 export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
-      PropertyPanePrincipalPicker('values', {
-        instance: this, key: 'principal-field', value: this.properties.values ?? [],
-        label: 'People',
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Selection',
+              groupFields: [
+                PropertyPanePrincipalPicker('values', {
+                  instance: this,
+                  key: 'principal-field',
+                  value: this.properties.values ?? [],
+                  label: 'People'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
-```
-
-#### Select native principal references
-
-```tsx
-import * as React from 'react';
-import { Button } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
-import { PropertyPanePrincipalPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import type { PrincipalPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-
-interface SourceProperties { pickerPrincipals?: PrincipalPickerValue[]; }
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-function createPrincipalController(host: NativePropertyPaneEnvironment<SourceProperties>): NativePropertyPaneController {
-  return {
-    getConfiguration: () => ({ pages: [{
-      header: { description: 'Select saved principal references, then use native Close. Reset is not native Discard.' },
-      groups: [{ isGroupNameHidden: true, groupFields: [
-        PropertyPanePrincipalPicker('pickerPrincipals', {
-          instance: host.instance, key: 'picker-principals', value: host.readProperties().pickerPrincipals ?? [], label: 'Principals',
-          principalTypes: ['user'], userIdentity: { mode: 'available' },
-        }),
-      ] }],
-    }] }),
-    fieldChanged: () => {},
-    configurationComplete: () => {},
-    changesApplied: () => {},
-    dispose: () => {},
-  };
-}
-
-// The initialized host owns actual native Edit/Close and SDK persistence.
-// This structural port is private example tooling. Configure the ordinary native
-// recipe's localization resources; existing host authentication and permissions
-// govern queries. The factory installs its own WebPart provider and renderer.
-// Search users explicitly; no personal/current suggestions. Available mode
-// has no ensureUser option and never provisions a SharePoint user.
-// The saved array retains the complete PrincipalPickerValue domain.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [saved, setSaved] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousRevision.current === resetRevision) return;
-    previousRevision.current = resetRevision;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    setSaved(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [resetRevision]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || resetRevision !== previousRevision.current) return;
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      return createPrincipalController(host);
-    });
-    if (result.status === 'blocked') {
-      lease.current = undefined;
-      setStatus(result.reason);
-      return;
-    }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, select Principals, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || resetRevision !== previousRevision.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read().pickerPrincipals ?? [], undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    commands: <><Button onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved principal references</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use the actual native Edit and Close controls. Selection, preparation and Reset do not open or close the pane. Reset cancels only an unproduced preparation and local observations; it cannot discard accepted native changes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <pre>{saved ?? 'Use Inspect saved principal references after an actual native selection.'}</pre>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native Principal picker, open this WebPart's actual Edit property pane, select principal references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query." };
 ```
 
 ### Type (8)
@@ -1292,7 +747,7 @@ Native custom field for `groupFields`; the latest SPFx change callback receives 
 
 ### Source (8)
 
-[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts:175](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#L175)
+[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts:190](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-principal-picker.ts#L190)
 
 ## PropertyPaneSitePicker
 
@@ -1332,18 +787,33 @@ import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPaneSitePicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { SitePickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
 
-interface Properties { values?: SitePickerValue[]; }
+interface Properties {
+  values?: SitePickerValue[];
+}
 export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
-      PropertyPaneSitePicker('values', {
-        instance: this, key: 'site-field', value: this.properties.values ?? [],
-        label: 'Site',
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Selection',
+              groupFields: [
+                PropertyPaneSitePicker('values', {
+                  instance: this,
+                  key: 'site-field',
+                  value: this.properties.values ?? [],
+                  label: 'Site'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
 ```
@@ -1403,571 +873,6 @@ function knownSiteField(instance: BaseClientSideWebPart<Properties>, values: Sit
 }
 ```
 
-#### Select native site references
-
-```tsx
-import * as React from 'react';
-import { Button } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
-import { PropertyPaneSitePicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import type { SitePickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-
-interface SourceProperties { pickerSites?: SitePickerValue[]; }
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-function createSiteController(host: NativePropertyPaneEnvironment<SourceProperties>): NativePropertyPaneController {
-  return {
-    getConfiguration: () => ({ pages: [{
-      header: { description: 'Select saved site references, then use native Close. Reset is not native Discard.' },
-      groups: [{ isGroupNameHidden: true, groupFields: [
-        PropertyPaneSitePicker('pickerSites', {
-          instance: host.instance, key: 'picker-sites', value: host.readProperties().pickerSites ?? [], label: 'Sites',
-        }),
-      ] }],
-    }] }),
-    fieldChanged: () => {},
-    configurationComplete: () => {},
-    changesApplied: () => {},
-    dispose: () => {},
-  };
-}
-
-// The initialized host owns actual native Edit/Close and SDK property persistence.
-// This private structural port is not a public toolkit export. Native resources
-// are configured as for the ordinary native Site recipe; host authentication and
-// existing delegated permissions govern discovery. Omitted Site options retain
-// the public SitePicker defaults, including the current-site source behavior.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [saved, setSaved] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousRevision.current === resetRevision) return;
-    previousRevision.current = resetRevision;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    setSaved(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [resetRevision]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || resetRevision !== previousRevision.current) return;
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      return createSiteController(host);
-    });
-    if (result.status === 'blocked') {
-      lease.current = undefined;
-      setStatus(result.reason);
-      return;
-    }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, select Sites, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || resetRevision !== previousRevision.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read().pickerSites ?? [], undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    commands: <><Button onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved site references</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use the actual native Edit and Close controls. Selection, preparation and Reset do not open or close the pane. Reset cancels only an unproduced preparation and local observations; it cannot discard accepted native changes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <pre>{saved ?? 'Use Inspect saved site references after an actual native selection.'}</pre>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native Site picker, open this WebPart's actual property pane, select site references and inspect the saved values; selection and Reset do not open the pane or query." };
-```
-
-#### Configure native metadata and file cascade
-
-```tsx
-import * as React from 'react';
-import { Button } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import { type IPropertyPaneConfiguration, PropertyPaneTextField, PropertyPaneLabel, PropertyPaneToggle, PropertyPaneDropdown } from '@microsoft/sp-property-pane';
-import { PropertyPaneSitePicker, PropertyPaneListPicker, PropertyPaneFieldPicker, PropertyPaneViewPicker, PropertyPaneContentTypePicker, PropertyPaneListItemPicker, PropertyPanePrincipalPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import { PropertyPaneFileFolderPicker } from '@apvee/spfx-react-toolkit/property-pane/file-folder-picker';
-import type { SitePickerValue, ListPickerValue, FieldPickerValue, ViewPickerValue, ContentTypePickerValue, ListItemPickerValue, PrincipalPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-import type { FileFolderPickerValue, FileFolderPickerScope, FileFolderPickerProps, FileFolderPickerPreset, FileFolderPickerInitialLocation } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';
-
-// Saved SDK-facing fields are read only for compatibility, never exposed as configurator switches.
-type SavedNavigationProperty = 'fileFolderMyFiles' | 'fileFolderRecent' | 'fileFolderShared' | 'fileFolderQuickAccess' | 'fileFolderOrganization' | 'fileFolderSite';
-const savedNavigation: readonly (readonly ['myFiles' | 'recent' | 'shared' | 'quickAccess' | 'organization' | 'site', SavedNavigationProperty])[] = [
-  ['myFiles', 'fileFolderMyFiles'], ['recent', 'fileFolderRecent'], ['shared', 'fileFolderShared'],
-  ['quickAccess', 'fileFolderQuickAccess'], ['organization', 'fileFolderOrganization'], ['site', 'fileFolderSite'],
-];
-
-type LegacyProps = Extract<FileFolderPickerProps, { readonly preset?: undefined }>;
-interface FileFolderDemoSettings {
-  fileFolderMyFiles?: boolean;
-  fileFolderRecent?: boolean;
-  fileFolderShared?: boolean;
-  fileFolderQuickAccess?: boolean;
-  fileFolderOrganization?: boolean;
-  fileFolderSite?: boolean;
-  fileFolderPreset?: FileFolderPickerPreset | 'legacy';
-  fileFolderTitle?: string;
-  fileFolderLayout?: LegacyProps['layout'];
-  fileFolderGraph?: boolean;
-  fileFolderNavigationVisible?: boolean;
-  fileFolderInitialView?: LegacyProps['initialView'];
-  fileFolderNavigationPreset?: LegacyProps['navigationPreset'] | 'auto';
-  fileFolderSiteUrl?: string;
-  fileFolderFromLink?: LegacyProps['fromLinkMode'];
-  fileFolderDeviceUpload?: boolean;
-  fileFolderDeviceLabel?: string;
-  fileFolderUpload?: boolean;
-  fileFolderCreateFolder?: boolean;
-}
-const savedSdkProperties: readonly (keyof FileFolderDemoSettings)[] = [
-  ...savedNavigation.map(([, property]) => property), 'fileFolderTitle', 'fileFolderLayout', 'fileFolderGraph',
-  'fileFolderNavigationVisible', 'fileFolderInitialView', 'fileFolderNavigationPreset', 'fileFolderSiteUrl',
-  'fileFolderFromLink', 'fileFolderDeviceUpload', 'fileFolderDeviceLabel',
-];
-
-// Defined false and empty saved settings are meaningful compatibility preferences. Writes remain common intents.
-function fileFolderHasLegacySettings(settings: FileFolderDemoSettings): boolean {
-  return savedSdkProperties.some(property => settings[property] !== undefined);
-}
-function fileFolderDemoPreset(settings: FileFolderDemoSettings): FileFolderPickerPreset | 'legacy' {
-  return settings.fileFolderPreset ?? (fileFolderHasLegacySettings(settings) ? 'legacy' : 'focused');
-}
-
-type LegacyExperience = Pick<LegacyProps, 'title' | 'layout' | 'graphEnabled' | 'visibleLocations' | 'initialView' | 'navigationVisible' | 'navigationPreset' | 'siteNavigationUrl' | 'fromLinkMode' | 'localFilesMode' | 'localFilesLabel'> & { readonly preset?: undefined };
-// Select one library contract; recipe generation stays in the library resolver. Original saved fields remain restorable.
-function fileFolderDemoExperience(settings: FileFolderDemoSettings, scope: FileFolderPickerScope, initialLocation?: FileFolderPickerInitialLocation): LegacyExperience | { readonly preset: FileFolderPickerPreset } {
-  const preset = fileFolderDemoPreset(settings);
-  if (preset !== 'legacy') return { preset };
-  const visibleLocations = savedNavigation.every(([, property]) => settings[property] === undefined) ? undefined
-    : savedNavigation.filter(([key, property]) => {
-      const incompatibleSource = (key === 'myFiles' && scope.kind !== 'oneDrive') || (key === 'quickAccess' && scope.kind === 'oneDrive');
-      return !incompatibleSource && (settings[property] ?? (key === 'myFiles' && scope.kind === 'oneDrive'));
-    }).map(([key]) => key);
-  return {
-    title: settings.fileFolderTitle || undefined, layout: settings.fileFolderLayout, graphEnabled: settings.fileFolderGraph,
-    visibleLocations, navigationVisible: settings.fileFolderNavigationVisible,
-    initialView: scope.kind === 'oneDrive' && !scope.folder && initialLocation === undefined ? settings.fileFolderInitialView ?? 'location' : 'location',
-    navigationPreset: settings.fileFolderNavigationPreset === 'oneDrive' || settings.fileFolderNavigationPreset === 'current-site' ? settings.fileFolderNavigationPreset : undefined,
-    siteNavigationUrl: settings.fileFolderSiteUrl?.trim() || undefined, fromLinkMode: settings.fileFolderFromLink,
-    localFilesMode: settings.fileFolderUpload && settings.fileFolderDeviceUpload ? 'upload' : 'disabled', localFilesLabel: settings.fileFolderDeviceLabel || undefined,
-  };
-}
-
-interface SourceProperties extends FileFolderDemoSettings {
-  pickerMultiselect?: boolean;
-  fileFolderValues?: FileFolderPickerValue[];
-  fileFolderScope?: FileFolderPickerScope['kind'];
-  fileFolderItemTypes?: 'files' | 'folders' | 'all';
-  fileFolderMultiselect?: boolean;
-  fileFolderSize?: 'medium' | 'large';
-  fileFolderColorfulTagAvatars?: boolean;
-  fileFolderFolder?: string;
-  fileFolderHint?: string;
-  fileFolderSearchable?: boolean;
-  fileFolderExtensions?: string;
-  fileFolderCategory?: FileFolderPickerProps['fileCategory'] | '';
-  fileFolderSelectionLimit?: string;
-  fileFolderInitialWeb?: string;
-  fileFolderInitialLibrary?: string;
-  fileFolderInitialFolder?: string;
-  pickerPresentation?: 'combobox' | 'tagPicker';
-  pickerColorfulTagAvatars?: boolean;
-
-  pickerSites?: SitePickerValue[];
-  pickerLists?: ListPickerValue[];
-  pickerFields?: FieldPickerValue[];
-  pickerViews?: ViewPickerValue[];
-  pickerContentTypes?: ContentTypePickerValue[];
-  pickerContentTypeScope?: 'site' | 'list';
-  pickerItems?: ListItemPickerValue[];
-  pickerPrincipals?: PrincipalPickerValue[];
-}
-
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-
-const pickerValueKeys: readonly ('pickerSites' | 'pickerLists' | 'pickerFields' | 'pickerViews' | 'pickerContentTypes' | 'pickerItems' | 'pickerPrincipals')[] = ['pickerSites', 'pickerLists', 'pickerFields', 'pickerViews', 'pickerContentTypes', 'pickerItems', 'pickerPrincipals'];
-
-// Compare reference identities only: a label enrichment must not clear dependent values.
-function pickerCascadeIdentity(value: unknown): string {
-  const references: readonly unknown[] = Array.isArray(value) ? value : [];
-  return JSON.stringify(references.map(reference => {
-    if (!reference || typeof reference !== 'object' || !('kind' in reference)) return undefined;
-    if (reference.kind === 'site' && 'url' in reference && typeof reference.url === 'string') return ['site', reference.url.toLowerCase().replace(/\/+$/, '')];
-    if (reference.kind === 'list' && 'webUrl' in reference && typeof reference.webUrl === 'string' && 'listId' in reference && typeof reference.listId === 'string') return ['list', reference.webUrl.toLowerCase().replace(/\/+$/, ''), reference.listId.toLowerCase()];
-    return undefined;
-  }));
-}
-
-
-function clearFileFolderInitialLocation(properties: SourceProperties): void {
-    delete properties.fileFolderInitialWeb;
-    delete properties.fileFolderInitialLibrary;
-    delete properties.fileFolderInitialFolder;
-  }
-
-
-function resolveFileFolderSettings(properties: SourceProperties, fallbackWeb: string): {
-  readonly site: SitePickerValue | undefined;
-  readonly list: ListPickerValue | undefined;
-  readonly listTarget: { kind: 'id'; id: string } | undefined;
-  readonly fileFolderKind: FileFolderPickerScope['kind'];
-  readonly fileFolderScope: FileFolderPickerScope;
-  readonly fileFolderCategory: FileFolderPickerProps['fileCategory'];
-  readonly fileFolderDisabled: boolean;
-  readonly savedFileFolderPreset: FileFolderPickerPreset | 'legacy';
-  readonly fileFolderPreset: FileFolderPickerPreset;
-  readonly fileFolderInitialLocation: FileFolderPickerInitialLocation | undefined;
-} {
-    const site = properties.pickerSites?.length === 1 ? properties.pickerSites[0] : undefined;
-    const candidate = properties.pickerLists?.length === 1 ? properties.pickerLists[0] : undefined;
-    const list = site !== undefined && candidate?.webUrl.toLowerCase().replace(/\/+$/, '') === site.url.toLowerCase().replace(/\/+$/, '') ? candidate : undefined;
-    const listTarget: { kind: 'id'; id: string } | undefined = list === undefined ? undefined : { kind: 'id', id: list.listId };
-    const fileFolderKind = properties.fileFolderScope ?? 'siteCollection';
-    const fileFolderScope: FileFolderPickerScope = fileFolderKind === 'oneDrive' ? { kind: 'oneDrive', folder: properties.fileFolderFolder || undefined } :
-      fileFolderKind === 'folder' ? { kind: 'folder', webUrl: list?.webUrl ?? fallbackWeb, list: listTarget ?? '', folder: properties.fileFolderFolder ?? '' } :
-      fileFolderKind === 'library' ? { kind: 'library', webUrl: list?.webUrl ?? fallbackWeb, list: listTarget ?? '' } : { kind: 'siteCollection', siteUrl: site?.url };
-    const fileFolderCategory = properties.fileFolderItemTypes === 'folders' ? undefined : properties.fileFolderCategory || undefined;
-    const fileFolderDisabled = (fileFolderKind === 'library' || fileFolderKind === 'folder') && listTarget === undefined;
-    const savedFileFolderPreset = fileFolderDemoPreset(properties);
-    const fileFolderPreset = savedFileFolderPreset === 'legacy' ? 'focused' : savedFileFolderPreset;
-    const fileFolderInitialLocation = properties.fileFolderInitialWeb || properties.fileFolderInitialLibrary || properties.fileFolderInitialFolder ? {
-      webUrl: properties.fileFolderInitialWeb?.trim() || undefined,
-      list: properties.fileFolderInitialLibrary?.trim() || undefined,
-      folder: properties.fileFolderInitialFolder || undefined,
-    } : undefined;
-    return { site, list, listTarget, fileFolderKind, fileFolderScope, fileFolderCategory, fileFolderDisabled, savedFileFolderPreset, fileFolderPreset, fileFolderInitialLocation };
-}
-
-function createIntegratedController(host: NativePropertyPaneEnvironment<SourceProperties>): NativePropertyPaneController {
-  let pickerSiteRevision = 0;
-  let pickerListRevision = 0;
-  let pickerContentTypeRevision = 0;
-  let fileFolderRevision = 0;
-  const fieldChanged = (propertyPath: string, oldValue: unknown, newValue: unknown): void => {
-    const properties = host.readProperties();
-    if (['fileFolderScope', 'fileFolderFolder'].includes(propertyPath)) {
-      if (oldValue !== newValue) {
-        properties.fileFolderValues = []; fileFolderRevision++;
-        const folderBound = properties.fileFolderScope === 'folder' || properties.fileFolderScope === 'oneDrive';
-        if (propertyPath === 'fileFolderScope' || folderBound) clearFileFolderInitialLocation(properties);
-      }
-      host.refresh(); return;
-    }
-    if (propertyPath === 'fileFolderCategory' && newValue) delete properties.fileFolderExtensions;
-    if (propertyPath === 'fileFolderItemTypes' && newValue === 'folders') delete properties.fileFolderCategory;
-    if (propertyPath.startsWith('fileFolder')) {
-      // Preset and functional options update the same field descriptor without resetting values or its revision.
-      host.refresh(); return;
-    }
-    if (propertyPath === 'pickerMultiselect' || propertyPath === 'pickerPresentation' || propertyPath === 'pickerColorfulTagAvatars') {
-      if (propertyPath === 'pickerMultiselect' && newValue === false) {
-        const previousSites = properties.pickerSites;
-        const previousLists = properties.pickerLists;
-        for (const key of pickerValueKeys) {
-          const values = properties[key];
-          if (values !== undefined && values.length > 1) Object.assign(properties, { [key]: values.slice(0, 1) });
-        }
-        if (pickerCascadeIdentity(previousSites) !== pickerCascadeIdentity(properties.pickerSites)) {
-          fieldChanged('pickerSites', previousSites, properties.pickerSites);
-          return;
-        }
-        if (pickerCascadeIdentity(previousLists) !== pickerCascadeIdentity(properties.pickerLists)) {
-          fieldChanged('pickerLists', previousLists, properties.pickerLists);
-          return;
-        }
-      }
-      host.refresh();
-      return;
-    }
-    if (propertyPath === 'pickerContentTypeScope') {
-      if ((oldValue ?? 'site') === (newValue ?? 'site')) return;
-      properties.pickerContentTypes = [];
-      pickerContentTypeRevision++;
-      host.refresh();
-      return;
-    }
-    if (propertyPath !== 'pickerSites' && propertyPath !== 'pickerLists') return;
-    if (pickerCascadeIdentity(oldValue) === pickerCascadeIdentity(newValue)) return;
-    const fileFolderKind = properties.fileFolderScope ?? 'siteCollection';
-    const sourceDependsOnReference = propertyPath === 'pickerSites' ? fileFolderKind !== 'oneDrive'
-      : fileFolderKind === 'library' || fileFolderKind === 'folder';
-    if (sourceDependsOnReference) clearFileFolderInitialLocation(properties);
-    properties.fileFolderValues = []; fileFolderRevision++;
-    if (propertyPath === 'pickerSites') {
-      properties.pickerLists = [];
-      pickerSiteRevision++;
-    }
-    if (propertyPath === 'pickerSites' || properties.pickerContentTypeScope === 'list') {
-      properties.pickerContentTypes = [];
-      pickerContentTypeRevision++;
-    }
-    properties.pickerFields = [];
-    properties.pickerViews = [];
-    properties.pickerItems = [];
-    pickerListRevision++;
-    // Consumer-owned dependency updates need new field descriptors; stable keys retain mounted picker roots.
-    host.refresh();
-  };
-  const getConfiguration = (): IPropertyPaneConfiguration => {
-    const properties = host.readProperties();
-    const modeProps: { multiselect: boolean; presentation: 'combobox' | 'tagPicker'; colorfulTagAvatars: boolean } = { multiselect: properties.pickerMultiselect ?? true,
-      presentation: properties.pickerPresentation ?? 'combobox',
-      colorfulTagAvatars: properties.pickerColorfulTagAvatars ?? false };
-    const { site, list, listTarget, fileFolderKind, fileFolderScope, fileFolderCategory, fileFolderDisabled, fileFolderPreset, fileFolderInitialLocation } = resolveFileFolderSettings(properties, host.instance.context.pageContext.web.absoluteUrl);
-    const contentTypeScope = properties.pickerContentTypeScope ?? 'site';
-    const contentTypeProps = { instance: host.instance, ...modeProps, key: 'picker-content-types', value: properties.pickerContentTypes ?? [], valueRevision: pickerContentTypeRevision, webUrl: site?.url, label: 'Content types' };
-    const fileFolderExperience = fileFolderDemoExperience({ ...properties, fileFolderPreset }, fileFolderScope, fileFolderInitialLocation);
-    return {
-      pages: [
-        {
-          displayGroupsAsAccordion: true,
-          header: {
-            description: 'Configure metadata and file references, inspect saved JSON, then use actual native Close. Reset is not Discard.'
-          },
-          groups: [
-            { isGroupNameHidden: true, groupFields: [PropertyPaneSitePicker('pickerSites', { instance: host.instance, ...modeProps, key: 'picker-sites', value: properties.pickerSites ?? [], label: 'Sites' })] },
-            {
-              groupName: 'Picker references (JSON)',
-              groupFields: [
-                PropertyPaneListPicker('pickerLists', { instance: host.instance, ...modeProps, key: 'picker-lists', value: properties.pickerLists ?? [], valueRevision: pickerSiteRevision, webUrl: site?.url, disabled: site === undefined, label: 'Lists', hint: site === undefined ? 'Select a site first.' : undefined }),
-                ...(listTarget === undefined ? [PropertyPaneLabel('picker-cascade-hint', { text: 'Select a site and a list to configure fields, views and items.' })] : [
-                  PropertyPaneFieldPicker('pickerFields', { instance: host.instance, ...modeProps, key: 'picker-fields', value: properties.pickerFields ?? [], valueRevision: pickerListRevision, webUrl: list?.webUrl, list: listTarget, label: 'Fields' }),
-                  PropertyPaneViewPicker('pickerViews', { instance: host.instance, ...modeProps, key: 'picker-views', value: properties.pickerViews ?? [], valueRevision: pickerListRevision, webUrl: list?.webUrl, list: listTarget, label: 'Views' }),
-                  PropertyPaneListItemPicker('pickerItems', { instance: host.instance, ...modeProps, key: 'picker-items', value: properties.pickerItems ?? [], valueRevision: pickerListRevision, webUrl: list?.webUrl, list: listTarget, textField: 'Title', label: 'Items / files' }),
-                ]),
-                ...(site === undefined ? [PropertyPaneLabel('picker-content-type-hint', { text: 'Select a site to configure content types.' })] : contentTypeScope === 'site' ? [
-                  PropertyPaneContentTypePicker('pickerContentTypes', { ...contentTypeProps, scope: 'site' }),
-                ] : listTarget === undefined ? [PropertyPaneLabel('picker-content-type-hint', { text: 'Select a site and a list to configure list content types.' })] : [
-                  PropertyPaneContentTypePicker('pickerContentTypes', { ...contentTypeProps, webUrl: list?.webUrl, scope: 'list', list: listTarget }),
-                ]),
-                PropertyPanePrincipalPicker('pickerPrincipals', { instance: host.instance, ...modeProps, key: 'picker-principals', value: properties.pickerPrincipals ?? [], label: 'Principals', principalTypes: ['user', 'sharePointGroup', 'microsoft365Group', 'securityGroup', 'distributionList'], userIdentity: { mode: 'available' } }),
-              ],
-            },
-            {
-              groupName: 'File and folder picker',
-              isCollapsed: false,
-              groupFields: [
-                PropertyPaneLabel('file-folder-help', { text: 'Microsoft hosted v8. SharePoint scopes use the selected site/library above; only existing content is selected.' }),
-                PropertyPaneDropdown('fileFolderScope', { label: 'File picker source', selectedKey: fileFolderKind, options: [
-                  { key: 'siteCollection', text: 'Site collection' }, { key: 'library', text: 'Selected document library' }, { key: 'folder', text: 'Folder in selected library' }, { key: 'oneDrive', text: 'Current user’s OneDrive Business' },
-                ] }),
-                ...(fileFolderKind === 'folder' || fileFolderKind === 'oneDrive' ? [PropertyPaneTextField('fileFolderFolder', { label: 'Existing folder path' })] : []),
-                PropertyPaneDropdown('fileFolderPreset', { label: 'Preset', selectedKey: fileFolderPreset, options: [
-                  { key: 'focused', text: 'Focused' }, { key: 'extended', text: 'Extended' },
-                ] }),
-                PropertyPaneDropdown('fileFolderItemTypes', { label: 'Selectable content', selectedKey: properties.fileFolderItemTypes ?? 'files', options: [{ key: 'files', text: 'Files' }, { key: 'folders', text: 'Folders' }, { key: 'all', text: 'Files and folders' }] }),
-                PropertyPaneToggle('fileFolderMultiselect', { label: 'Multiple file/folder selection', checked: properties.fileFolderMultiselect ?? false }),
-                PropertyPaneFileFolderPicker('fileFolderValues', { instance: host.instance, key: 'file-folder-values', label: 'Selected files / folders', value: properties.fileFolderValues ?? [], valueRevision: fileFolderRevision,
-                  size: properties.fileFolderSize ?? 'medium', colorfulTagAvatars: properties.fileFolderColorfulTagAvatars ?? false, scope: fileFolderScope, itemTypes: properties.fileFolderItemTypes ?? 'files', multiselect: properties.fileFolderMultiselect ?? false, disabled: fileFolderDisabled,
-                  ...fileFolderExperience, initialLocation: fileFolderInitialLocation,
-                  searchable: properties.fileFolderSearchable ?? true,
-                  fileCategory: fileFolderCategory,
-                  extensions: properties.fileFolderItemTypes === 'folders' || fileFolderCategory !== undefined ? undefined : properties.fileFolderExtensions?.split(',').map(extension => extension.trim()).filter(Boolean),
-                  selectionLimit: properties.fileFolderMultiselect && properties.fileFolderSelectionLimit?.trim() ? Number(properties.fileFolderSelectionLimit) : undefined,
-                  uploadEnabled: properties.fileFolderUpload ?? false, createFolderEnabled: properties.fileFolderCreateFolder ?? false,
-                  hint: fileFolderDisabled ? 'Select exactly one site and one document library above.' : properties.fileFolderHint || undefined }),
-              ],
-            },
-            {
-              groupName: 'File picker options',
-              isCollapsed: true,
-              groupFields: [
-                ...(properties.fileFolderMultiselect ? [PropertyPaneTextField('fileFolderSelectionLimit', { label: 'Selection limit (empty: default)' })] : []),
-                ...(properties.fileFolderItemTypes !== 'folders' ? [
-                  PropertyPaneDropdown('fileFolderCategory', { label: 'File category', selectedKey: fileFolderCategory ?? '', options: [
-                    { key: '', text: 'Unrestricted / custom extensions' }, { key: 'images', text: 'Images' }, { key: 'video', text: 'Video' },
-                    { key: 'audio', text: 'Audio' }, { key: 'media', text: 'Media' }, { key: 'documents', text: 'Documents' },
-                  ] }),
-                  PropertyPaneTextField('fileFolderExtensions', { label: 'File extensions (comma separated)', disabled: fileFolderCategory !== undefined }),
-                  PropertyPaneLabel('file-folder-category-help', { text: 'A category replaces custom extensions and checks file suffixes. Mixed mode keeps folders selectable. Policy changes preserve selected references.' }),
-                ] : []),
-                PropertyPaneLabel('file-folder-initial-help', { text: 'Changing source clears the optional starting location. OneDrive accepts a folder only.' }),
-                PropertyPaneToggle('fileFolderSearchable', { label: 'Hosted search', checked: properties.fileFolderSearchable ?? true }),
-                ...(fileFolderKind !== 'oneDrive' ? [
-                  PropertyPaneTextField('fileFolderInitialWeb', { label: 'Initial web URL (navigation only)' }),
-                  PropertyPaneTextField('fileFolderInitialLibrary', { label: 'Initial library title (navigation only)' }),
-                ] : []),
-                PropertyPaneTextField('fileFolderInitialFolder', { label: 'Initial folder (navigation only)' }),
-                PropertyPaneDropdown('fileFolderSize', { label: 'File/folder tag size', selectedKey: properties.fileFolderSize ?? 'medium', options: [{ key: 'medium', text: 'Medium' }, { key: 'large', text: 'Large' }] }),
-                PropertyPaneToggle('fileFolderColorfulTagAvatars', { label: 'Colorful file/folder tag avatars', checked: properties.fileFolderColorfulTagAvatars ?? false }),
-                PropertyPaneTextField('fileFolderHint', { label: 'Field description (hint)' }),
-                PropertyPaneLabel('file-folder-writes', { text: 'Optional actions write immediately. Cancel and Property Pane Discard cannot undo those writes.' }),
-                PropertyPaneToggle('fileFolderUpload', { label: 'Enable uploads', checked: properties.fileFolderUpload ?? false }),
-                PropertyPaneToggle('fileFolderCreateFolder', { label: 'Enable folder creation', checked: properties.fileFolderCreateFolder ?? false }),
-              ],
-            },
-            {
-              groupName: 'File picker diagnostics',
-              isCollapsed: true,
-              groupFields: [
-                PropertyPaneLabel('file-folder-diagnostics', { text: `Source: ${JSON.stringify(fileFolderScope)}. Preset: ${fileFolderPreset}. Selection: ${JSON.stringify(properties.fileFolderValues ?? [])}` }),
-              ],
-            },
-            {
-              groupName: 'Picker modes',
-              isCollapsed: false,
-              groupFields: [
-                PropertyPaneLabel('picker-modes-help', { text: 'Global settings apply to all seven pickers. Single mode keeps the first selected value. Cascading fields require exactly one site and one list.' }),
-                PropertyPaneDropdown('pickerPresentation', { label: 'Presentation for all pickers', selectedKey: modeProps.presentation,
-                  options: [{ key: 'combobox', text: 'Dropdown' }, { key: 'tagPicker', text: 'TagPicker' }] }),
-                PropertyPaneDropdown('pickerContentTypeScope', { label: 'Content type scope', selectedKey: contentTypeScope,
-                  options: [{ key: 'site', text: 'Site collection' }, { key: 'list', text: 'List' }] }),
-                PropertyPaneToggle('pickerMultiselect', { label: 'Multiple selection for all pickers', checked: modeProps.multiselect }),
-                PropertyPaneToggle('pickerColorfulTagAvatars', { label: 'Colorful tag avatars for all pickers', checked: modeProps.colorfulTagAvatars }),
-              ],
-            },
-          ]
-        }
-      ]
-    };
-  };
-  return { getConfiguration, fieldChanged, configurationComplete: () => {}, changesApplied: () => {}, dispose: () => {} };
-}
-
-// One produced native session owns business state independently of this Demo's commands.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [saved, setSaved] = React.useState<string>();
-  const [compatibility, setCompatibility] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const fallbackWeb = React.useRef<string>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousLifetime = React.useRef(lifetime);
-  React.useEffect(() => {
-    if (previousLifetime.current === lifetime) return;
-    previousLifetime.current = lifetime;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    fallbackWeb.current = undefined;
-    setSaved(undefined);
-    setCompatibility(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [lifetime]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    fallbackWeb.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || lifetime !== previousLifetime.current) return;
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      fallbackWeb.current = host.instance.context.pageContext.web.absoluteUrl;
-      return createIntegratedController(host);
-    });
-    if (result.status === 'blocked') { lease.current = undefined; setStatus(result.reason); return; }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, configure metadata and files, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || lifetime !== previousLifetime.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read(), undefined, 2));
-  };
-  const inspectCompatibility = (): void => {
-    if (!lifetime.active || lifetime !== previousLifetime.current) return;
-    const read = readProperties.current, web = fallbackWeb.current;
-    if (!read || web === undefined) { setStatus('Open the prepared native scenario before inspecting saved compatibility mapping.'); return; }
-    const properties = read();
-    const { fileFolderScope, fileFolderInitialLocation, savedFileFolderPreset, fileFolderPreset } = resolveFileFolderSettings(properties, web);
-    setCompatibility(JSON.stringify({ hasLegacySettings: fileFolderHasLegacySettings(properties), savedPreset: savedFileFolderPreset,
-      compatibility: fileFolderDemoExperience(properties, fileFolderScope, fileFolderInitialLocation),
-      effective: fileFolderDemoExperience({ ...properties, fileFolderPreset }, fileFolderScope, fileFolderInitialLocation) }, undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    commands: <><Button onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved JSON</Button><Button onClick={inspectCompatibility}>Inspect saved compatibility mapping</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use actual native Edit and Close. Site and list changes clear their dependent references. Global single mode keeps the first of each of seven metadata arrays; file selection has independent settings.</p><p>Selection, preparation and Reset do not open or close the pane. Reset cancels only unproduced preparation and local observations. Accepted optional uploads and folder creation write immediately; Cancel and Property Pane Discard cannot undo those writes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <><pre aria-label="Saved native JSON">{saved ?? 'Inspect saved JSON after the actual native getter.'}</pre><pre aria-label="Saved compatibility mapping">{compatibility ?? 'Inspect saved compatibility mapping after the actual native getter. Saved legacy preferences remain stored; the native menu uses focused or extended.'}</pre></>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare, use actual native Edit to configure metadata and file cascades, then inspect live saved JSON and compatibility policy; use native Close and observe that Reset does not discard native changes." };
-```
-
 ### Type (9)
 
 ```ts
@@ -2011,7 +916,7 @@ Native custom field for `groupFields`; the latest SPFx change callback receives 
 
 ### Source (9)
 
-[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts:671](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#L671)
+[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts:686](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-site-picker.ts#L686)
 
 ## PropertyPaneViewPicker
 
@@ -2051,148 +956,36 @@ import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
 import { PropertyPaneViewPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
 import type { ViewPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
 
-interface Properties { values?: ViewPickerValue[]; }
+interface Properties {
+  values?: ViewPickerValue[];
+}
 export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
   public render(): void {
     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
   }
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
-      PropertyPaneViewPicker('values', {
-        instance: this, key: 'view-field', value: this.properties.values ?? [],
-        label: 'Views', list: 'Projects',
-      }),
-    ] }] }] };
+    return {
+      pages: [
+        {
+          groups: [
+            {
+              groupName: 'Selection',
+              groupFields: [
+                PropertyPaneViewPicker('values', {
+                  instance: this,
+                  key: 'view-field',
+                  value: this.properties.values ?? [],
+                  label: 'Views',
+                  list: 'Projects'
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }
-```
-
-#### Select native view references
-
-```tsx
-import * as React from 'react';
-import { Button, Input } from '@fluentui/react-components';
-import type { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import type { IPropertyPaneConfiguration } from '@microsoft/sp-property-pane';
-import { PropertyPaneViewPicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
-import type { ViewPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
-
-interface SourceProperties { pickerViews?: ViewPickerValue[]; }
-interface NativePropertyPaneEnvironment<P extends object> {
-  readonly instance: BaseClientSideWebPart<P>;
-  readonly readProperties: () => P;
-  readonly refresh: () => void;
-}
-interface NativePropertyPaneController {
-  readonly getConfiguration: () => IPropertyPaneConfiguration;
-  readonly fieldChanged: (propertyPath: string, oldValue: unknown, newValue: unknown) => void;
-  readonly configurationComplete: () => void;
-  readonly changesApplied: () => void;
-  readonly dispose: () => void;
-}
-interface NativePropertyPanePreparation { readonly release: () => void; }
-type NativePropertyPanePreparationResult =
-  | { readonly status: 'prepared'; readonly lease: NativePropertyPanePreparation }
-  | { readonly status: 'blocked'; readonly reason: string };
-interface DemoPropertyPanePort<P extends object> {
-  readonly prepare: (create: (host: NativePropertyPaneEnvironment<P>) => NativePropertyPaneController) => NativePropertyPanePreparationResult;
-}
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-function createViewController(host: NativePropertyPaneEnvironment<SourceProperties>, list: string): NativePropertyPaneController {
-  return {
-    getConfiguration: () => ({ pages: [{
-      header: { description: 'Select saved view references, then use native Close. Reset is not native Discard.' },
-      groups: [{ isGroupNameHidden: true, groupFields: [
-        PropertyPaneViewPicker('pickerViews', {
-          instance: host.instance, key: 'picker-views', value: host.readProperties().pickerViews ?? [], label: 'Views', list,
-        }),
-      ] }],
-    }] }),
-    fieldChanged: () => {},
-    configurationComplete: () => {},
-    changesApplied: () => {},
-    dispose: () => {},
-  };
-}
-
-// The initialized host owns actual native Edit/Close and SDK persistence.
-// This structural port is private example tooling. Configure the ordinary native
-// recipe's localization resources; existing host authentication and permissions
-// govern queries. The factory installs its own WebPart provider and renderer.
-export function Demo({ render, resetRevision = 0, propertyPane }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-  propertyPane?: DemoPropertyPanePort<SourceProperties>;
-}): React.ReactElement {
-  const [status, setStatus] = React.useState('Prepare before opening this WebPart’s actual native property pane.');
-  const [listTitle, setListTitle] = React.useState('');
-  const [saved, setSaved] = React.useState<string>();
-  const lease = React.useRef<NativePropertyPanePreparation>();
-  const readProperties = React.useRef<(() => SourceProperties)>();
-  const lifetime = React.useMemo(() => ({ active: true }), [propertyPane, resetRevision]);
-  const previousRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousRevision.current === resetRevision) return;
-    previousRevision.current = resetRevision;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-    setListTitle('');
-    setSaved(undefined);
-    setStatus('Local state reset. A produced native session survives until its real native lifecycle ends; Reset is not Discard or rollback.');
-  }, [resetRevision]);
-  React.useEffect(() => () => {
-    lifetime.active = false;
-    lease.current?.release();
-    lease.current = undefined;
-    readProperties.current = undefined;
-  }, [lifetime]);
-  const prepare = (): void => {
-    if (!propertyPane || !lifetime.active || resetRevision !== previousRevision.current) return;
-    const list = listTitle.trim();
-    if (!list) { setStatus('Enter a real exact list title before preparing.'); return; }
-    // Freeze this chosen configuration; later draft edits do not alter the native session.
-    lease.current?.release();
-    const result = propertyPane.prepare(host => {
-      readProperties.current = host.readProperties;
-      return createViewController(host, list);
-    });
-    if (result.status === 'blocked') {
-      lease.current = undefined;
-      setStatus(result.reason);
-      return;
-    }
-    lease.current = result.lease;
-    setStatus('Prepared. Open this WebPart’s actual native Edit property pane, select Views, then use native Close. Preparing does not open the pane or query.');
-  };
-  const observe = (): void => {
-    if (!lifetime.active || resetRevision !== previousRevision.current) return;
-    const read = readProperties.current;
-    if (!read) { setStatus('Open the prepared native scenario before inspecting its saved values.'); return; }
-    setSaved(JSON.stringify(read().pickerViews ?? [], undefined, 2));
-  };
-  const regions: DemoRegions = propertyPane ? {
-    controls: <>
-      <label>Exact list title<Input aria-label="Exact list title" value={listTitle} onChange={event => setListTitle(event.target.value)} /></label>
-      <p>Enter an existing exact list title in the initialized current web; even a GUID-looking string is a title. Draft collection and preparation perform no queries.</p>
-    </>,
-    commands: <><Button disabled={!listTitle.trim()} onClick={prepare}>Prepare native scenario</Button><Button onClick={observe}>Inspect saved view references</Button></>,
-    status: <p role="status">{status}</p>,
-    children: <><p>Use the actual native Edit and Close controls. Selection, preparation and Reset do not open or close the pane. Reset cancels only an unproduced preparation and local observations; it cannot discard accepted native changes.</p><p>If the SDK, React or host fails after native configuration was returned, reload before further native scenario work; automatic recovery is unsupported.</p></>,
-    diagnostics: <pre>{saved ?? 'Use Inspect saved view references after an actual native selection.'}</pre>,
-  } : {
-    status: <p role="status">The initialized native scenario host is not connected. This selected native scenario is not active.</p>,
-    children: <p>Connect an initialized native host to enable Prepare, then use this WebPart’s actual native Edit and Close. Selection and Reset do not query or open the pane.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: "Prepare the native View picker, open this WebPart's actual Edit property pane, select view references and use native Close and inspect the saved JSON; selection and Reset do not open the pane or query." };
 ```
 
 ### Type (10)
@@ -2238,4 +1031,4 @@ Native custom field for `groupFields`; the latest SPFx change callback receives 
 
 ### Source (10)
 
-[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts:180](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#L180)
+[packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts:196](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/property-pane/pickers/property-pane-view-picker.ts#L196)

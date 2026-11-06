@@ -392,11 +392,15 @@ function MyComponent() {
       setPending(false);
     }
   };
-  return <>
-    <button disabled={pending} onClick={() => void run()}>Load data</button>
-    {failure && <span role="alert">{failure}</span>}
-    <pre>{JSON.stringify(result)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={pending} onClick={() => void run()}>
+        Load data
+      </button>
+      {failure && <span role="alert">{failure}</span>}
+      <pre>{JSON.stringify(result)}</pre>
+    </>
+  );
 }
 ```
 

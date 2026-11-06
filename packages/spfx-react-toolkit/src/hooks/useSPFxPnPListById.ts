@@ -25,7 +25,10 @@ import type { PnPContextInfo } from './useSPFxPnPContext';
  * import { useSPFxPnPListById } from '@apvee/spfx-react-toolkit';
  *
  * function Example() {
- *   const { query, items, error, loading } = useSPFxPnPListById<{ Id: number; Title: string }>('11111111-2222-3333-4444-555555555555', { pageSize: 50 });
+ *   const { query, items, error, loading } = useSPFxPnPListById<{
+ *     Id: number;
+ *     Title: string;
+ *   }>('11111111-2222-3333-4444-555555555555', { pageSize: 50 });
  *   const [failure, setFailure] = React.useState<string>();
  *   const run = async () => {
  *     setFailure(undefined);
@@ -35,14 +38,20 @@ import type { PnPContextInfo } from './useSPFxPnPContext';
  *       setFailure(failure instanceof Error ? failure.message : String(failure));
  *     }
  *   };
- *   return <>
- *     <button disabled={loading} onClick={() => void run()}>Load</button>
- *     {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
- *     <pre>{JSON.stringify(items)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={loading} onClick={() => void run()}>
+ *         Load
+ *       </button>
+ *       {(failure ?? error?.message) && (
+ *         <span role="alert">{failure ?? error?.message}</span>
+ *       )}
+ *       <pre>{JSON.stringify(items)}</pre>
+ *     </>
+ *   );
  * }
  * ```
- * @example Read items by list GUID
+ * @scenario Read items by list GUID
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';

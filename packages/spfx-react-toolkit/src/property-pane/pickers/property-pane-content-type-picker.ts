@@ -36,23 +36,40 @@ import { createPropertyPanePicker } from './property-pane-picker-factory.interna
  * import { PropertyPaneContentTypePicker } from '@apvee/spfx-react-toolkit/property-pane/pickers';
  * import type { ContentTypePickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';
  *
- * interface Properties { values?: ContentTypePickerValue[]; }
+ * interface Properties {
+ *   values?: ContentTypePickerValue[];
+ * }
  * export default class SelectionWebPart extends BaseClientSideWebPart<Properties> {
  *   public render(): void {
  *     this.domElement.textContent = `${this.properties.values?.length ?? 0} saved references`;
  *   }
  *   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
- *     return { pages: [{ groups: [{ groupName: 'Selection', groupFields: [
- *       PropertyPaneContentTypePicker('values', {
- *         instance: this, key: 'content-type-field', value: this.properties.values ?? [],
- *         label: 'Content types', scope: 'list', list: 'Projects',
- *       }),
- *     ] }] }] };
+ *     return {
+ *       pages: [
+ *         {
+ *           groups: [
+ *             {
+ *               groupName: 'Selection',
+ *               groupFields: [
+ *                 PropertyPaneContentTypePicker('values', {
+ *                   instance: this,
+ *                   key: 'content-type-field',
+ *                   value: this.properties.values ?? [],
+ *                   label: 'Content types',
+ *                   scope: 'list',
+ *                   list: 'Projects'
+ *                 })
+ *               ]
+ *             }
+ *           ]
+ *         }
+ *       ]
+ *     };
  *   }
  * }
  * ```
  *
- * @example Select native content type references
+ * @scenario Select native content type references
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';

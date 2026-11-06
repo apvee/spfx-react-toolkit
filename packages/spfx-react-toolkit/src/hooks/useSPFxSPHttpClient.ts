@@ -294,7 +294,7 @@ export interface SPFxSPHttpClientInfo {
  * }
  * ```
  *
- * @example Read the current SharePoint web title and URL
+ * @scenario Read the current SharePoint web title and URL
  * ```tsx
  * import * as React from 'react';
  * import { Button, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';

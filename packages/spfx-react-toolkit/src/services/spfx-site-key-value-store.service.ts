@@ -150,7 +150,7 @@ export interface SPFxSiteKeyValueStoreService {
  * }
  * ```
  *
- * @example Read a collection root record before a consented save
+ * @scenario Read a collection root record before a consented save
  * ```tsx
  * import * as React from 'react';
  * import { makeStyles, Button, Checkbox, Field, Input, Text } from '@fluentui/react-components';

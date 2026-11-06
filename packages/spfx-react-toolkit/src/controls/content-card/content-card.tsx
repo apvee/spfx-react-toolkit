@@ -19,13 +19,16 @@ import type { ContentCardProps } from './content-card.types';
  * ```tsx
  * import * as React from 'react';
  * import { ContentCard } from '@apvee/spfx-react-toolkit';
- * <ContentCard title="Workspace" footer="Updated today" actions={<button>Open</button>}>Three members</ContentCard>
+ *
+ * <ContentCard title="Workspace" footer="Updated today" actions={<button>Open</button>}>
+ *   Three members
+ * </ContentCard>;
  * ```
  *
  * @useWhen A titled summary needs native Card interactions, caller content and explicit header/footer actions.
  * @avoidWhen Use PreviewCard when the layout requires a preview-media region.
  *
- * @example Configure content slots and native card interaction
+ * @scenario Configure content slots and native card interaction
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, FluentProvider, Input, Select, makeStyles } from '@fluentui/react-components';

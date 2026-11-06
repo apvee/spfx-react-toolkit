@@ -271,8 +271,11 @@ const dynamicFamily = createDynamicColumnFamily();
  * ```tsx
  * import * as React from 'react';
  * import { DataGrid } from '@apvee/spfx-react-toolkit';
+ *
  * const rows = [{ id: 1, title: 'Plan' }];
- * <DataGrid items={rows} getRowId={row => String(row.id)}><DataGrid.TextColumn id="title" header="Title" field="title" /></DataGrid>
+ * <DataGrid items={rows} getRowId={row => String(row.id)}>
+ *   <DataGrid.TextColumn id="title" header="Title" field="title" />
+ * </DataGrid>;
  * ```
  *
  * Executable examples mount beneath the host FluentProvider/theme and shared Griffel
@@ -282,7 +285,7 @@ const dynamicFamily = createDynamicColumnFamily();
  * changes restore the baseline while preserving Demo identity. Selecting another
  * scenario mounts that scenario's baseline. All changes are local consumer state.
  *
- * @example Classify dynamic row values and preserve controlled selection
+ * @scenario Classify dynamic row values and preserve controlled selection
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, Select, FluentProvider, makeStyles } from '@fluentui/react-components';

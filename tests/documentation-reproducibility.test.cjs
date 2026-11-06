@@ -54,8 +54,7 @@ test('copied tiny engine reconstructs development only from sources and restores
   fs.mkdirSync(path.join(fixture, 'docs/development'), { recursive: true });
   fs.writeFileSync(path.join(fixture, 'docs/development/stale.md'), '# Poisoned old output\n\nNever copy this file.\n');
   fs.writeFileSync(path.join(fixture, 'docs/development/INDEX.md'), '# Poisoned old index\n\nNever copy this target through link closure.\n');
-  // Real API owners may have an untitled non-executable example. Promotion
-  // inside the cold mirror must supply the required executable title.
+  // Keep an untitled API example to check that adding a cold scenario leaves its selector intact.
   const apiSource = path.join(fixture, 'packages/spfx-react-toolkit/src/index.ts');
   fs.writeFileSync(apiSource, fs.readFileSync(apiSource, 'utf8').replace('@example Count', '@example'));
   const generated = require('../scripts/docs/executable-examples-render.cjs').executableRoot;
@@ -83,7 +82,7 @@ test('copied tiny engine reconstructs development only from sources and restores
   assert.equal(result.developmentSourceMutationChanged, true);
   assert.equal(result.developmentRebuild.directoryAbsentBefore, true);
   assert.equal(result.developmentRebuild.sourcesRetained, true);
-  for (const route of ['scripts/docs/generated.cjs', 'scripts/docs/generated-artifacts.cjs', 'scripts/docs/documentation-context.cjs', 'scripts/docs/executable-examples.cjs', 'scripts/docs/executable-examples-model.cjs', 'scripts/docs/executable-examples-render.cjs']) assert.ok(result.copiedInputs.includes(route), route);
+  for (const route of ['scripts/docs/generated.cjs', 'scripts/docs/generated-artifacts.cjs', 'scripts/docs/documentation-context.cjs', 'scripts/docs/documentation-tsdoc.cjs', 'scripts/docs/executable-examples.cjs', 'scripts/docs/executable-examples-model.cjs', 'scripts/docs/executable-examples-render.cjs']) assert.ok(result.copiedInputs.includes(route), route);
   const { executableRoot } = require('../scripts/docs/executable-examples-render.cjs');
   assert.ok(!result.copiedInputs.some(route => route.startsWith(executableRoot + '/')));
   assert.ok(result.families.examples.paths.includes(executableRoot + '/catalogue.ts'));

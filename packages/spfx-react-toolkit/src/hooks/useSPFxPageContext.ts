@@ -30,7 +30,7 @@ import { useSPFxServiceScope } from './useSPFxServiceScope';
  *
  * @useWhen a descendant needs the native PageContext metadata instead of issuing a network request.
  *
- * @example Inspect selected native page metadata
+ * @scenario Inspect selected native page metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxPageContext } from '@apvee/spfx-react-toolkit';

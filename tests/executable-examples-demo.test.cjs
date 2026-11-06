@@ -106,7 +106,7 @@ function scenarios(h) {
         children: h.React.createElement('div', { 'data-example': id }, shell ? shell.presentation.appearance : 'Ordinary example'),
       });
     }
-    return { id, ownerKey: featureKey, title: `Scenario ${id}`, featureKey, featureTitle: featureKey, groupKey, groupRoute: `docs/api/${groupKey}/example.md`, publicNames: [featureKey], source: { file: 'fixture.tsx', line: 1 },
+    return { id, ownerKey: featureKey, title: `Scenario ${id}`, featureKey, featureTitle: featureKey, groupKey, groupRoute: `docs/api/${groupKey}/example.md`, publicNames: [featureKey], source: { file: 'fixture.tsx', line: 1 }, exampleSource: { file: 'fixture.tsx', line: 9 },
       metadata: { host: adapter ? 'webPart' : 'none', kind: 'snapshot', contentPlacement: 'subject', observe: `Observe ${id}`, ...(adapter ? { hostAdapter: adapter } : {}) },
       load: () => { loads.push(id); return Promise.resolve({ Demo }); },
       loadSource: () => { sourceLoads.push(id); return Promise.resolve({ code: `// Authored ${id}\nexport const text = '<button>Italiano</button>';\n\n` }); },
@@ -206,7 +206,7 @@ test('source disclosure loads exact escaped text on demand, retains it and prese
     const pre = code.parentElement;
     assert.equal(pre.getAttribute('dir'), 'ltr'); assert.equal(pre.tabIndex, 0);
     assert.equal(pre.getAttribute('role'), 'region'); assert.equal(pre.getAttribute('aria-label'), 'Example code');
-    assert.match(h.host.textContent, /fixture\.tsx:1/);
+    assert.match(h.host.textContent, /fixture\.tsx:9/);
     assert.equal(code.querySelector('button'), null, 'literal code never creates controls');
     assert.equal(code.querySelector('[data-demo-section]'), null);
     assert.ok(!h.host.querySelector('[data-demo-section]').contains(pre), 'source stays outside DemoCard');

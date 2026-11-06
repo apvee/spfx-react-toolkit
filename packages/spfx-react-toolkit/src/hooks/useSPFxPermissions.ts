@@ -74,7 +74,9 @@ export interface SPFxPermissionsInfo {
  *
  * function PermissionStatus() {
  *   const { hasWebPermission } = useSPFxPermissions();
- *   return <span>{hasWebPermission(SPPermission.addListItems) ? 'Can add' : 'Read only'}</span>;
+ *   return (
+ *     <span>{hasWebPermission(SPPermission.addListItems) ? 'Can add' : 'Read only'}</span>
+ *   );
  * }
  * ```
  *
@@ -82,7 +84,7 @@ export interface SPFxPermissionsInfo {
  *
  * @avoidWhen a server operation needs authorization; enforce access on the server rather than trusting a UI check.
  *
- * @example Inspect native current page permission masks
+ * @scenario Inspect native current page permission masks
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxPermissions } from '@apvee/spfx-react-toolkit';

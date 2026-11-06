@@ -122,13 +122,14 @@ const ErrorFallback: React.ComponentType<SharePointPermissionTrimBranchProps> = 
  * import * as React from 'react';
  * import { SharePointPermissionTrim } from '@apvee/spfx-react-toolkit';
  * import { SPPermission } from '@microsoft/sp-page-context';
+ *
  * <SharePointPermissionTrim permissions={[SPPermission.addListItems]}>
  *   <button>Create</button>
  *   <SharePointPermissionTrim.Fallback>Read only</SharePointPermissionTrim.Fallback>
- * </SharePointPermissionTrim>
+ * </SharePointPermissionTrim>;
  * ```
  *
- * @example Stage resource permissions and observe protected lifetimes
+ * @scenario Stage resource permissions and observe protected lifetimes
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, makeStyles } from '@fluentui/react-components';
@@ -245,7 +246,7 @@ const ErrorFallback: React.ComponentType<SharePointPermissionTrimBranchProps> = 
  * export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run a staged resource permission check and observe that protected content mounts only after a real grant; draft edits preserve the applied check and Reset returns to idle.' };
  * ```
  *
- * @example Compose permission and Entra checks with nested AND
+ * @scenario Compose permission and Entra checks with nested AND
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, makeStyles } from '@fluentui/react-components';

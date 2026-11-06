@@ -268,11 +268,17 @@ export interface SPFxPnPListInfo<T = unknown> {
  *       setFailure(failure instanceof Error ? failure.message : String(failure));
  *     }
  *   };
- *   return <>
- *     <button disabled={tasks.loading} onClick={() => void run()}>Load tasks</button>
- *     {(failure ?? tasks.error?.message) && <span role="alert">{failure ?? tasks.error?.message}</span>}
- *     <pre>{JSON.stringify(result)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={tasks.loading} onClick={() => void run()}>
+ *         Load tasks
+ *       </button>
+ *       {(failure ?? tasks.error?.message) && (
+ *         <span role="alert">{failure ?? tasks.error?.message}</span>
+ *       )}
+ *       <pre>{JSON.stringify(result)}</pre>
+ *     </>
+ *   );
  * }
  * ```
  *
@@ -306,7 +312,7 @@ export interface SPFxPnPListInfo<T = unknown> {
  * }
  * ```
 
- * @example Read a user-selected list with observable results
+ * @scenario Read a user-selected list with observable results
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input } from '@fluentui/react-components';
@@ -403,7 +409,7 @@ export interface SPFxPnPListInfo<T = unknown> {
  *   observe: 'Choose an existing list and run the read explicitly; loading, results and errors identify the selected list.',
  * };
  * ```
- * @example Manage list items with paging and captured delete consent
+ * @scenario Manage list items with paging and captured delete consent
  * ```tsx
  * import * as React from 'react';
  * import { flushSync } from 'react-dom';

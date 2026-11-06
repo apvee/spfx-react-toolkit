@@ -201,7 +201,7 @@ interface PassiveAuthEventObserverInfo {
  * }
  * ```
  *
- * @example Manually check Graph and custom API delegated scopes
+ * @scenario Manually check Graph and custom API delegated scopes
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';

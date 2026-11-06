@@ -36,7 +36,7 @@ function changeDoc(copy, rawDoc, name) {
   }
 }
 function snippet(code, title = 'Scenario', language = 'tsx') {
-  return `/** A scenario.\n * @example ${title}\n * \`\`\`${language}\n${code.split('\n').map(line => ` * ${line}`).join('\n')}\n * \`\`\`\n */`;
+  return `/** A scenario.\n * @scenario ${title}\n * \`\`\`${language}\n${code.split('\n').map(line => ` * ${line}`).join('\n')}\n * \`\`\`\n */`;
 }
 const component = "import * as React from 'react';\nexport function Demo(): React.ReactElement { return <div />; }";
 const metadata = "export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Visible content.' };";
@@ -71,17 +71,15 @@ test('projects only the named executable contract and retains physical provenanc
 });
 
 test('leaves ordinary, default-only and type usage examples outside the catalog', () => {
-  const ordinary = base.examples.filter(example => example.title !== 'Basic view');
-  assert.equal(collect({ ...base, examples: ordinary }).examples.length, 0);
-  assert.deepEqual(collect({ ...base, examples: ordinary }).diagnostics, []);
-  const defaultNamed = collect(replaceDoc(snippet(component.replace('export function Demo', 'export default function Demo'))));
-  assert.deepEqual(defaultNamed, { examples: [], diagnostics: [] });
+  assert.deepEqual(collect({ ...base, scenarios: [] }), { examples: [], diagnostics: [] });
+  const defaultNamed = snippet(component.replace('export function Demo', 'export default function Demo')).replace('@scenario', '@example');
+  assert.deepEqual(collect(replaceDoc(defaultNamed)), { examples: [], diagnostics: [] });
 });
 
 test('keeps scenario IDs stable across physical line changes and added public aliases', () => {
   const original = collect().examples[0];
   const changed = structuredClone(base);
-  changed.examples.forEach(example => { example.source.line += 30; });
+  changed.scenarios.forEach(example => { example.source.line += 30; });
   changed.graph.bindings.push({ ...changed.graph.bindings.find(binding => binding.exportedName === 'Widget'), exportedName: 'NewAlias' });
   const result = collect(changed);
   assert.equal(result.examples.length, 1);
@@ -129,11 +127,12 @@ test('accepts structural optional region/reset and public Shell ports', () => {
   assert.deepEqual(collect(replaceDoc(snippet(aliased))).diagnostics, []);
 });
 
-test('rejects incomplete named contracts while ignoring names inside nested scopes', () => {
+test('requires both named exports in scenarios and ignores nested names in public examples', () => {
   invalid(component, 'EXECUTABLE_INCOMPLETE_CONTRACT');
   invalid(metadata, 'EXECUTABLE_INCOMPLETE_CONTRACT');
   const nested = `function ordinary() { const demo = {}; function Demo() { return 1; } }`;
-  assert.deepEqual(collect(replaceDoc(snippet(nested))), { examples: [], diagnostics: [] });
+  invalid(nested, 'EXECUTABLE_INCOMPLETE_CONTRACT');
+  assert.deepEqual(collect(replaceDoc(snippet(nested).replace('@scenario', '@example'))), { examples: [], diagnostics: [] });
 });
 
 for (const declaration of ['export type { Actual as Demo };', 'export { type Actual as Demo };']) {
@@ -190,12 +189,12 @@ test('rejects missing and duplicate local titles and type-only owners', () => {
   assert.equal(typeOnly.examples.length, 1, 'the unrelated Widget scenario is retained');
 });
 
-test('requires an executable title to be unique among all examples of its owner', () => {
+test('allows a scenario and an API example to share a title', () => {
   const repeated = snippet(component + '\n' + metadata, 'Same').replace(' */', '') +
-    snippet('export const ordinary = 1;', 'Same').replace('/** A scenario.\n', '');
+    snippet('export const ordinary = 1;', 'Same').replace('/** A scenario.\n', '').replace('@scenario', '@example');
   const result = collect(replaceDoc(repeated));
-  assert.equal(result.examples.length, 0);
-  assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_DUPLICATE_TITLE'));
+  assert.equal(result.examples.length, 1);
+  assert.deepEqual(result.diagnostics, []);
 });
 
 test('rejects expressions, spreads, unknown metadata and missing or empty observations', () => {
@@ -403,4 +402,42 @@ for (const [name, index] of [
   const result = collect(replaceDoc(snippet(code)));
   assert.equal(result.examples.length, 0, JSON.stringify({ name, examples: result.examples.length, diagnostics: result.diagnostics }));
   assert.ok(result.diagnostics.some(item => item.code === 'EXECUTABLE_COMPONENT'), JSON.stringify(result.diagnostics));
+});
+
+test('keeps scenarios distinct from API examples and rejects the reserved legacy exports', () => {
+  const raw = snippet(component + '\n' + metadata, 'Selected');
+  const model = replaceDoc(raw);
+  assert.equal(model.scenarios.length, 1);
+  assert.equal(model.examples.some(example => example.title === 'Selected'), false);
+  assert.equal(collect(model).examples[0].title, 'Selected');
+  const legacy = collect(replaceDoc(raw.replace('@scenario', '@example')));
+  assert.equal(legacy.examples.length, 0);
+  assert.ok(legacy.diagnostics.some(item => item.code === 'EXECUTABLE_LEGACY_EXAMPLE'));
+});
+
+test('scenario ranges retain full Markdown fences and leave example literals and following tags alone', () => {
+  const { getScenarioBlockRanges } = require('../scripts/docs/documentation-tsdoc.cjs');
+  const raw = [
+    '/** Summary.',
+    ' * @example Public usage', ' * ```ts', ' * const label = "@scenario";', ' * ```',
+    ' * @scenario Interactive', ' * ~~~~tsx', ' * ```', ' * @example Literal', ' * ~~~~',
+    ' * @remarks Keep this.', ' */',
+  ].join('\n');
+  const ranges = getScenarioBlockRanges(raw);
+  const stripped = ranges.reduceRight((comment, { pos, end }) => comment.slice(0, pos) + comment.slice(end), raw);
+  assert.equal(stripped, [
+    '/** Summary.',
+    ' * @example Public usage', ' * ```ts', ' * const label = "@scenario";', ' * ```',
+    ' * @remarks Keep this.', ' */',
+  ].join('\n'));
+});
+
+for (const [name, code] of [
+  ['nested destructured bindings', 'export const { display: [Demo], meta: { demo } } = { display: [1], meta: { demo: 2 } };'],
+  ['namespace re-export', 'export * as Demo from "react";'],
+]) test(`reports legacy reserved names in ${name}`, () => {
+  const raw = snippet(code, 'Legacy').replace('@scenario', '@example');
+  const result = collect(replaceDoc(raw));
+  assert.equal(result.examples.length, 0);
+  assert.deepEqual(result.diagnostics.map(item => item.code), ['EXECUTABLE_LEGACY_EXAMPLE']);
 });

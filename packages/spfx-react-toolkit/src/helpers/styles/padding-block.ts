@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { paddingBlock } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = paddingBlock.none;
  * ```
  *
- * @example Select block padding descriptors — visible top/bottom content spacing
+ * @scenario Select block padding descriptors — visible top/bottom content spacing
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

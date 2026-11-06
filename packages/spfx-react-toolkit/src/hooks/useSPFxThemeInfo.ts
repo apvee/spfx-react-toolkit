@@ -29,7 +29,7 @@ import { useSPFxRuntimeSelector } from '../core/state.internal';
  *
  * @useWhen a component needs the current native SPFx theme and theme-change updates.
  *
- * @example Observe the native SPFx theme snapshot
+ * @scenario Observe the native SPFx theme snapshot
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxThemeInfo } from '@apvee/spfx-react-toolkit';

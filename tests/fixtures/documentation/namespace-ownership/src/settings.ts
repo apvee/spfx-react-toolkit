@@ -2,7 +2,7 @@
  * Settings with an implemented default expression.
  * @packageDocumentation
  * @docPage helpers/styles
- * @example Default expression recipe
+ * @scenario Default expression recipe
  * ```tsx
  * import * as React from 'react';
  * import { settings } from '@fixture/namespace';

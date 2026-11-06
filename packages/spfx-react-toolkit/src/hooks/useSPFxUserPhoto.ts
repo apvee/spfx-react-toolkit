@@ -201,7 +201,11 @@ function createEnhancedPhotoError(err: unknown): Error {
  *
  * function ProfilePhoto() {
  *   const photo = useSPFxUserPhoto({ email: 'user@contoso.com', size: '96x96' });
- *   return photo.photoUrl ? <img src={photo.photoUrl} alt="Profile" /> : <span>{photo.error?.message}</span>;
+ *   return photo.photoUrl ? (
+ *     <img src={photo.photoUrl} alt="Profile" />
+ *   ) : (
+ *     <span>{photo.error?.message}</span>
+ *   );
  * }
  * ```
  *
@@ -210,7 +214,7 @@ function createEnhancedPhotoError(err: unknown): Error {
  * @remarks
  * Mount below the matching SPFx provider with Fluent peers. Start gates Graph initialization; Run alone requests /me at the default 240x240 and displays it at 96px. Reset preserves the operational child and pending request: a late current success may create a hidden hook-owned URL. Only normal replacement, target change, failure or unmount revokes it. Reset does not clear hook state or cancel I/O.
  *
- * @example Read the current user photo with managed URL cleanup
+ * @scenario Read the current user photo with managed URL cleanup
  * ```tsx
  * import * as React from 'react';
  * import { Avatar, Button, Image, Label, MessageBar, MessageBarBody, makeStyles } from '@fluentui/react-components';

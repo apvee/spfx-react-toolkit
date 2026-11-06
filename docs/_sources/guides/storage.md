@@ -76,9 +76,9 @@ The two complete host scenarios below keep Graph initialization behind Start and
 
 Reset preserves the operational child, original hook callbacks and genuine pending locks. It restores local drafts and hides stale publication; it does not clear hook state, cancel requests, revoke a still-owned photo URL or undo accepted OneDrive content. A current photo request may finish with a hidden owned URL after Reset, released by normal hook cleanup. Ordinary feature navigation can leave pending work, with unmount suppressing late UI publication. Real writes/cleanup require an authorized destination; metadata/download failures are not confirmed absence.
 
-<!-- toolkit:include symbol="useSPFxUserPhoto" section="example" title="Read the current user photo with managed URL cleanup" -->
+<!-- toolkit:include symbol="useSPFxUserPhoto" section="scenario" title="Read the current user photo with managed URL cleanup" -->
 
-<!-- toolkit:include symbol="useSPFxOneDriveAppData" section="example" title="Read and explicitly replace OneDrive app data" -->
+<!-- toolkit:include symbol="useSPFxOneDriveAppData" section="scenario" title="Read and explicitly replace OneDrive app data" -->
 
 ## Stable browser names
 
@@ -118,9 +118,9 @@ The separate service scenario explicitly reads the root record and observes effe
 
 Reset preserves the outer Demo and actual pending-write ledger, hides results/consent, and deactivates the hook session. Reactivation is explicit and waits for the original public write promise to settle. Internal service requests may continue after Reset; neither Reset nor navigation cancels or rolls back server work. The lock belongs to that still-mounted Demo and does not serialize another scenario. Real tenant writes and cleanup require separate authorization.
 
-<!-- toolkit:include symbol="useSPFxSiteKeyValueStore" section="example" title="Explore collection root records with guarded mutations" -->
+<!-- toolkit:include symbol="useSPFxSiteKeyValueStore" section="scenario" title="Explore collection root records with guarded mutations" -->
 
-<!-- toolkit:include symbol="createSPFxSiteKeyValueStoreService" section="example" title="Read a collection root record before a consented save" -->
+<!-- toolkit:include symbol="createSPFxSiteKeyValueStoreService" section="scenario" title="Read a collection root record before a consented save" -->
 
 ## Layered whole-record configuration
 
@@ -146,11 +146,11 @@ A saved picker reference is identity data, not a durable download token or a gua
 
 Select the tenant-property hook example and explicitly activate its manual session before Run. Activation makes no HTTP request; Run loads both configured keys concurrently through independent catalog caches. Reset or a changed host/web identity requires explicit activation again and hides obsolete results. Already-started logical reads may still finish; current read errors take precedence over retained values.
 
-<!-- toolkit:include symbol="useSPFxTenantProperty" section="example" title="Read tenant version and counter with explicit activation" -->
+<!-- toolkit:include symbol="useSPFxTenantProperty" section="scenario" title="Read tenant version and counter with explicit activation" -->
 
 For an already known tenant catalog, use the direct factory example. Supply the actual catalog URL; the factory adds no discovery or writes. It reads unknown data, validates a boolean and distinguishes absence, a wrong decoded type and a failed HTTP/response parse.
 
-<!-- toolkit:include symbol="createSPFxTenantPropertyService" section="example" title="Read and validate a catalog StorageEntity" -->
+<!-- toolkit:include symbol="createSPFxTenantPropertyService" section="scenario" title="Read and validate a catalog StorageEntity" -->
 
 ## Explore tenant list records safely
 
@@ -160,9 +160,9 @@ Use disposable keys with a nonempty `spfx-toolkit-tenant-demo-` suffix and conse
 
 Reset restores local UI and consent, retaining the original pending public-write lock even when its hook child unmounts. Already-dispatched setup, mutation and recovery requests may finish; Reset does not cancel, roll back or remove a stored record. No stale sequence may begin a later public read. Locks belong to each still-mounted Demo and do not serialize other scenarios.
 
-<!-- toolkit:include symbol="useSPFxTenantKeyValueStore" section="example" title="Explore tenant records and exact text persistence" -->
+<!-- toolkit:include symbol="useSPFxTenantKeyValueStore" section="scenario" title="Explore tenant records and exact text persistence" -->
 
-<!-- toolkit:include symbol="createSPFxTenantKeyValueStoreService" section="example" title="Round trip numeric looking text through a tenant service" -->
+<!-- toolkit:include symbol="createSPFxTenantKeyValueStoreService" section="scenario" title="Round trip numeric looking text through a tenant service" -->
 
 ## Explore effective configuration and physical stores
 
@@ -174,8 +174,8 @@ The factory scenario composes the same physical services directly with the requi
 
 Consent binds the exact disposable key, physical scope, value and description policy. Changed drafts retire old commands before React commits; no-op edits remain usable. Reset retains the mounted component and original pending public-write tickets until those promises settle. It invalidates stale publication and later recipe steps, without cancelling internal RPCs or rolling back accepted writes. The local gate does not serialize another scenario or host instance. Real writes, provisioning and cleanup require separate host authorization.
 
-<!-- toolkit:include symbol="useSPFxConfigurationStore" section="example" title="Compare layered configuration and physical inventories" -->
+<!-- toolkit:include symbol="useSPFxConfigurationStore" section="scenario" title="Compare layered configuration and physical inventories" -->
 
-<!-- toolkit:include symbol="createSPFxConfigurationStoreService" section="example" title="Compose tenant defaults and site overrides with the service" -->
+<!-- toolkit:include symbol="createSPFxConfigurationStoreService" section="scenario" title="Compose tenant defaults and site overrides with the service" -->
 
 After Cancel or Escape, consumed consent stays revoked. The commands conditionally use Fluent `disabledFocusable` with the same disabled condition, so focus can return to the current trigger while the command remains unavailable. Its live ownership and consent guards still reject invocation; returning focus does not approve another write.

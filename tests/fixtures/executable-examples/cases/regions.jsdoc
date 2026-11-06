@@ -1,6 +1,6 @@
 /**
  * A scenario with host regions.
- * @example Regions and reset
+ * @scenario Regions and reset
  * ```tsx
  * import * as React from 'react';
  * type DemoRegions = {

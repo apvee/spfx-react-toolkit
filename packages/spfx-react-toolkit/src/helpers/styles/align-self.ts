@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { alignSelf } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = alignSelf.auto;
  * ```
  *
- * @example Select an individual flex item alignment — subject is a child, not the parent
+ * @scenario Select an individual flex item alignment — subject is a child, not the parent
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

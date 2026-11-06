@@ -85,7 +85,7 @@ export interface SPFxPageTypeInfo {
  *
  * @useWhen UI needs the page-layout classification available in legacy page metadata.
  *
- * @example Inspect the supplied page classification
+ * @scenario Inspect the supplied page classification
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxPageType } from '@apvee/spfx-react-toolkit';

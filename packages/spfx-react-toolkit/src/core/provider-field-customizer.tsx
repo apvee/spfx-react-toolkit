@@ -54,10 +54,16 @@ export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
  * ```tsx
  * import * as React from 'react';
  * import { BaseFieldCustomizer } from '@microsoft/sp-listview-extensibility';
- * import { SPFxFieldCustomizerProvider, SPFxFieldCustomizerProviderProps } from '@apvee/spfx-react-toolkit';
+ * import {
+ *   SPFxFieldCustomizerProvider,
+ *   SPFxFieldCustomizerProviderProps
+ * } from '@apvee/spfx-react-toolkit';
  *
  * function hostTree(instance: BaseFieldCustomizer<{ title: string }>): React.ReactElement {
- *   const props: SPFxFieldCustomizerProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ *   const props: SPFxFieldCustomizerProviderProps<{ title: string }> = {
+ *     instance,
+ *     children: <span>Host content</span>
+ *   };
  *   return <SPFxFieldCustomizerProvider {...props} />;
  * }
  * ```
@@ -100,7 +106,7 @@ export interface SPFxFieldCustomizerProviderProps<TProps extends {} = {}> {
  * }
  * ```
 
- * @example Compare Field Customizer provider availability with the current host
+ * @scenario Compare Field Customizer provider availability with the current host
  * ```tsx
  * import * as React from 'react';
  * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Badge, Field, Select, makeStyles, tokens } from '@fluentui/react-components';

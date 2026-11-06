@@ -204,8 +204,9 @@ export interface SPFxConfigurationStoreService {
  *
  * async function exampleUsage(context: WebPartContext) {
  *   const store = createSPFxConfigurationStoreService(context.spHttpClient, {
- *     mode: 'layered', discoveryWebUrl: context.pageContext.web.absoluteUrl,
- *     siteCollectionUrl: context.pageContext.site.absoluteUrl,
+ *     mode: 'layered',
+ *     discoveryWebUrl: context.pageContext.web.absoluteUrl,
+ *     siteCollectionUrl: context.pageContext.site.absoluteUrl
  *   });
  *   await store.save('my-app:pageSize', 20, { scope: 'tenant' });
  *   await store.save('my-app:pageSize', 50, { scope: 'site' });
@@ -252,7 +253,7 @@ export interface SPFxConfigurationStoreService {
  *
 
  *
- * @example Compose tenant defaults and site overrides with the service
+ * @scenario Compose tenant defaults and site overrides with the service
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input, Text, makeStyles } from '@fluentui/react-components';

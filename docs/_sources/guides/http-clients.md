@@ -31,31 +31,31 @@ Mount the source-owned scenarios below the [provider matching the native host](.
 
 Inspect all five client/provider states without adding a token request. Graph client and token-provider acquisition can begin when their hooks mount; initialization errors and readiness remain separate from request loading and errors.
 
-<!-- toolkit:include symbol="useSPFxAadTokenProvider" section="example" title="Inspect client readiness and token-provider initialization" -->
+<!-- toolkit:include symbol="useSPFxAadTokenProvider" section="scenario" title="Inspect client readiness and token-provider initialization" -->
 
 ### Load external JSON
 
 Use the external todo scenario to observe a tracked invocation, caught action failures and returned scalar fields. The HTTP, SharePoint and AAD JSON callbacks in these scenarios parse the response without inspecting `response.ok`; the hook does not turn a non-success HTTP response into a rejection automatically. Add the required status policy to your own callback.
 
-<!-- toolkit:include symbol="useSPFxHttpClient" section="example" title="Load an external todo with tracked invocation state" -->
+<!-- toolkit:include symbol="useSPFxHttpClient" section="scenario" title="Load an external todo with tracked invocation state" -->
 
 ### Read the current SharePoint web
 
 The current-web scenario synchronizes its request base through `setBaseUrl` when native page metadata changes, without issuing a read. The hook's initial base URL is captured state; it does not follow later page changes by itself.
 
-<!-- toolkit:include symbol="useSPFxSPHttpClient" section="example" title="Read the current SharePoint web title and URL" -->
+<!-- toolkit:include symbol="useSPFxSPHttpClient" section="scenario" title="Read the current SharePoint web title and URL" -->
 
 ### Load the Graph profile after initialization
 
 Wait for Graph acquisition to finish, then explicitly load `/me`. Keep initialization failures separate from invocation failures and verify the required delegated `User.Read` approval for the actual tenant.
 
-<!-- toolkit:include symbol="useSPFxMSGraphClient" section="example" title="Read the current Graph profile after initialization" -->
+<!-- toolkit:include symbol="useSPFxMSGraphClient" section="scenario" title="Read the current Graph profile after initialization" -->
 
 ### Select a custom API resource and call a path
 
 Edit the resource and path drafts, initialize the trimmed resource explicitly, then call only when the acquired client matches that resource. Editing either draft invalidates the old local result. An `api://` identifier can identify a token resource without being an HTTP endpoint; the unchanged failed resource has no dedicated initialization-retry API.
 
-<!-- toolkit:include symbol="useSPFxAadHttpClient" section="example" title="Initialize a custom API client and call a path" -->
+<!-- toolkit:include symbol="useSPFxAadHttpClient" section="scenario" title="Initialize a custom API client and call a path" -->
 
 ## Concurrent invocations
 
@@ -70,7 +70,7 @@ The manual permission scenario uses the mounted [useSPFxApiPermissionPrecheck ho
 
 An empty completed-results view summarizes to `configurationState: 'idle'` with `isConfigured: true`; this is not a completed grant check. Passive popup/redirect guards detach when the overall public check settles. A timeout does not cancel native token acquisition, which may settle later. Retry without cache forwards an uncached token preference while keeping passive mode; it neither clears a cache nor changes tenant grants. Token diagnostics do not establish server authorization or prove a later API request will succeed.
 
-<!-- toolkit:include symbol="useSPFxApiPermissionPrecheck" section="example" title="Manually check Graph and custom API delegated scopes" -->
+<!-- toolkit:include symbol="useSPFxApiPermissionPrecheck" section="scenario" title="Manually check Graph and custom API delegated scopes" -->
 
 ## Configure API permission requests
 

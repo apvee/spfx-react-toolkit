@@ -608,12 +608,16 @@ export function ReportCard({ thumbnail, brandLogo, isLoading, shareReport }: {
 ```tsx
 import * as React from 'react';
 import { AutoSkeleton } from '@apvee/spfx-react-toolkit';
+
 const isLoading = true;
 const photoUrl = '/images/profile.png';
 const name = 'Ada';
 <AutoSkeleton loading={isLoading} animation="pulse">
-  <section><img data-skeleton-shape="circle" src={photoUrl} alt="" /><p>{name}</p></section>
-</AutoSkeleton>
+  <section>
+    <img data-skeleton-shape="circle" src={photoUrl} alt="" />
+    <p>{name}</p>
+  </section>
+</AutoSkeleton>;
 ```
 
 #### Basic usage
@@ -621,7 +625,8 @@ const name = 'Ada';
 ```tsx
 import * as React from 'react';
 import { DescriptionList } from '@apvee/spfx-react-toolkit';
-<DescriptionList items={[{ id: 'owner', label: 'Owner', value: 'Ada Lovelace' }]} />
+
+<DescriptionList items={[{ id: 'owner', label: 'Owner', value: 'Ada Lovelace' }]} />;
 ```
 
 #### Basic usage
@@ -629,9 +634,10 @@ import { DescriptionList } from '@apvee/spfx-react-toolkit';
 ```tsx
 import * as React from 'react';
 import { FormattedText, RelativeTime } from '@apvee/spfx-react-toolkit';
+
 <FormattedText variant="caption1" subtle>
   <RelativeTime dateTime="2026-01-01T12:00:00Z" locale="it-IT" timeZone="Europe/Rome" />
-</FormattedText>
+</FormattedText>;
 ```
 
 #### Request the next load-more batch
@@ -639,12 +645,22 @@ import { FormattedText, RelativeTime } from '@apvee/spfx-react-toolkit';
 ```tsx
 import * as React from 'react';
 import { Pagination } from '@apvee/spfx-react-toolkit';
+
 const hasMore = true;
 const loadingMore = false;
-async function loadMore(): Promise<void> { console.log('Next batch requested'); }
-function reportError(error: unknown): void { console.error(error); }
-<Pagination pagination={{ type: 'loadMore', hasNextPage: hasMore }} loading={loadingMore}
-  onPaginationChange={() => { void loadMore().catch(reportError); }} />
+async function loadMore(): Promise<void> {
+  console.log('Next batch requested');
+}
+function reportError(error: unknown): void {
+  console.error(error);
+}
+<Pagination
+  pagination={{ type: 'loadMore', hasNextPage: hasMore }}
+  loading={loadingMore}
+  onPaginationChange={() => {
+    void loadMore().catch(reportError);
+  }}
+/>;
 ```
 
 #### Browse controlled rows

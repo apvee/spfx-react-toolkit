@@ -137,12 +137,17 @@ SettingsGroupRoot.displayName = 'SettingsGroup';
  * import * as React from 'react';
  * import { SettingsGroup } from '@apvee/spfx-react-toolkit';
  * import { Switch } from '@fluentui/react-components';
- * <SettingsGroup title="Notifications"><SettingsGroup.Item title="Email"><Switch aria-label="Email alerts" /></SettingsGroup.Item></SettingsGroup>
+ *
+ * <SettingsGroup title="Notifications">
+ *   <SettingsGroup.Item title="Email">
+ *     <Switch aria-label="Email alerts" />
+ *   </SettingsGroup.Item>
+ * </SettingsGroup>;
  * ```
  *
  * @useWhen Related settings should stay visible in a Card with shared row labels and optional Form adapters.
  * @avoidWhen Use AccordionGroup when consumers should disclose and collapse sections.
- * @example Preserve notification settings across group presentations
+ * @scenario Preserve notification settings across group presentations
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, FluentProvider, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

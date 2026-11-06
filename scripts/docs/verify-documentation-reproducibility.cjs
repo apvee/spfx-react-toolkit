@@ -75,6 +75,7 @@ function copyInputs(root, source, mirror, config, reverse) {
     'documentation-markdown.cjs',
     'documentation-model.cjs',
     'documentation-render.cjs',
+    'documentation-tsdoc.cjs',
     'documentation.cjs',
     'documentation.config.cjs',
     'executable-examples-model.cjs',
@@ -160,21 +161,18 @@ function addExecutableProbe(mirror, target) {
   const offset = source.split('\n').slice(0, target.line - 1).join('\n').length;
   const start = source.lastIndexOf('/**', offset);
   const end = source.indexOf('*/', start);
-  const exampleStart = source.indexOf('@example', start);
-  const fenceStart = source.indexOf('```', exampleStart);
-  const fenceEnd = source.indexOf('```', fenceStart + 3);
-  assert.ok(exampleStart >= start && fenceStart > exampleStart && fenceEnd < end, 'Owning JSDoc supplies an example fence.');
-  // Replace the fixture copy's snippet, retaining any existing title/selector.
-  // Untitled prose examples need a title when promoted to executable probes.
-  // Finite editorial inclusions stay unambiguous; the checkout is untouched.
-  const example = [
-    '```tsx', " * import * as React from 'react';",
-    " * export function Demo(): React.ReactElement { return React.createElement('div', undefined, 'Cold executable original'); }",
-    " * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Cold executable is visible.' };",
-    ' * ```',
-  ].join('\n');
-  const prefix = source.slice(exampleStart, fenceStart).replace(/^@example[ \t]*(?=\n)/, '@example Reproducibility executable');
-  fs.writeFileSync(filename, source.slice(0, exampleStart) + prefix + example + source.slice(fenceEnd + 3));
+  assert.ok(start >= 0 && end >= start && end <= offset + 3, 'Public source declaration has preceding JSDoc.');
+  const insertion = source.lastIndexOf('\n', end) + 1;
+  assert.match(source.slice(insertion, end), /^[ \t]+$/, 'Owning JSDoc closes on a separate line.');
+  const margin = source.slice(insertion, end);
+  const scenario = [
+    '@scenario Reproducibility executable',
+    '```tsx', "import * as React from 'react';",
+    "export function Demo(): React.ReactElement { return React.createElement('div', undefined, 'Cold executable original'); }",
+    "export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Cold executable is visible.' };",
+    '```',
+  ].map(line => margin + '* ' + line + '\n').join('');
+  fs.writeFileSync(filename, source.slice(0, insertion) + scenario + source.slice(insertion));
 }
 
 /** Two copied cold engines, real write/rebuild and fresh locale/timezone probes.
@@ -264,7 +262,8 @@ function verifyReproducibility(root, config = defaultConfig) {
     const probeSource = path.join(mirrors[0], mutationTarget.file);
     fs.writeFileSync(probeSource, fs.readFileSync(probeSource, 'utf8').replace('Cold executable original', 'Cold executable changed'));
     const exampleMutated = childProcess(mirrors[0], temporary, project, environments[0], mirrors);
-    for (const family of ['documentation', 'examples']) assert.notEqual(exampleMutated.families[family].digest, mutated.families[family].digest, `Example source mutation must change ${family}.`);
+    assert.notEqual(exampleMutated.families.examples.digest, mutated.families.examples.digest, 'Scenario code must change executable outputs.');
+    assert.deepEqual(exampleMutated.families.documentation, mutated.families.documentation, 'Scenario code without an explicit include must leave documentation unchanged.');
     assert.deepEqual(exampleMutated.diskHashes, exampleMutated.hashes);
     const probeNames = ['fetch', 'http', 'https', 'http2', 'net', 'net-prototype', 'tls', 'dgram', 'dns', 'dns-promises', 'child', 'worker'];
     for (const name of probeNames) {

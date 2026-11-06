@@ -61,7 +61,7 @@ export interface SPFxUserInfo {
  *
  * @useWhen UI needs the signed-in user display/login metadata already supplied by PageContext.
  *
- * @example Inspect the current user display metadata
+ * @scenario Inspect the current user display metadata
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';

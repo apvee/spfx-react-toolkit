@@ -26,7 +26,11 @@ import { PickerRenderer } from './picker-renderer.internal';
  * ```tsx
  * import * as React from 'react';
  * import { ContentTypePicker } from '@apvee/spfx-react-toolkit';
- * <ContentTypePicker label="Site content type" webUrl="https://tenant.sharepoint.com/sites/hr/sub" />
+ *
+ * <ContentTypePicker
+ *   label="Site content type"
+ *   webUrl="https://tenant.sharepoint.com/sites/hr/sub"
+ * />;
  * ```
  *
  * @example List catalog
@@ -39,7 +43,7 @@ import { PickerRenderer } from './picker-renderer.internal';
  * @useWhen A user must select content types from a site collection, web or list catalog.
  * @avoidWhen Use FieldPicker for column definitions within a list.
  *
- * @example Explore site and list content type references
+ * @scenario Explore site and list content type references
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

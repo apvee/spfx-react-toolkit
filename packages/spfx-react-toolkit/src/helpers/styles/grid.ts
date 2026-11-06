@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { grid } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = grid.columns(3);
  * ```
  *
- * @example Select positive grid column counts — actual four-item grid and invalid drafts
+ * @scenario Select positive grid column counts — actual four-item grid and invalid drafts
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

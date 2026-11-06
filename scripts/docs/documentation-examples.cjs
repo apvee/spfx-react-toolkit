@@ -44,7 +44,7 @@ function suppressionDiagnostics(example) {
  * and leaves every original example line at its original offset.
  *
  * @param {string} root Repository or source-mirror root.
- * @param {DocumentationModel} model Normalized examples from the contract model.
+ * @param {DocumentationModel} model Normalized examples and scenarios from the contract model.
  * @param {Config} config Versioned source, package and TypeScript config paths.
  * @returns {Diagnostic[]} Deterministically sorted original-source diagnostics.
  */
@@ -57,7 +57,8 @@ function checkDocumentationExamples(root, model, config) {
   const options = { ...parsed.options, noEmit: true, noUnusedLocals: false, noUnusedParameters: false };
   /** @type {Map<string, {example: DocExample, text: string}>} */
   const virtual = new Map();
-  for (const [index, example] of model.examples.entries()) {
+  const snippets = [...model.examples, ...model.scenarios];
+  for (const [index, example] of snippets.entries()) {
     const filename = path.resolve(root, config.sourceRoot, `.__documentation_example_${index}.${example.language}`);
     if (fs.existsSync(filename)) throw new Error(`Virtual example collides with source file: ${posix(path.relative(root, filename))}`);
     virtual.set(filename, { example, text: example.code + '\nexport {};\n' });
@@ -110,7 +111,7 @@ function checkDocumentationExamples(root, model, config) {
     return resolved;
   });
   const program = ts.createProgram([...parsed.fileNames, ...virtual.keys()], options, host);
-  const diagnostics = [...model.examples.flatMap(suppressionDiagnostics), ...referenceDiagnostics];
+  const diagnostics = [...snippets.flatMap(suppressionDiagnostics), ...referenceDiagnostics];
   for (const diagnostic of ts.getPreEmitDiagnostics(program)) {
     const virtualFile = diagnostic.file && virtual.get(diagnostic.file.fileName);
     const line = diagnostic.file ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start ?? 0).line : 0;

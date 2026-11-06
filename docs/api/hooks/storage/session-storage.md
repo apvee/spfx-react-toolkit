@@ -161,65 +161,6 @@ function MultiStepWizard() {
 }
 ```
 
-#### Save and clear an instance scoped session value
-
-```tsx
-// Requires the matching SPFx provider. Only named commands write; browser JSON persistence is best effort. The string generic does not validate stored JSON. Reset keeps current hook state, rather than rereading persistence; reentry initializes from the scoped key.
-import * as React from 'react';
-import { Button, Input } from '@fluentui/react-components';
-import { useSPFxContext, useSPFxSessionStorage } from '@apvee/spfx-react-toolkit';
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  children?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-}
-function standalone(regions: DemoRegions): React.ReactElement {
-  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
-}
-export function Demo({ render = standalone, resetRevision = 0 }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-} = {}): React.ReactElement {
-  const { spfxContext } = useSPFxContext();
-  const { value, setValue, remove } = useSPFxSessionStorage('demo-session-key', '');
-  const [draft, setDraft] = React.useState('');
-  const [message, setMessage] = React.useState<string>();
-  const lifetime = React.useMemo(() => ({ active: true, timer: undefined as number | undefined }),
-    [resetRevision, spfxContext, setValue, remove]);
-  React.useLayoutEffect(() => {
-    setDraft('');
-    setMessage(undefined);
-    return () => {
-      lifetime.active = false;
-      if (lifetime.timer !== undefined) window.clearTimeout(lifetime.timer);
-    };
-  }, [lifetime]);
-  const save = (): void => {
-    if (!lifetime.active || !draft) return;
-    setValue(draft);
-    setDraft('');
-    setMessage('Session value updated; persistence attempted.');
-    if (lifetime.timer !== undefined) window.clearTimeout(lifetime.timer);
-    const timer = window.setTimeout(() => {
-      if (!lifetime.active || lifetime.timer !== timer) return;
-      lifetime.timer = undefined;
-      setMessage(undefined);
-    }, 3000);
-    lifetime.timer = timer;
-  };
-  const clear = (): void => { if (lifetime.active) remove(); };
-  return render({
-    controls: <Input aria-label="Session value" value={draft} onChange={(_, data) => setDraft(data.value)} />,
-    commands: <><Button disabled={!draft} onClick={save}>Save Session</Button><Button onClick={clear}>Clear Session</Button></>,
-    status: message ? <p role="status">{message}</p> : undefined,
-    children: <output>Current value: {String(value ?? '')}</output>,
-  });
-}
-export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Save Session updates the current instance value and attempts browser persistence; Clear Session removes its scoped key and restores the empty fallback without new feedback. Reset clears only input/feedback and keeps the current hook value, without rereading browser storage.' };
-```
-
 ### Type
 
 ```ts

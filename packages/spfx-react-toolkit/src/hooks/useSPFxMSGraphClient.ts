@@ -274,7 +274,7 @@ export interface SPFxMSGraphClientInfo {
  * }
  * ```
  *
- * @example Read the current Graph profile after initialization
+ * @scenario Read the current Graph profile after initialization
  * ```tsx
  * import * as React from 'react';
  * import { Button, Accordion, AccordionItem, AccordionHeader, AccordionPanel, makeStyles } from '@fluentui/react-components';

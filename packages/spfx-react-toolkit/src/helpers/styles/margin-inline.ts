@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { marginInline } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = marginInline.none;
  * ```
  *
- * @example Select inline margin descriptors — host/LTR/RTL
+ * @scenario Select inline margin descriptors — host/LTR/RTL
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';

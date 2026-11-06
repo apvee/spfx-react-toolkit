@@ -19,11 +19,20 @@ import { createStandardSchemaResolver } from './form-validation.internal';
  * ```tsx
  * import * as React from 'react';
  * import { createForm } from '@apvee/spfx-react-toolkit/controls/form';
+ *
  * const Order = createForm<{ reference: string }>();
  * export function Editor(): React.ReactElement {
- *   return <Order.Root defaultValues={{ reference: '' }} onSubmit={values => { console.log(values.reference); }}>
- *     <Order.Input name="reference" /><Order.Submit>Save</Order.Submit>
- *   </Order.Root>;
+ *   return (
+ *     <Order.Root
+ *       defaultValues={{ reference: '' }}
+ *       onSubmit={values => {
+ *         console.log(values.reference);
+ *       }}
+ *     >
+ *       <Order.Input name="reference" />
+ *       <Order.Submit>Save</Order.Submit>
+ *     </Order.Root>
+ *   );
  * }
  * ```
  * @useWhen A stable form family should type-check live paths and validated output with one validation owner.
@@ -150,7 +159,7 @@ import { createStandardSchemaResolver } from './form-validation.internal';
  *   </section>;
  * }
  * ```
- * @example Edit typed reports across native fields and composition
+ * @scenario Edit typed reports across native fields and composition
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, Input, Select, ColorArea, ColorSlider, ColorSwatch, FluentProvider, makeStyles } from '@fluentui/react-components';
@@ -428,7 +437,7 @@ import { createStandardSchemaResolver } from './form-validation.internal';
  * }
  * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Edit native values across 22 adapters and shared report compositions; save a snapshot, recover from failure, and reset pending work.' };
  * ```
- * @example Validate and transform quantity with recoverable failures
+ * @scenario Validate and transform quantity with recoverable failures
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, Select, FluentProvider, makeStyles } from '@fluentui/react-components';

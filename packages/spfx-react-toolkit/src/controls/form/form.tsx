@@ -273,15 +273,24 @@ export function createFormSuiteRuntime<TInput extends FieldValues, TContext, TOu
  * ```tsx
  * import * as React from 'react';
  * import { Form } from '@apvee/spfx-react-toolkit/controls/form';
+ *
  * export function Editor(): React.ReactElement {
- *   return <Form.Root defaultValues={{ reference: '' }} onSubmit={values => { console.log(values.reference); }}>
- *     <Form.Input name="reference" /><Form.Submit>Save</Form.Submit>
- *   </Form.Root>;
+ *   return (
+ *     <Form.Root
+ *       defaultValues={{ reference: '' }}
+ *       onSubmit={values => {
+ *         console.log(values.reference);
+ *       }}
+ *     >
+ *       <Form.Input name="reference" />
+ *       <Form.Submit>Save</Form.Submit>
+ *     </Form.Root>
+ *   );
  * }
  * ```
  * @useWhen Runtime field names prevent a statically typed createForm family.
  * @avoidWhen A known model can use createForm for checked live paths and output types.
- * @example Edit a dynamic report with explicit save and reset
+ * @scenario Edit a dynamic report with explicit save and reset
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, Select, FluentProvider, makeStyles } from '@fluentui/react-components';

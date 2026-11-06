@@ -99,7 +99,7 @@ export interface SPFxPnPService {
  * }
  * ```
  *
- * @example Read through a supplied PnP service client
+ * @scenario Read through a supplied PnP service client
  * ```tsx
  * import * as React from 'react';
  * import { Button, makeStyles } from '@fluentui/react-components';

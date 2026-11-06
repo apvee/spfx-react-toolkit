@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { paddingBlockStart } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = paddingBlockStart.none;
  * ```
  *
- * @example Select block start padding descriptors — visible start spacing
+ * @scenario Select block start padding descriptors — visible start spacing
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

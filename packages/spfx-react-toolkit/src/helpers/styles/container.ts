@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { container } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = container.inlineSize;
  * ```
  *
- * @example Toggle a named inline size query ancestor — nested child visibly responds when ancestor establishment changes
+ * @scenario Toggle a named inline size query ancestor — nested child visibly responds when ancestor establishment changes
  * ```tsx
  * import * as React from 'react';
  * import { Checkbox, Field, Input, Select } from '@fluentui/react-components';

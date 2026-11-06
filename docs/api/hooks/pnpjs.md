@@ -434,114 +434,18 @@ function WebDetails() {
       setFailure(failure instanceof Error ? failure.message : String(failure));
     }
   };
-  return <>
-    <button disabled={!pnp.isInitialized || pnp.isLoading} onClick={() => void run()}>Load web</button>
-    {(failure ?? pnp.error?.message) && <span role="alert">{failure ?? pnp.error?.message}</span>}
-    <pre>{JSON.stringify(result)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={!pnp.isInitialized || pnp.isLoading} onClick={() => void run()}>
+        Load web
+      </button>
+      {(failure ?? pnp.error?.message) && (
+        <span role="alert">{failure ?? pnp.error?.message}</span>
+      )}
+      <pre>{JSON.stringify(result)}</pre>
+    </>
+  );
 }
-```
-
-#### Compare explicit invoke and batch reads
-
-```tsx
-import * as React from 'react';
-import { Button, Field, MessageBar, MessageBarActions, MessageBarBody, Select } from '@fluentui/react-components';
-import { useSPFxPnP, useSPFxPnPContext } from '@apvee/spfx-react-toolkit';
-import '@pnp/sp/webs';
-import '@pnp/sp/lists';
-import '@pnp/sp/site-users';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type RequestMode = 'invoke' | 'batch';
-type ListCount = { Title: string; ItemCount: number };
-type NamedResource = { Title: string };
-type Outcome = { token: object; request: number } & (
-  | { phase: 'pending' }
-  | { phase: 'invoke'; lists: ListCount[] }
-  | { phase: 'batch'; lists: NamedResource[]; user: NamedResource; web: NamedResource }
-  | { phase: 'error'; message: string }
-);
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  // Mount below the matching SPFx provider, for example inside WebPartShell.
-  const [mode, setMode] = React.useState<RequestMode>('invoke');
-  const context = useSPFxPnPContext();
-  const pnp = useSPFxPnP(context);
-  const values: readonly unknown[] = [pnp.sp, pnp.invoke, pnp.batch, mode, resetRevision];
-  const boundary = React.useRef({ values, token: {} });
-  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {} };
-  const token = boundary.current.token;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const dispatch = React.useRef<{ token: object; request: number }>();
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const current = (): boolean => mounted.current && boundary.current.token === token;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setMode('invoke'); setOutcome(undefined);
-    pnp.clearError();
-  }, [resetRevision, pnp.clearError]);
-  const changeMode = (value: string): void => {
-    if (!current() || value === mode || (value !== 'invoke' && value !== 'batch')) return;
-    // Retire commands synchronously; returning to an earlier mode never revives them.
-    boundary.current = { ...boundary.current, token: {} };
-    sequence.current++;
-    setMode(value); setOutcome(undefined); pnp.clearError();
-  };
-  const run = async (): Promise<void> => {
-    if (!current() || !context.isInitialized || !pnp.sp || dispatch.current?.token === token) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    // Consume admission before any await, including rapid repeated button activation.
-    dispatch.current = { token, request };
-    setOutcome({ token, request, phase: 'pending' });
-    pnp.clearError();
-    try {
-      if (mode === 'invoke') {
-        const lists = await pnp.invoke<ListCount[]>(sp => sp.web.lists.select('Title', 'ItemCount').filter('Hidden eq false').top(10)());
-        if (owns()) setOutcome({ token, request, phase: 'invoke', lists });
-      } else {
-        const [lists, user, web] = await pnp.batch<[NamedResource[], NamedResource, NamedResource]>(batchedSP => {
-          // Queue every read before awaiting any result; the service dispatches this batch.
-          const listsPromise = batchedSP.web.lists.select('Title').top(5)();
-          const userPromise = batchedSP.web.currentUser.select('Title')();
-          const webPromise = batchedSP.web.select('Title')();
-          return Promise.all([listsPromise, userPromise, webPromise]);
-        });
-        if (owns()) setOutcome({ token, request, phase: 'batch', lists, user, web });
-      }
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (owns() && dispatch.current?.request === request && dispatch.current.token === token) dispatch.current = undefined;
-    }
-  };
-  const dismiss = (): void => {
-    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
-    setOutcome(undefined); pnp.clearError();
-  };
-  const regions: DemoRegions = {
-    controls: <Field label="Request"><Select aria-label="Request" value={mode} onChange={(_event, data) => changeMode(data.value)}><option value="invoke">Lists</option><option value="batch">Batch site, user and lists</option></Select></Field>,
-    commands: <Button appearance="primary" disabled={!context.isInitialized || visible?.phase === 'pending'} onClick={run}>Run</Button>,
-    status: <>
-      <p>Effective web: {context.siteUrl}; initialized: {context.isInitialized ? 'Yes' : 'No'}</p>
-      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
-      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
-      {visible?.phase === 'error' && <MessageBar intent="error"><MessageBarBody>Request error: {visible.message}</MessageBarBody><MessageBarActions><Button onClick={dismiss}>Dismiss</Button></MessageBarActions></MessageBar>}
-      <p role="status">{visible?.phase === 'pending' ? 'Loading selected request...' : visible?.phase === 'invoke' || visible?.phase === 'batch' ? 'Selected request completed.' : 'Choose a request and Run.'}</p>
-    </>,
-    children: visible?.phase === 'invoke' ? <section aria-label="Lists (top 10, non-hidden)"><h4>Lists (top 10, non-hidden)</h4>{visible.lists.length ? <ul>{visible.lists.map((list, index) => <li key={index}>{list.Title} - {list.ItemCount} items</li>)}</ul> : <p>No lists returned.</p>}</section>
-      : visible?.phase === 'batch' ? <section aria-label="Batch results"><dl><dt>Web Title</dt><dd>{visible.web.Title}</dd><dt>Current User</dt><dd>{visible.user.Title}</dd></dl><h4>Lists (top 5)</h4>{visible.lists.length ? <ul>{visible.lists.map((list, index) => <li key={index}>{list.Title}</li>)}</ul> : <p>No lists returned.</p>}</section> : undefined,
-    diagnostics: <p>Run invokes one nonhidden top-10 list read or batches three GET reads for top-5 lists, current user and web titles. A read batch uses a POST envelope and may first obtain a request digest; it writes no list items and does not promise one total HTTP call. Any failed read rejects the combined result. The hook's loading boolean does not count overlap and its operation error can settle late; this example owns the current mode's outcome separately. Mode changes, Reset, client replacement and departure invalidate this view; dispatched requests may still finish and are not canceled.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Choose Lists or Batch site, user and lists, then Run to compare top-10 nonhidden list counts with batched top-5 list, current-user and web titles; mode changes and reset invalidate late results.' };
 ```
 
 ### Signatures (6)
@@ -601,7 +505,7 @@ Contract: see [SPFxPnPInfo.invoke](pnpjs.md#spfxpnpinfo).
 
 ### Source (7)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts:283](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts#L283)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts:289](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnP.ts#L289)
 
 ## PnPContextConfig
 
@@ -795,83 +699,6 @@ function PnPStatus() {
   const context = useSPFxPnPContext('/sites/projects', { cache: { enabled: true } });
   return <span>{context.error?.message ?? context.siteUrl}</span>;
 }
-```
-
-#### Read current or cross-site web information
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
-import { useSPFxPnPContext } from '@apvee/spfx-react-toolkit';
-import '@pnp/sp/webs';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Outcome = { token: object; request: number } & (
-  | { phase: 'pending' }
-  | { phase: 'success'; title: string; url: string; description: string }
-  | { phase: 'error'; message: string }
-);
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  // Mount below the matching SPFx provider, for example inside WebPartShell.
-  const [target, setTarget] = React.useState('');
-  const context = useSPFxPnPContext(target);
-  const values: readonly unknown[] = [context.sp, target, resetRevision];
-  const boundary = React.useRef({ values, token: {} });
-  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {} };
-  const token = boundary.current.token;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const current = (): boolean => mounted.current && boundary.current.token === token;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setTarget(''); setOutcome(undefined);
-  }, [resetRevision]);
-  const changeTarget = (value: string): void => {
-    if (!current() || value === target) return;
-    // Retire retained commands synchronously, before React commits the draft.
-    boundary.current = { ...boundary.current, token: {} };
-    sequence.current++;
-    setTarget(value); setOutcome(undefined);
-  };
-  const run = async (): Promise<void> => {
-    const client = context.sp;
-    if (!current() || !context.isInitialized || !client) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    setOutcome({ token, request, phase: 'pending' });
-    try {
-      // SharePoint's legacy Description field may be null; local absence uses undefined.
-      const web: { Title: string; Url: string; Description?: string | null } = await client.web.select('Title', 'Url', 'Description')();
-      if (owns()) setOutcome({ token, request, phase: 'success', title: web.Title, url: web.Url, description: web.Description || '(no description)' });
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    }
-  };
-  const dismiss = (): void => {
-    if (current() && visible?.phase === 'error' && visible.request === sequence.current) setOutcome(undefined);
-  };
-  const regions: DemoRegions = {
-    controls: <Field label="Site URL" hint="Leave empty to use current site"><Input aria-label="Site URL" value={target} onChange={(_event, data) => changeTarget(data.value)} placeholder="e.g., /sites/hr or https://contoso.sharepoint.com/sites/hr" /></Field>,
-    commands: <Button appearance="primary" disabled={!context.isInitialized || visible?.phase === 'pending'} onClick={run}>Run</Button>,
-    status: <>
-      <p>Effective web: {context.siteUrl}; initialized: {context.isInitialized ? 'Yes' : 'No'}</p>
-      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
-      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
-      {visible?.phase === 'error' && <MessageBar intent="error"><MessageBarBody>Request error: {visible.message}</MessageBarBody><MessageBarActions><Button onClick={dismiss}>Dismiss</Button></MessageBarActions></MessageBar>}
-      <p role="status">{visible?.phase === 'pending' ? 'Loading selected web...' : visible?.phase === 'success' ? 'Site information loaded.' : 'Run to read the selected site.'}</p>
-    </>,
-    children: visible?.phase === 'success' ? <dl aria-label="Site information"><dt>Title</dt><dd>{visible.title}</dd><dt>URL</dt><dd>{visible.url}</dd><dt>Description</dt><dd>{visible.description}</dd></dl> : undefined,
-    diagnostics: <p>Only Run reads Title, Url and Description. The raw Site URL is passed unchanged to the public resolver. Client construction, draft edits and Reset send no requests. Initialization errors stay separate from request errors. Reset, target/client changes and departure invalidate this view; already dispatched reads may still finish. No request is canceled and no items are written.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Leave Site URL empty for the current web or enter a cross-site URL, then Run to read Title, URL and Description; target changes and reset invalidate late results.' };
 ```
 
 ### Signatures (8)
@@ -1763,11 +1590,17 @@ function Tasks() {
       setFailure(failure instanceof Error ? failure.message : String(failure));
     }
   };
-  return <>
-    <button disabled={tasks.loading} onClick={() => void run()}>Load tasks</button>
-    {(failure ?? tasks.error?.message) && <span role="alert">{failure ?? tasks.error?.message}</span>}
-    <pre>{JSON.stringify(result)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={tasks.loading} onClick={() => void run()}>
+        Load tasks
+      </button>
+      {(failure ?? tasks.error?.message) && (
+        <span role="alert">{failure ?? tasks.error?.message}</span>
+      )}
+      <pre>{JSON.stringify(result)}</pre>
+    </>
+  );
 }
 ```
 
@@ -1797,323 +1630,6 @@ function SelectedLists() {
     {list.items.map(item => <p key={item.Id}>{item.Title}</p>)}
   </div>)}</div>;
 }
-```
-
-#### Read a user-selected list with observable results
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPList } from '@apvee/spfx-react-toolkit';
-
-interface DemoRegions {
-  controls?: React.ReactNode;
-  commands?: React.ReactNode;
-  status?: React.ReactNode;
-  diagnostics?: React.ReactNode;
-  children?: React.ReactNode;
-}
-type ReadOutcome =
-  | { resource: string; phase: 'pending' }
-  | { resource: string; phase: 'success'; items: { Id: number; Title: string }[] }
-  | { resource: string; phase: 'error'; message: string };
-function standalone(regions: DemoRegions): React.ReactElement {
-  return <div>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</div>;
-}
-
-export function Demo({ render = standalone, resetRevision = 0 }: {
-  render?: (regions: DemoRegions) => React.ReactElement;
-  resetRevision?: number;
-} = {}): React.ReactElement {
-  // Mount below the SPFx host provider, for example inside WebPartShell.
-  // Choose an existing list in the current web that you are authorized to read.
-  const [title, setTitle] = React.useState('');
-  const context = useSPFxPnPContext();
-  const list = useSPFxPnPList<{ Id: number; Title: string }>(title, undefined, context);
-  const [outcome, setOutcome] = React.useState<ReadOutcome>();
-  const requestVersion = React.useRef(0);
-  const mounted = React.useRef(false);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    mounted.current = true;
-    return () => { mounted.current = false; requestVersion.current++; };
-  }, []);
-  React.useLayoutEffect(() => {
-    // A new context invalidates results from the previous web/client.
-    requestVersion.current++;
-    setOutcome(undefined);
-  }, [context.sp, context.isInitialized]);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    requestVersion.current++;
-    setTitle('');
-    setOutcome(undefined);
-  }, [resetRevision]);
-  const selectTitle = (value: string): void => {
-    // Invalidate synchronously, before a pending promise can publish a result.
-    requestVersion.current++;
-    setTitle(value);
-    setOutcome(undefined);
-  };
-  const read = async (): Promise<void> => {
-    if (!title.trim().length || !context.isInitialized || list.loading) return;
-    const resource = title;
-    const version = ++requestVersion.current;
-    const isCurrent = (): boolean => mounted.current && requestVersion.current === version;
-    setOutcome({ resource, phase: 'pending' });
-    try {
-      // The returned promise can settle after selection/reset/unmount.
-      const items = await list.query(items => items.select('Id', 'Title').top(5));
-      if (isCurrent()) setOutcome({ resource, phase: 'success', items });
-    } catch (error) {
-      // Readiness can change after the command was enabled; always catch.
-      if (isCurrent()) setOutcome({ resource, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    }
-  };
-  return render({
-    controls: <Field label="List title">
-      <Input aria-label="List title" value={title} onChange={(_event, data) => selectTitle(data.value)} />
-    </Field>,
-    commands: <Button disabled={!title.trim().length || !context.isInitialized || list.loading}
-      onClick={read}>Read selected list</Button>,
-    status: <div role="status" aria-live="polite">
-      <p>Selected list: {title || '(none)'}</p>
-      <p>Web: {context.siteUrl}; fields: Id, Title; maximum rows: 5</p>
-      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
-      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
-      {outcome?.phase === 'pending' && list.loading && <p>Loading {outcome.resource}…</p>}
-      {outcome?.phase === 'error' && <p role="alert">Request error for {outcome.resource}: {outcome.message}</p>}
-      {outcome?.phase === 'success' && <p>Results for {outcome.resource}: {outcome.items.length}</p>}
-    </div>,
-    children: outcome?.phase === 'success'
-      ? <ul aria-label={`Results for ${outcome.resource}`}>{outcome.items.map(item => <li key={item.Id}>{item.Id}: {item.Title}</li>)}</ul>
-      : undefined,
-    diagnostics: <p>Only the command reads items. Editing the exact title or resetting clears local results and invalidates pending completions; no request is canceled at the server. Context initialization errors remain separate. No items are written.</p>,
-  });
-}
-export const demo = {
-  host: 'webPart', kind: 'read', contentPlacement: 'configuration',
-  observe: 'Choose an existing list and run the read explicitly; loading, results and errors identify the selected list.',
-};
-```
-
-#### Manage list items with paging and captured delete consent
-
-```tsx
-import * as React from 'react';
-import { flushSync } from 'react-dom';
-import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, Field, Input } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPList, useSx, flex, gap } from '@apvee/spfx-react-toolkit';
-type TextDraft = { session: object; value: string };
-interface DemoRegions { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; children?: React.ReactNode; diagnostics?: React.ReactNode; }
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const context = useSPFxPnPContext();
-  const [title, setTitle] = React.useState('');
-  // SharePoint may omit Title or return legacy null; local text drafts remain strings.
-  type Item = { Id: number; Title?: string | null };
-  const list = useSPFxPnPList<Item>(title, { pageSize: 10 }, context);
-  const sx = useSx();
-  const layout = sx(flex.column, gap.small);
-  const [newDraftState, setNewDraftState] = React.useState<TextDraft>(() => ({ session: {}, value: '' }));
-  const [editDraftState, setEditDraftState] = React.useState<TextDraft>(() => ({ session: {}, value: '' }));
-  const newDraft = React.useRef(newDraftState);
-  const editDraft = React.useRef(editDraftState);
-  const committedNew = React.useRef(newDraftState);
-  const committedEdit = React.useRef(editDraftState);
-  React.useLayoutEffect(() => {
-    committedNew.current = newDraftState; committedEdit.current = editDraftState;
-  }, [newDraftState, editDraftState]);
-  const [editing, setEditing] = React.useState<number>();
-  const mounted = React.useRef(true);
-  const boundary = React.useRef({ sp: context.sp, ready: context.isInitialized, title, revision: resetRevision, token: {} });
-  const command = React.useRef<{ token: object }>();
-  const physical = React.useRef<{ token: object; promise?: Promise<unknown> }>();
-  const drafts = React.useRef(0);
-  const readState = React.useRef({ loading: list.loading, more: list.loadingMore });
-  readState.current = { loading: list.loading, more: list.loadingMore };
-  const latestPage = React.useRef(list.loadMore);
-  latestPage.current = list.loadMore;
-  const [writing, setWriting] = React.useState(false);
-  const [activity, setActivity] = React.useState<{ token: object; text: string }>();
-  const [baseline, setBaseline] = React.useState<object>();
-  const [readScope, setReadScope] = React.useState<object>();
-  const [failure, setFailure] = React.useState<{ token: object; message: string }>();
-  const [notice, setNotice] = React.useState<{ token: object; message: string }>();
-  type Consent = { token: object; id: number; trigger: HTMLButtonElement; remove: (id: number) => Promise<void> };
-  const consent = React.useRef<Consent>();
-  const [approval, setApproval] = React.useState<Consent>();
-  // React 17 native ref props require a legacy null-initialized RefObject.
-  const input = React.useRef<HTMLInputElement>(null);
-  const old = boundary.current;
-  if (old.sp !== context.sp || old.ready !== context.isInitialized || old.title !== title || old.revision !== resetRevision) {
-    boundary.current = { sp: context.sp, ready: context.isInitialized, title, revision: resetRevision, token: {} };
-    command.current = undefined;
-    consent.current = undefined;
-    newDraft.current = { session: {}, value: '' };
-    editDraft.current = { session: {}, value: '' };
-  }
-  const token = boundary.current.token;
-  const draft = drafts.current;
-  const newSession = newDraft.current.session;
-  const editSession = editDraft.current.session;
-  const newTitle = newDraftState.session === newSession ? newDraftState.value : '';
-  const editTitle = editDraftState.session === editSession ? editDraftState.value : '';
-  const current = (): boolean => mounted.current && boundary.current.token === token;
-  const busy = (): boolean => physical.current !== undefined || command.current?.token === token || consent.current !== undefined || readState.current.loading || readState.current.more;
-  const locallyBusy = (): boolean => command.current?.token === token || physical.current?.token === token || consent.current?.token === token;
-  const localBusy = locallyBusy();
-  const ready = context.isInitialized && title.trim().length > 0;
-  const shown = baseline === token;
-  React.useEffect(() => {
-    setNewDraftState(newDraft.current); setEditDraftState(editDraft.current); setEditing(undefined); setApproval(undefined);
-    setFailure(undefined); setNotice(undefined); setActivity(undefined);
-  }, [token]);
-  const revision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    setTitle(''); setBaseline(undefined); drafts.current++;
-  }, [resetRevision]);
-  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; consent.current = undefined; }; }, []);
-  const selectTitle = (value: string): void => {
-    if (!current() || locallyBusy() || value === title) return;
-    boundary.current = { ...boundary.current, token: {} };
-    drafts.current++; setTitle(value);
-  };
-  const read = async (more = false): Promise<void> => {
-    if (!current() || !ready || busy() || (more && (!shown || !list.hasMore || latestPage.current !== list.loadMore))) return;
-    const ticket = { token }; command.current = ticket;
-    setActivity({ token, text: more ? 'Loading more…' : 'Loading…' }); setFailure(undefined);
-    // Reveal first-Load errors; request currentness remains owned by the hook.
-    setReadScope(token);
-    try {
-      if (more) await list.loadMore();
-      else await list.query(q => q.select('Id', 'Title').orderBy('Id', false));
-      if (current()) setBaseline(token);
-    } catch {
-      // A newer automatic query can supersede this page within the same token.
-      // Consume its rejection and display only the hook's current read error.
-    } finally {
-      if (command.current === ticket) { command.current = undefined; if (current()) setActivity(undefined); }
-    }
-  };
-  const write = async (dispatch: () => Promise<unknown>, success: (result: unknown) => void, beforeDispatch?: () => void): Promise<void> => {
-    if (!current() || !ready || busy() || drafts.current !== draft) return;
-    // This ticket survives Reset/client changes until the ORIGINAL public promise settles.
-    const ticket: { token: object; promise?: Promise<unknown> } = { token };
-    physical.current = ticket; setWriting(true); setFailure(undefined); setNotice(undefined); list.clearError();
-    try {
-      beforeDispatch?.();
-      if (!current()) return;
-      ticket.promise = dispatch();
-      const result = await ticket.promise;
-      if (current()) success(result);
-    } catch (error) {
-      if (current()) setFailure({ token, message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (physical.current === ticket) { physical.current = undefined; if (mounted.current) setWriting(false); }
-    }
-  };
-  const create = (): Promise<void> => {
-    if (!newTitle.trim() || newDraft.current.session !== newSession || newDraft.current.value !== newTitle) return Promise.resolve();
-    return write(() => list.create({ Title: newTitle }), id => {
-      drafts.current++;
-      newDraft.current = { session: {}, value: '' };
-      setNewDraftState(newDraft.current);
-      setNotice({ token, message: `Created item #${String(id)}.` });
-    });
-  };
-  const save = (id: number): Promise<void> => {
-    if (!editTitle.trim() || editDraft.current.session !== editSession || editDraft.current.value !== editTitle) return Promise.resolve();
-    return write(() => list.update(id, { Title: editTitle }), () => {
-      drafts.current++;
-      editDraft.current = { session: {}, value: '' };
-      setEditing(undefined);
-      setEditDraftState(editDraft.current);
-      setNotice({ token, message: `Updated item #${id}.` });
-    });
-  };
-  const cancelConsent = (): void => {
-    const request = consent.current;
-    if (!current() || request?.token !== token || request !== approval) return;
-    // Event handlers use the existing React 17 react-dom peer to commit modal removal.
-    // Its closing surface would otherwise trap focus before restoration/dispatch.
-    consent.current = undefined; flushSync(() => setApproval(undefined));
-    if (request.trigger.isConnected && !request.trigger.disabled) request.trigger.focus(); else input.current?.focus();
-  };
-  const approve = (): Promise<void> => {
-    const request = consent.current;
-    if (!current() || request?.token !== token || request !== approval || physical.current || command.current || readState.current.loading || readState.current.more) return Promise.resolve();
-    // Consume captured consent before dispatch; a same-target callback replacement cannot retarget it.
-    consent.current = undefined;
-    return write(() => request.remove(request.id), () => setNotice({ token, message: `Deleted item #${request.id}.` }), () => {
-      // The physical ticket is already held when close/focus synchronously runs other handlers.
-      flushSync(() => setApproval(undefined)); input.current?.focus();
-    });
-  };
-  const error = failure?.token === token ? failure.message : shown || readScope === token ? list.error?.message : undefined;
-  const regions: DemoRegions = {
-    controls: <div className={layout}>
-      <Field label="List Title"><Input ref={input} aria-label="List Title" value={title} readOnly={localBusy}
-        onChange={(_, data) => selectTitle(data.value)} /></Field>
-      <Field label="New item title"><Input aria-label="New item title" value={newTitle} readOnly={localBusy}
-        onChange={(_, data) => {
-          if (!current() || locallyBusy() || committedNew.current !== newDraftState || newDraft.current.session !== newSession || data.value === newDraft.current.value) return;
-          // Retire commands on every accepted change; immutable state also commits accepted ABA edits.
-          newDraft.current = { session: newSession, value: data.value }; drafts.current++; setNewDraftState(newDraft.current);
-        }} /></Field>
-    </div>,
-    commands: <><Button disabled={!ready || writing || localBusy || list.loading || list.loadingMore} onClick={() => read()}>Load</Button>
-      <Button disabled={!ready || !newTitle.trim() || writing || localBusy || list.loading || list.loadingMore} onClick={create}>Create</Button></>,
-    status: <div role="status" aria-live="polite">
-      <p>Physical web: {context.siteUrl}; exact list: {title || '(none)'}. Commands create, update and delete items in this target.</p>
-      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
-      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
-      {writing && <p>A dispatched write is still pending, including after Reset.</p>}
-      {(activity?.token === token || (shown && (list.loading || list.loadingMore))) && <p>{activity?.token === token ? activity.text : list.loadingMore ? 'Loading more…' : 'Refreshing…'}</p>}
-      {notice?.token === token && <p>{notice.message}</p>}
-      {error && <><p role="alert">Request error: {error}</p><Button onClick={() => { if (current() && !busy()) { setFailure(undefined); list.clearError(); } }}>Dismiss</Button></>}
-      {shown && list.isEmpty && !activity && <p>No items found.</p>}
-    </div>,
-    children: <>
-      {shown && <div className={layout} aria-label="List items"><p>Items ({list.items.length}):</p>{list.items.map(item => <div key={item.Id}>
-        {editing === item.Id ? <><Input aria-label="Edit title" value={editTitle} readOnly={localBusy}
-          onChange={(_, data) => {
-            if (!current() || locallyBusy() || committedEdit.current !== editDraftState || editDraft.current.session !== editSession || data.value === editDraft.current.value) return;
-            editDraft.current = { session: editSession, value: data.value }; drafts.current++; setEditDraftState(editDraft.current);
-          }} />
-          <Button disabled={writing || localBusy || !editTitle.trim()} onClick={() => save(item.Id)}>Save</Button>
-          <Button disabled={writing || localBusy} onClick={() => { if (current() && !busy() && drafts.current === draft) {
-            drafts.current++;
-            editDraft.current = { session: {}, value: '' };
-            setEditing(undefined);
-            setEditDraftState(editDraft.current);
-          } }}>Cancel</Button></>
-          : <><span>#{item.Id} - {item.Title || '(untitled)'}</span>
-            <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => { if (current() && !busy() && drafts.current === draft) {
-              drafts.current++;
-              editDraft.current = { session: {}, value: item.Title ?? '' };
-              setEditing(item.Id);
-              setEditDraftState(editDraft.current);
-            } }}>Edit</Button>
-            <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={event => { if (current() && !busy() && drafts.current === draft) {
-              const request = { token, id: item.Id, trigger: event.currentTarget, remove: list.remove };
-              consent.current = request;
-              setApproval(request);
-            } }}>Delete</Button></>}
-      </div>)}{list.hasMore && <Button disabled={writing || localBusy || list.loading || list.loadingMore} onClick={() => read(true)}>Load More</Button>}</div>}
-      {approval?.token === token && <Dialog open onOpenChange={(_, data) => { if (!data.open) cancelConsent(); }}>
-        <DialogSurface><DialogBody><DialogTitle>Delete this item?</DialogTitle><DialogContent>Delete item #{approval?.id}? This action cannot be undone.</DialogContent>
-          <DialogActions><Button onClick={cancelConsent}>Cancel</Button><Button appearance="primary" disabled={writing || list.loading || list.loadingMore} onClick={approve}>Delete item</Button></DialogActions>
-        </DialogBody></DialogSurface>
-      </Dialog>}
-    </>,
-    diagnostics: <p>Load explicitly selects Id and Title in descending Id order, page size 10. Successful writes schedule the hook's existing 100 ms active-query refresh; rows change only when that read publishes. Create before Load need not refresh. A failed refresh does not roll back a successful write. Paging uses a count-based p_ID heuristic, not a guaranteed continuation for noncontiguous descending IDs or concurrent edits. Missing or legacy-null titles display as (untitled) and edit as an empty draft. Updates/deletes use wildcard ETags and do not protect against concurrent edits. Reset commits a blank target and hides rows until a fresh Load; dispatched requests are not canceled. The original write promise keeps this mounted example locked until settlement, even after Reset or client change; departure has no global lock. Choose a disposable list only when its writes are authorized.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Load an explicitly selected list, create or edit titles, and load more rows; Delete captures the selected item for approval, while writes refresh the active query after 100 ms and reset invalidates local results without canceling dispatched requests.' };
 ```
 
 ### Type (5)
@@ -2244,7 +1760,7 @@ Contract: see [SPFxPnPListInfo.updateBatch](pnpjs.md#spfxpnplistinfo).
 
 ### Source (31)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts:623](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#L623)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts:629](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPList.ts#L629)
 
 ## useSPFxPnPListById
 
@@ -2277,7 +1793,10 @@ import * as React from 'react';
 import { useSPFxPnPListById } from '@apvee/spfx-react-toolkit';
 
 function Example() {
-  const { query, items, error, loading } = useSPFxPnPListById<{ Id: number; Title: string }>('11111111-2222-3333-4444-555555555555', { pageSize: 50 });
+  const { query, items, error, loading } = useSPFxPnPListById<{
+    Id: number;
+    Title: string;
+  }>('11111111-2222-3333-4444-555555555555', { pageSize: 50 });
   const [failure, setFailure] = React.useState<string>();
   const run = async () => {
     setFailure(undefined);
@@ -2287,100 +1806,18 @@ function Example() {
       setFailure(failure instanceof Error ? failure.message : String(failure));
     }
   };
-  return <>
-    <button disabled={loading} onClick={() => void run()}>Load</button>
-    {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
-    <pre>{JSON.stringify(items)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={loading} onClick={() => void run()}>
+        Load
+      </button>
+      {(failure ?? error?.message) && (
+        <span role="alert">{failure ?? error?.message}</span>
+      )}
+      <pre>{JSON.stringify(items)}</pre>
+    </>
+  );
 }
-```
-
-#### Read items by list GUID
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPListById } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-interface Item {
-  readonly Id: number;
-  // SharePoint's unset optional text field uses the legacy null value.
-  // eslint-disable-next-line @rushstack/no-new-null
-  readonly Title?: string | null;
-}
-type Outcome = { token: object; request: number } & (
-  | { phase: 'pending' }
-  | { phase: 'success'; items: Item[] }
-  | { phase: 'error'; message: string }
-);
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  // Mount below the matching SPFx provider, for example inside WebPartShell.
-  const [value, setValue] = React.useState('');
-  const context = useSPFxPnPContext();
-  const list = useSPFxPnPListById<Item>(value, { pageSize: 10 }, context);
-  const values: readonly unknown[] = [context.sp, context.isInitialized, list.query, value, resetRevision];
-  const boundary = React.useRef({ values, token: {} });
-  if (!values.every((item, index) => boundary.current.values[index] === item)) boundary.current = { values, token: {} };
-  const token = boundary.current.token;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const dispatch = React.useRef<{ token: object; request: number }>();
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const current = (): boolean => mounted.current && boundary.current.token === token;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setValue(''); setOutcome(undefined); list.clearError();
-  }, [resetRevision, list.clearError]);
-  const changeValue = (next: string): void => {
-    if (!current() || next === value) return;
-    // Retire retained commands before React commits, including an accepted A-B-A edit.
-    boundary.current = { ...boundary.current, token: {} };
-    sequence.current++;
-    setValue(next); setOutcome(undefined); list.clearError();
-  };
-  const run = async (): Promise<void> => {
-    if (!current() || !value.trim() || !context.isInitialized || !context.sp || dispatch.current?.token === token) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    dispatch.current = { token, request };
-    setOutcome({ token, request, phase: 'pending' });
-    list.clearError();
-    try {
-      const items = await list.query(q => q.select('Id', 'Title').orderBy('Id', false));
-      if (owns()) setOutcome({ token, request, phase: 'success', items });
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
-    }
-  };
-  const dismiss = (): void => {
-    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
-    setOutcome(undefined); list.clearError();
-  };
-  const regions: DemoRegions = {
-    controls: <Field label="List GUID"><Input aria-label="List GUID" value={value} placeholder="11111111-2222-3333-4444-555555555555" onChange={(_event, data) => changeValue(data.value)} /></Field>,
-    commands: <Button appearance="primary" disabled={!value.trim() || !context.isInitialized || visible?.phase === 'pending'} onClick={run}>Query by GUID</Button>,
-    status: <>
-      <p>Example: 11111111-2222-3333-4444-555555555555</p>
-      <p>Effective web: {context.siteUrl}; initialized: {context.isInitialized ? 'Yes' : 'No'}</p>
-      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
-      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
-      {visible?.phase === 'error' && <MessageBar intent="error"><MessageBarBody>Request error: {visible.message}</MessageBarBody><MessageBarActions><Button onClick={dismiss}>Dismiss</Button></MessageBarActions></MessageBar>}
-      <p role="status">{visible?.phase === 'pending' ? 'Loading...' : visible?.phase === 'success' ? visible.items.length ? 'Items loaded.' : 'No items loaded.' : 'Enter a list selector and request a query.'}</p>
-    </>,
-    children: visible?.phase === 'success' && visible.items.length > 0 ? <section aria-label="List items"><h4>Items ({visible.items.length}):</h4><ul>{visible.items.map(item => <li key={item.Id}>#{item.Id} - {item.Title || '(untitled)'}</li>)}</ul></section> : undefined,
-    diagnostics: <p>Reads the first 10 Id/Title rows in descending ID order from the configured web. Pass the raw GUID; the service accepts paired braces, trims surrounding whitespace and normalizes hex casing. No request runs on mount, draft changes or Reset. Selector validation is deferred until Query. Reset, target or client changes and departure invalidate this view and retained commands; dispatched reads may finish and are not canceled. This example owns its result, pending state and error separately because reset revisions are not part of the hook's service identity.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Enter a list GUID, then Query by GUID to read the first 10 items in descending ID order; target changes and reset invalidate late results.' };
 ```
 
 ### Type (6)
@@ -2511,7 +1948,7 @@ Contract: see [SPFxPnPListInfo.updateBatch](pnpjs.md#spfxpnplistinfo).
 
 ### Source (32)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts:136](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#L136)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts:145](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPListById.ts#L145)
 
 ## useSPFxPnPListByPath
 
@@ -2544,7 +1981,10 @@ import * as React from 'react';
 import { useSPFxPnPListByPath } from '@apvee/spfx-react-toolkit';
 
 function Example() {
-  const { query, items, error, loading } = useSPFxPnPListByPath<{ Id: number; Title: string }>('Lists/Tasks', { pageSize: 50 });
+  const { query, items, error, loading } = useSPFxPnPListByPath<{
+    Id: number;
+    Title: string;
+  }>('Lists/Tasks', { pageSize: 50 });
   const [failure, setFailure] = React.useState<string>();
   const run = async () => {
     setFailure(undefined);
@@ -2554,100 +1994,18 @@ function Example() {
       setFailure(failure instanceof Error ? failure.message : String(failure));
     }
   };
-  return <>
-    <button disabled={loading} onClick={() => void run()}>Load</button>
-    {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
-    <pre>{JSON.stringify(items)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={loading} onClick={() => void run()}>
+        Load
+      </button>
+      {(failure ?? error?.message) && (
+        <span role="alert">{failure ?? error?.message}</span>
+      )}
+      <pre>{JSON.stringify(items)}</pre>
+    </>
+  );
 }
-```
-
-#### Read items by decoded web-relative path
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPListByPath } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-interface Item {
-  readonly Id: number;
-  // SharePoint's unset optional text field uses the legacy null value.
-  // eslint-disable-next-line @rushstack/no-new-null
-  readonly Title?: string | null;
-}
-type Outcome = { token: object; request: number } & (
-  | { phase: 'pending' }
-  | { phase: 'success'; items: Item[] }
-  | { phase: 'error'; message: string }
-);
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  // Mount below the matching SPFx provider, for example inside WebPartShell.
-  const [value, setValue] = React.useState('');
-  const context = useSPFxPnPContext();
-  const list = useSPFxPnPListByPath<Item>(value, { pageSize: 10 }, context);
-  const values: readonly unknown[] = [context.sp, context.isInitialized, list.query, value, resetRevision];
-  const boundary = React.useRef({ values, token: {} });
-  if (!values.every((item, index) => boundary.current.values[index] === item)) boundary.current = { values, token: {} };
-  const token = boundary.current.token;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const dispatch = React.useRef<{ token: object; request: number }>();
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const current = (): boolean => mounted.current && boundary.current.token === token;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setValue(''); setOutcome(undefined); list.clearError();
-  }, [resetRevision, list.clearError]);
-  const changeValue = (next: string): void => {
-    if (!current() || next === value) return;
-    // Retire retained commands before React commits, including an accepted A-B-A edit.
-    boundary.current = { ...boundary.current, token: {} };
-    sequence.current++;
-    setValue(next); setOutcome(undefined); list.clearError();
-  };
-  const run = async (): Promise<void> => {
-    if (!current() || !value.trim() || !context.isInitialized || !context.sp || dispatch.current?.token === token) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    dispatch.current = { token, request };
-    setOutcome({ token, request, phase: 'pending' });
-    list.clearError();
-    try {
-      const items = await list.query(q => q.select('Id', 'Title').orderBy('Id', false));
-      if (owns()) setOutcome({ token, request, phase: 'success', items });
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
-    }
-  };
-  const dismiss = (): void => {
-    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
-    setOutcome(undefined); list.clearError();
-  };
-  const regions: DemoRegions = {
-    controls: <Field label="Web-relative list path"><Input aria-label="Web-relative list path" value={value} placeholder="Lists/Tasks" onChange={(_event, data) => changeValue(data.value)} /></Field>,
-    commands: <Button appearance="primary" disabled={!value.trim() || !context.isInitialized || visible?.phase === 'pending'} onClick={run}>Query by path</Button>,
-    status: <>
-      <p>Example: Lists/Tasks</p>
-      <p>Effective web: {context.siteUrl}; initialized: {context.isInitialized ? 'Yes' : 'No'}</p>
-      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
-      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
-      {visible?.phase === 'error' && <MessageBar intent="error"><MessageBarBody>Request error: {visible.message}</MessageBarBody><MessageBarActions><Button onClick={dismiss}>Dismiss</Button></MessageBarActions></MessageBar>}
-      <p role="status">{visible?.phase === 'pending' ? 'Loading...' : visible?.phase === 'success' ? visible.items.length ? 'Items loaded.' : 'No items loaded.' : 'Enter a list selector and request a query.'}</p>
-    </>,
-    children: visible?.phase === 'success' && visible.items.length > 0 ? <section aria-label="List items"><h4>Items ({visible.items.length}):</h4><ul>{visible.items.map(item => <li key={item.Id}>#{item.Id} - {item.Title || '(untitled)'}</li>)}</ul></section> : undefined,
-    diagnostics: <p>Reads the first 10 Id/Title rows in descending ID order from the configured web. Pass a decoded path without a leading slash, relative to the configured explicit HTTP(S) web base; PnP owns escaping. No request runs on mount, draft changes or Reset. Selector validation is deferred until Query. Reset, target or client changes and departure invalidate this view and retained commands; dispatched reads may finish and are not canceled. This example owns its result, pending state and error separately because reset revisions are not part of the hook's service identity.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Enter a decoded list path relative to the configured web, then Query by path to read the first 10 items in descending ID order; target changes and reset invalidate late results.' };
 ```
 
 ### Type (7)
@@ -2778,7 +2136,7 @@ Contract: see [SPFxPnPListInfo.updateBatch](pnpjs.md#spfxpnplistinfo).
 
 ### Source (33)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts:136](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#L136)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts:145](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByPath.ts#L145)
 
 ## useSPFxPnPListByUrl
 
@@ -2811,7 +2169,10 @@ import * as React from 'react';
 import { useSPFxPnPListByUrl } from '@apvee/spfx-react-toolkit';
 
 function Example() {
-  const { query, items, error, loading } = useSPFxPnPListByUrl<{ Id: number; Title: string }>('/sites/projects/Lists/Tasks', { pageSize: 50 });
+  const { query, items, error, loading } = useSPFxPnPListByUrl<{
+    Id: number;
+    Title: string;
+  }>('/sites/projects/Lists/Tasks', { pageSize: 50 });
   const [failure, setFailure] = React.useState<string>();
   const run = async () => {
     setFailure(undefined);
@@ -2821,100 +2182,18 @@ function Example() {
       setFailure(failure instanceof Error ? failure.message : String(failure));
     }
   };
-  return <>
-    <button disabled={loading} onClick={() => void run()}>Load</button>
-    {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
-    <pre>{JSON.stringify(items)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={loading} onClick={() => void run()}>
+        Load
+      </button>
+      {(failure ?? error?.message) && (
+        <span role="alert">{failure ?? error?.message}</span>
+      )}
+      <pre>{JSON.stringify(items)}</pre>
+    </>
+  );
 }
-```
-
-#### Read items by decoded server-relative URL
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPListByUrl } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-interface Item {
-  readonly Id: number;
-  // SharePoint's unset optional text field uses the legacy null value.
-  // eslint-disable-next-line @rushstack/no-new-null
-  readonly Title?: string | null;
-}
-type Outcome = { token: object; request: number } & (
-  | { phase: 'pending' }
-  | { phase: 'success'; items: Item[] }
-  | { phase: 'error'; message: string }
-);
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  // Mount below the matching SPFx provider, for example inside WebPartShell.
-  const [value, setValue] = React.useState('');
-  const context = useSPFxPnPContext();
-  const list = useSPFxPnPListByUrl<Item>(value, { pageSize: 10 }, context);
-  const values: readonly unknown[] = [context.sp, context.isInitialized, list.query, value, resetRevision];
-  const boundary = React.useRef({ values, token: {} });
-  if (!values.every((item, index) => boundary.current.values[index] === item)) boundary.current = { values, token: {} };
-  const token = boundary.current.token;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const dispatch = React.useRef<{ token: object; request: number }>();
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const current = (): boolean => mounted.current && boundary.current.token === token;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setValue(''); setOutcome(undefined); list.clearError();
-  }, [resetRevision, list.clearError]);
-  const changeValue = (next: string): void => {
-    if (!current() || next === value) return;
-    // Retire retained commands before React commits, including an accepted A-B-A edit.
-    boundary.current = { ...boundary.current, token: {} };
-    sequence.current++;
-    setValue(next); setOutcome(undefined); list.clearError();
-  };
-  const run = async (): Promise<void> => {
-    if (!current() || !value.trim() || !context.isInitialized || !context.sp || dispatch.current?.token === token) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    dispatch.current = { token, request };
-    setOutcome({ token, request, phase: 'pending' });
-    list.clearError();
-    try {
-      const items = await list.query(q => q.select('Id', 'Title').orderBy('Id', false));
-      if (owns()) setOutcome({ token, request, phase: 'success', items });
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
-    }
-  };
-  const dismiss = (): void => {
-    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
-    setOutcome(undefined); list.clearError();
-  };
-  const regions: DemoRegions = {
-    controls: <Field label="Server-relative list URL"><Input aria-label="Server-relative list URL" value={value} placeholder="/sites/projects/Lists/Tasks" onChange={(_event, data) => changeValue(data.value)} /></Field>,
-    commands: <Button appearance="primary" disabled={!value.trim() || !context.isInitialized || visible?.phase === 'pending'} onClick={run}>Query by URL</Button>,
-    status: <>
-      <p>Example: /sites/projects/Lists/Tasks</p>
-      <p>Effective web: {context.siteUrl}; initialized: {context.isInitialized ? 'Yes' : 'No'}</p>
-      {context.error && <p role="alert">Context initialization error: {context.error.message}</p>}
-      {!context.isInitialized && !context.error && <p>Context is not initialized.</p>}
-      {visible?.phase === 'error' && <MessageBar intent="error"><MessageBarBody>Request error: {visible.message}</MessageBarBody><MessageBarActions><Button onClick={dismiss}>Dismiss</Button></MessageBarActions></MessageBar>}
-      <p role="status">{visible?.phase === 'pending' ? 'Loading...' : visible?.phase === 'success' ? visible.items.length ? 'Items loaded.' : 'No items loaded.' : 'Enter a list selector and request a query.'}</p>
-    </>,
-    children: visible?.phase === 'success' && visible.items.length > 0 ? <section aria-label="List items"><h4>Items ({visible.items.length}):</h4><ul>{visible.items.map(item => <li key={item.Id}>#{item.Id} - {item.Title || '(untitled)'}</li>)}</ul></section> : undefined,
-    diagnostics: <p>Reads the first 10 Id/Title rows in descending ID order from the configured web. Pass a decoded server-relative root beginning with one slash; PnP owns escaping and the configured physical web remains unchanged. No request runs on mount, draft changes or Reset. Selector validation is deferred until Query. Reset, target or client changes and departure invalidate this view and retained commands; dispatched reads may finish and are not canceled. This example owns its result, pending state and error separately because reset revisions are not part of the hook's service identity.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Enter a decoded server-relative list URL, then Query by URL to read the first 10 items in descending ID order; target changes and reset invalidate late results.' };
 ```
 
 ### Type (8)
@@ -3045,7 +2324,7 @@ Contract: see [SPFxPnPListInfo.updateBatch](pnpjs.md#spfxpnplistinfo).
 
 ### Source (34)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts:136](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#L136)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts:145](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPListByUrl.ts#L145)
 
 ## SPFxPnPSearchInfo
 
@@ -3255,7 +2534,7 @@ Promise resolving to array of suggestion strings
 
 ### Source (35)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:454](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L454)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:462](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L462)
 
 ## SPFxPnPSearchInfo.applyRefiner
 
@@ -3329,7 +2608,7 @@ Promise resolving when filtered search is complete
 
 ### Source (36)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:609](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L609)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:617](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L617)
 
 ## SPFxPnPSearchInfo.clearError
 
@@ -3349,7 +2628,7 @@ No value; initialization/context errors remain separate.
 
 ### Source (37)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:615](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L615)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:623](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L623)
 
 ## SPFxPnPSearchInfo.loadMore
 
@@ -3381,7 +2660,7 @@ New page.
 
 ### Source (38)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:549](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L549)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:557](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L557)
 
 ## SPFxPnPSearchInfo.refetch
 
@@ -3409,7 +2688,7 @@ Resolves after search success.
 
 ### Source (39)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:556](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L556)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:564](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L564)
 
 ## SPFxPnPSearchInfo.search
 
@@ -3450,7 +2729,7 @@ New result page even for obsolete completions.
 
 ### Source (40)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:462](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L462)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:470](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L470)
 
 ## SPFxPnPSearchInfo.search.options
 
@@ -3466,7 +2745,7 @@ Source-owned support type; no public named import.
 
 ### Source (41)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:464](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L464)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:472](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L472)
 
 ## SPFxPnPSearchInfo.suggest
 
@@ -3528,7 +2807,7 @@ Promise resolving to array of suggestion strings
 
 ### Source (42)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:507](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L507)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:515](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L515)
 
 ## SearchQueryBuilderFn
 
@@ -3648,7 +2927,7 @@ function Example() {
 
 ### Source (44)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:408](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L408)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:416](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L416)
 
 ## SearchRefiner.entries
 
@@ -3666,7 +2945,7 @@ Source-owned support type; no public named import.
 
 ### Source (45)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:417](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L417)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:425](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L425)
 
 ## SearchResult
 
@@ -3714,7 +2993,7 @@ interface SearchResult<T = Record<string, string>>
 
 ### Source (46)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:353](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L353)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:361](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L361)
 
 ## SearchVerticals
 
@@ -3749,129 +3028,25 @@ function PeopleSearch() {
   const findPeople = async () => {
     setFailure(undefined);
     try {
-      setPeople(await search(builder => builder.text('john').sourceId(SearchVerticals.People)));
+      setPeople(
+        await search(builder => builder.text('john').sourceId(SearchVerticals.People))
+      );
     } catch (failure) {
       setFailure(failure instanceof Error ? failure.message : String(failure));
     }
   };
-  return <>
-    <button disabled={loading} onClick={() => void findPeople()}>Find people</button>
-    {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
-    <pre>{JSON.stringify(people)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={loading} onClick={() => void findPeople()}>
+        Find people
+      </button>
+      {(failure ?? error?.message) && (
+        <span role="alert">{failure ?? error?.message}</span>
+      )}
+      <pre>{JSON.stringify(people)}</pre>
+    </>
+  );
 }
-```
-
-#### Search selected verticals with builder paging
-
-```tsx
-import * as React from 'react';
-import { Button, Link, makeStyles } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPSearch, SearchVerticals } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Item = { Title?: string; Path?: string; Author?: string; LastModifiedTime?: string };
-type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
-const choices = { All: SearchVerticals.All, Documents: SearchVerticals.Documents, Pages: SearchVerticals.Pages, People: SearchVerticals.People, Videos: SearchVerticals.Videos } as const;
-const useStyles = makeStyles({ controls: { display: 'flex', flexWrap: 'wrap', gap: '8px' }, results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } } });
-
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const classes = useStyles();
-  const context = useSPFxPnPContext();
-  const [vertical, setVertical] = React.useState<keyof typeof choices>('All');
-  const info = useSPFxPnPSearch<Item>({ pageSize: 5, selectProperties: ['Title', 'Path', 'Author', 'LastModifiedTime', 'FileType'] }, context);
-  // Only stable operation/client identities own this session, never the changing info object.
-  const values: readonly unknown[] = [info.search, info.loadMore, context.sp, resetRevision];
-  const boundary = React.useRef({ values, token: {}, version: 0, page: 0 });
-  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0, page: 0 };
-  const session = boundary.current;
-  const token = session.token;
-  const version = session.version;
-  const pageVersion = session.page;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const dispatch = React.useRef<{ token: object; request: number; version: number }>();
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const [published, setPublished] = React.useState<{ token: object; version: number }>();
-  const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  const showResults = current() && published?.token === token && published.version === version;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setOutcome(undefined);
-    setPublished(undefined);
-    setVertical('All');
-  }, [resetRevision]);
-  const invalidate = (): void => {
-    session.version++;
-    session.page++;
-    sequence.current++;
-    setOutcome(undefined);
-    setPublished(undefined);
-  };
-  const choose = (next: keyof typeof choices): void => {
-    if (!current() || next === vertical) return;
-    invalidate();
-    setVertical(next);
-  };
-  const run = async (query: string, append = false): Promise<void> => {
-    if (!current() || !context.isInitialized || !query.trim() || (dispatch.current?.token === token && dispatch.current.version === version)) return;
-    if (append && (!showResults || !info.hasMore || session.page !== pageVersion)) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    dispatch.current = { token, request, version };
-    session.page++;
-    setOutcome({ token, phase: 'pending' });
-    if (!append) setPublished(undefined);
-    try {
-      if (append) await info.loadMore();
-      else await info.search(builder => {
-        const configured = builder.text(query).sortList({ Property: 'LastModifiedTime', Direction: 1 });
-        const sourceId = choices[vertical];
-        return sourceId === undefined ? configured : configured.sourceId(sourceId);
-      });
-      if (owns()) {
-        setPublished({ token, version });
-        setOutcome({ token, phase: 'success' });
-      }
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
-    }
-  };
-  const dismiss = (): void => {
-    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
-    info.clearError();
-    setOutcome(undefined);
-  };
-  const pending = visible?.phase === 'pending';
-  const regions: DemoRegions = {
-    controls: <div className={classes.controls}>{(Object.keys(choices) as Array<keyof typeof choices>).map(value => <Button key={value} appearance={vertical === value ? 'primary' : 'secondary'} onClick={() => choose(value)}>{value}</Button>)}</div>,
-    commands: <><Button disabled={!context.isInitialized || pending} onClick={() => run('*')}>Search All</Button><Button disabled={!context.isInitialized || pending} onClick={() => run('filetype:docx OR filetype:pdf')}>Search Documents</Button></>,
-    status: <>
-      {context.error && <p role="alert">Client initialization error: {context.error.message}</p>}
-      {visible?.phase === 'error' && <div role="alert">{visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}
-      <p role="status">{pending ? 'Loading...' : showResults ? 'Search complete.' : 'Run the selected search.'}</p>
-    </>,
-    children: showResults ? <>
-      <p>Found {info.totalResults} result{info.totalResults === 1 ? '' : 's'} in &quot;{vertical}&quot;</p>
-      <div className={classes.results}>{info.results.map(result => <article key={result.id}>
-        <h3>{result.data.Title || '(No Title)'}</h3>
-        <p>{result.data.Author} - {result.data.LastModifiedTime ? new Date(result.data.LastModifiedTime).toLocaleDateString() : 'N/A'}</p>
-        {result.data.Path?.trim() ? <Link href={result.data.Path} target="_blank" rel="noopener noreferrer">{result.data.Path}</Link> : undefined}
-      </article>)}</div>
-      {info.hasMore && <Button disabled={pending} onClick={() => run('*', true)}>{pending ? 'Loading...' : 'Load More'}</Button>}
-    </> : undefined,
-    diagnostics: <p>Builder API with five vertical choices, LastModifiedTime sort and five-row paging. Mount below the matching SPFx provider. Select a vertical, then explicitly search. Paging retains the executed builder/source. Selection and reset hide obsolete work without canceling dispatched requests. Server permissions and indexing determine results; Sites and Conversations are not exercised here.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Choose a vertical, explicitly run Search All or Search Documents, and load additional results from that same source; selection and reset send no query and hide obsolete work.' };
 ```
 
 ### Type (12)
@@ -3894,7 +3069,7 @@ SearchVerticals: { readonly All: undefined; readonly People: "b09a7990-05ea-4af9
 
 ### Source (47)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:193](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L193)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:201](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L201)
 
 ## SearchVerticals.All
 
@@ -3921,7 +3096,7 @@ SearchVerticals.All: undefined
 
 ### Source (48)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:197](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L197)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:205](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L205)
 
 ## SearchVerticals.Conversations
 
@@ -3948,7 +3123,7 @@ SearchVerticals.Conversations: "6e71030e-5e16-4406-9bff-9c1829843083"
 
 ### Source (49)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:222](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L222)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:230](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L230)
 
 ## SearchVerticals.Documents
 
@@ -3975,7 +3150,7 @@ SearchVerticals.Documents: "8413cd39-2156-4e00-b54d-11efd9abdb89"
 
 ### Source (50)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:217](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L217)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:225](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L225)
 
 ## SearchVerticals.Pages
 
@@ -4002,7 +3177,7 @@ SearchVerticals.Pages: "5e34578e-4d68-4783-8c79-1f07d10bed4f"
 
 ### Source (51)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:227](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L227)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:235](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L235)
 
 ## SearchVerticals.People
 
@@ -4029,7 +3204,7 @@ SearchVerticals.People: "b09a7990-05ea-4af9-81ef-edfab16c4e31"
 
 ### Source (52)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:202](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L202)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:210](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L210)
 
 ## SearchVerticals.Sites
 
@@ -4056,7 +3231,7 @@ SearchVerticals.Sites: "e1327b9c-2b8c-4b23-99c9-3730cb29c3f7"
 
 ### Source (53)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:212](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L212)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:220](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L220)
 
 ## SearchVerticals.Videos
 
@@ -4083,7 +3258,7 @@ SearchVerticals.Videos: "38403c8c-3975-41a8-826e-717f2d41568a"
 
 ### Source (54)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:207](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L207)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:215](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L215)
 
 ## UseSPFxPnPSearchOptions
 
@@ -4207,7 +3382,7 @@ function Example() {
 
 ### Source (55)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:245](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L245)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:253](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L253)
 
 ## useSPFxPnPSearch
 
@@ -4237,7 +3412,10 @@ import * as React from 'react';
 import { useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
 
 function SearchDocuments() {
-  const search = useSPFxPnPSearch<{ Title: string }>({ pageSize: 25, refiners: 'FileType' });
+  const search = useSPFxPnPSearch<{ Title: string }>({
+    pageSize: 25,
+    refiners: 'FileType'
+  });
   const [documents, setDocuments] = React.useState<unknown>();
   const [failure, setFailure] = React.useState<string>();
   const findDocuments = async () => {
@@ -4248,11 +3426,17 @@ function SearchDocuments() {
       setFailure(failure instanceof Error ? failure.message : String(failure));
     }
   };
-  return <>
-    <button disabled={search.loading} onClick={() => void findDocuments()}>Search</button>
-    {(failure ?? search.error?.message) && <span role="alert">{failure ?? search.error?.message}</span>}
-    <pre>{JSON.stringify(documents)}</pre>
-  </>;
+  return (
+    <>
+      <button disabled={search.loading} onClick={() => void findDocuments()}>
+        Search
+      </button>
+      {(failure ?? search.error?.message) && (
+        <span role="alert">{failure ?? search.error?.message}</span>
+      )}
+      <pre>{JSON.stringify(documents)}</pre>
+    </>
+  );
 }
 ```
 
@@ -4271,295 +3455,6 @@ function DocumentSearch() {
     <ul>{state.results.map(result => <li key={result.id}>{result.data.Title}</li>)}</ul>
   </div>;
 }
-```
-
-#### Search SharePoint text with explicit execution
-
-```tsx
-import * as React from 'react';
-import { Button, Input, Link, makeStyles } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Item = { Title?: string; Path?: string; FileType?: string };
-type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
-const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } } });
-
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const classes = useStyles();
-  const context = useSPFxPnPContext();
-  const [text, setText] = React.useState('');
-  const info = useSPFxPnPSearch<Item>({ pageSize: 10 }, context);
-  // Only stable operation/client identities own this session, never the changing info object.
-  const values: readonly unknown[] = [info.search, context.sp, resetRevision];
-  const boundary = React.useRef({ values, token: {}, version: 0 });
-  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0 };
-  const session = boundary.current;
-  const token = session.token;
-  const version = session.version;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const dispatch = React.useRef<{ token: object; request: number; version: number }>();
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const [published, setPublished] = React.useState<{ token: object; version: number }>();
-  const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  const showResults = current() && published?.token === token && published.version === version;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setOutcome(undefined);
-    setPublished(undefined);
-    setText('');
-  }, [resetRevision]);
-  const invalidate = (): void => {
-    session.version++;
-    sequence.current++;
-    setOutcome(undefined);
-    setPublished(undefined);
-  };
-  const edit = (next: string): void => {
-    if (!current() || next === text) return;
-    invalidate();
-    setText(next);
-  };
-  const run = async (query: string): Promise<void> => {
-    if (!current() || !context.isInitialized || !query.trim() || (dispatch.current?.token === token && dispatch.current.version === version)) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    dispatch.current = { token, request, version };
-    setOutcome({ token, phase: 'pending' });
-    setPublished(undefined);
-    try {
-      await info.search(query);
-      if (owns()) {
-        setPublished({ token, version });
-        setOutcome({ token, phase: 'success' });
-      }
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
-    }
-  };
-  const dismiss = (): void => {
-    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
-    info.clearError();
-    setOutcome(undefined);
-  };
-  const pending = visible?.phase === 'pending';
-  const regions: DemoRegions = {
-    controls: <Input aria-label="Search SharePoint..." placeholder="Search SharePoint..." value={text} onChange={(_, data) => edit(data.value)} onKeyDown={event => { if (event.key === 'Enter') return run(text); return undefined; }} />,
-    commands: <Button disabled={!context.isInitialized || !text.trim() || pending} onClick={() => run(text)}>Search</Button>,
-    status: <>
-      {context.error && <p role="alert">Client initialization error: {context.error.message}</p>}
-      {visible?.phase === 'error' && <div role="alert">{visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}
-      <p role="status">{pending ? 'Loading...' : showResults ? 'Search complete.' : 'Run the selected search.'}</p>
-    </>,
-    children: showResults ? <>
-      <p>Found {info.totalResults} result{info.totalResults === 1 ? '' : 's'}</p>
-      <div className={classes.results}>{info.results.map(result => <article key={result.id}>
-        <h3>{result.data.Title || '(No Title)'}</h3>
-        {result.data.Path?.trim() ? <Link href={result.data.Path} target="_blank" rel="noopener noreferrer">{result.data.Path}</Link> : undefined}
-        {result.data.FileType && <p>Type: {result.data.FileType}</p>}
-      </article>)}</div>
-      {info.totalResults === 0 && <p>No results found. Try a different query.</p>}
-    </> : undefined,
-    diagnostics: <p>Simple text search. Try: document, report, ContentType:Document. Mount below the matching SPFx provider. Only Search or Enter sends nonempty text; the original nonempty KQL is preserved. Editing/reset hides obsolete work without canceling dispatched requests. Server permissions and indexing determine results.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Search or Enter runs the current nonempty text, shows its results or dismissible error, and reset or draft changes hide obsolete work without sending another query.' };
-```
-
-#### Filter search results with native refiner tokens
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Label, Link, Select, makeStyles } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Item = { Title?: string; Path?: string; FileType?: string; Author?: string };
-type Outcome = { token: object; phase: 'pending' | 'success' } | { token: object; request: number; phase: 'error'; message: string };
-const useStyles = makeStyles({ results: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', minWidth: 0, maxWidth: '100%', gap: '12px', overflowWrap: 'anywhere', '& > article': { minWidth: 0, maxWidth: '100%' } }, facets: { display: 'grid', gap: '8px' } });
-
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const classes = useStyles();
-  const context = useSPFxPnPContext();
-  const [operator, setOperator] = React.useState<'or' | 'and'>('or');
-  const info = useSPFxPnPSearch<Item>({ pageSize: 10, selectProperties: ['Title', 'Path', 'FileType', 'Author'], refiners: 'FileType,DisplayAuthor,Size,Write', refinerOperator: operator }, context);
-  // Results/loading change on every operation; only stable methods/client/options own the boundary.
-  const values: readonly unknown[] = [info.search, info.applyRefiner, context.sp, operator, resetRevision];
-  const boundary = React.useRef({ values, token: {}, version: 0 });
-  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0 };
-  const session = boundary.current;
-  const token = session.token;
-  const version = session.version;
-  const mounted = React.useRef(false);
-  const sequence = React.useRef(0);
-  const dispatch = React.useRef<{ token: object; request: number; version: number }>();
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const [published, setPublished] = React.useState<{ token: object; version: number; request: number }>();
-  const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
-  const visible = current() && outcome?.token === token ? outcome : undefined;
-  const showResults = current() && published?.token === token && published.version === version;
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; sequence.current++; }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    if (revision.current === resetRevision) return;
-    revision.current = resetRevision;
-    sequence.current++;
-    setOutcome(undefined);
-    setPublished(undefined);
-    setOperator('or');
-  }, [resetRevision]);
-  const chooseOperator = (next: 'or' | 'and'): void => {
-    if (!current() || next === operator) return;
-    session.version++;
-    sequence.current++;
-    setOutcome(undefined);
-    setPublished(undefined);
-    setOperator(next);
-  };
-  const run = async (facet?: { name: string; token: string }): Promise<void> => {
-    if (!current() || !context.isInitialized || (dispatch.current?.token === token && dispatch.current.version === version)) return;
-    if (facet && (!facet.token || !showResults || published?.request !== sequence.current)) return;
-    const request = ++sequence.current;
-    const owns = (): boolean => current() && sequence.current === request;
-    dispatch.current = { token, request, version };
-    setOutcome({ token, phase: 'pending' });
-    setPublished(undefined);
-    try {
-      // applyRefiner returns Promise<void>; display the real hook state only after current completion.
-      if (facet) await info.applyRefiner(facet.name, facet.token);
-      else await info.search('*');
-      if (owns()) {
-        setPublished({ token, version, request });
-        setOutcome({ token, phase: 'success' });
-      }
-    } catch (error) {
-      if (owns()) setOutcome({ token, request, phase: 'error', message: error instanceof Error ? error.message : String(error) });
-    } finally {
-      if (owns() && dispatch.current?.token === token && dispatch.current.request === request) dispatch.current = undefined;
-    }
-  };
-  const dismiss = (): void => {
-    if (!current() || visible?.phase !== 'error' || visible.request !== sequence.current) return;
-    info.clearError();
-    setOutcome(undefined);
-  };
-  const pending = visible?.phase === 'pending';
-  const regions: DemoRegions = {
-    controls: <><Field label="Match values within each facet"><Select aria-label="Match values within each facet" value={operator} onChange={event => chooseOperator(event.target.value === 'or' ? 'or' : 'and')}><option value="or">Any selected value (OR)</option><option value="and">All selected values (AND)</option></Select></Field><Label>Different facets combine with AND. Changing this choice resets the search.</Label></>,
-    commands: <Button disabled={!context.isInitialized || pending} onClick={() => run()}>Search All Content</Button>,
-    status: <>{context.error && <p role="alert">Client initialization error: {context.error.message}</p>}{visible?.phase === 'error' && <div role="alert">{visible.message} <Button onClick={dismiss}>Dismiss</Button></div>}<p role="status">{pending ? 'Loading...' : showResults ? 'Search complete.' : 'Click "Search All Content" to see results.'}</p></>,
-    children: showResults ? <><p>Found {info.totalResults} results</p><div className={classes.facets}>{info.refiners.map(refiner => <section key={refiner.name}><h3>{refiner.name}</h3>{refiner.entries.slice(0, 5).map((entry, index) => <Button key={JSON.stringify([refiner.name, entry.token, entry.value, index])} disabled={pending || !entry.token} onClick={() => run({ name: refiner.name, token: entry.token })}>{`${entry.value} (${entry.count})`}</Button>)}</section>)}</div><div className={classes.results}>{info.results.map(result => <article key={result.id}><h3>{result.data.Title || '(No Title)'}</h3><p>{result.data.FileType} | {result.data.Author}</p>{result.data.Path?.trim() ? <Link href={result.data.Path} target="_blank" rel="noopener noreferrer">{result.data.Path}</Link> : undefined}</article>)}</div>{info.totalResults === 0 && <p>No results found. Try a different query.</p>}</> : undefined,
-    diagnostics: <p>Faceted search with FileType, DisplayAuthor, Size and Write refiners. Click to filter/toggle. Mount below the matching SPFx provider with Fluent and Griffel peers. Native tokens, including ranges, are passed unchanged. Search clears filters; changing OR/AND or resetting only hides obsolete work. Dispatched requests may still settle. Server permissions and indexing determine results.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Run Search All Content, toggle native refiner tokens, and change OR or AND to reset the view without sending a query.' };
-```
-
-#### Request debounced suggestions after explicit start
-
-```tsx
-import * as React from 'react';
-import { Button, Field, Input, makeStyles } from '@fluentui/react-components';
-import { useSPFxPnPContext, useSPFxPnPSearch } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Outcome = { token: object; version: number; phase: 'pending' } | { token: object; version: number; phase: 'ready'; suggestions: string[] } | { token: object; version: number; phase: 'error'; message: string };
-const useStyles = makeStyles({ suggestions: { display: 'grid', gap: '8px' } });
-
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const classes = useStyles();
-  const context = useSPFxPnPContext();
-  const { suggest } = useSPFxPnPSearch(undefined, context);
-  const [draft, setDraft] = React.useState({ raw: '', armed: false });
-  const [outcome, setOutcome] = React.useState<Outcome>();
-  const values: readonly unknown[] = [suggest, context.sp, resetRevision];
-  const boundary = React.useRef({ values, token: {}, version: 0, raw: '', armed: false });
-  if (!values.every((value, index) => boundary.current.values[index] === value)) boundary.current = { values, token: {}, version: 0, raw: draft.raw, armed: false };
-  const session = boundary.current;
-  const token = session.token;
-  const version = session.version;
-  const mounted = React.useRef(false);
-  const timer = React.useRef<ReturnType<typeof setTimeout>>();
-  const current = (): boolean => mounted.current && boundary.current === session && session.version === version;
-  const cancelTimer = (): void => { if (timer.current !== undefined) { clearTimeout(timer.current); timer.current = undefined; } };
-  React.useLayoutEffect(() => { mounted.current = true; return () => { mounted.current = false; session.armed = false; session.version++; cancelTimer(); }; }, []);
-  const revision = React.useRef(resetRevision);
-  React.useLayoutEffect(() => {
-    cancelTimer();
-    if (revision.current !== resetRevision) { revision.current = resetRevision; session.raw = ''; }
-    session.armed = false;
-    setDraft({ raw: session.raw, armed: false });
-    setOutcome(undefined);
-  }, [suggest, context.sp, resetRevision]);
-  const retire = (): number => { session.version++; cancelTimer(); setOutcome(undefined); return session.version; };
-  const schedule = (acceptedVersion: number): void => {
-    if (!session.armed || session.raw.length < 2) return;
-    const raw = session.raw;
-    const method = suggest;
-    const owns = (): boolean => mounted.current && boundary.current === session && session.version === acceptedVersion && session.armed && session.raw === raw && boundary.current.values[0] === method;
-    setOutcome({ token, version: acceptedVersion, phase: 'pending' });
-    timer.current = setTimeout(() => {
-      if (!owns()) return;
-      timer.current = undefined;
-      const request = async (): Promise<void> => {
-        try {
-          const suggestions = await method(raw);
-          if (owns()) setOutcome({ token, version: acceptedVersion, phase: 'ready', suggestions });
-        } catch (error) {
-          if (owns()) setOutcome({ token, version: acceptedVersion, phase: 'error', message: error instanceof Error && error.message ? error.message : 'The suggestion request failed.' });
-        }
-      };
-      return request();
-    }, 300);
-  };
-  const edit = (raw: string): void => {
-    if (!current() || raw === session.raw) return;
-    // Accept raw text and revoke old work before publishing React state, including A -> B -> A.
-    session.raw = raw;
-    const acceptedVersion = retire();
-    setDraft({ raw, armed: session.armed });
-    schedule(acceptedVersion);
-  };
-  const start = (): void => {
-    if (!current() || session.armed || !context.isInitialized) return;
-    const acceptedVersion = retire();
-    session.armed = true;
-    setDraft({ raw: session.raw, armed: true });
-    schedule(acceptedVersion);
-  };
-  const stop = (): void => {
-    if (!current()) return;
-    retire();
-    session.armed = false;
-    setDraft({ raw: session.raw, armed: false });
-  };
-  const visible = current() && outcome?.token === token && outcome.version === version ? outcome : undefined;
-  const select = (suggestion: string): void => {
-    if (!current() || visible?.phase !== 'ready' || !visible.suggestions.includes(suggestion)) return;
-    retire();
-    session.raw = suggestion;
-    setDraft({ raw: suggestion, armed: session.armed });
-  };
-  const regions: DemoRegions = {
-    controls: <Field label="Search with Autocomplete"><Input aria-label="Search with Autocomplete" placeholder="Type at least 2 characters..." value={draft.raw} onChange={(_, data) => edit(data.value)} /></Field>,
-    commands: <><Button disabled={!context.isInitialized} onClick={start}>Start suggestions</Button><Button onClick={stop}>Stop suggestions</Button></>,
-    status: <>{context.error && <p role="alert">Client initialization error: {context.error.message}</p>}{visible?.phase === 'pending' && <p role="status">Loading suggestions...</p>}{visible?.phase === 'error' && <div role="alert">Could not load suggestions. {visible.message} Edit the search text to try again.</div>}{!visible && <p role="status">{draft.armed ? 'Edit the search text for suggestions.' : 'Start suggestions to enable autocomplete.'}</p>}</>,
-    children: visible?.phase === 'ready' ? visible.suggestions.length > 0 ? <div className={classes.suggestions}>{visible.suggestions.map((suggestion, index) => <Button key={JSON.stringify([suggestion, index])} onClick={() => select(suggestion)}>{suggestion}</Button>)}</div> : <p>No suggestions available for this text. SharePoint query suggestions depend on search history and tenant configuration. Indexed documents alone do not guarantee suggestions.</p> : undefined,
-    diagnostics: <p>Mount below the matching SPFx provider with Fluent and Griffel peers. Start explicitly arms 300 ms suggestions for raw text of at least two characters. Stop retains the draft; reset empties it. Selection changes text without another request. Only local timers are canceled: dispatched requests may still settle. SharePoint permissions, query history and tenant configuration determine suggestions.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start suggestions to debounce edits for 300 ms and show only the current response; Stop or reset returns to idle, and choosing a suggestion changes the text without another request.' };
 ```
 
 ### Type (20)
@@ -4659,4 +3554,4 @@ Contract: see [SPFxPnPSearchInfo.suggest](pnpjs.md#spfxpnpsearchinfo).
 
 ### Source (56)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:958](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L958)
+[packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts:975](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxPnPSearch.ts#L975)

@@ -19,9 +19,16 @@ import type { DataGridSuite } from './data-grid.types';
  * ```tsx
  * import * as React from 'react';
  * import { createDataGrid } from '@apvee/spfx-react-toolkit';
- * const Projects = createDataGrid<{ id:number; title:string }>();
- * const columns = Projects.defineColumns(c => [c.text({ id:'title', header:'Title', field:'title' })]);
- * <Projects items={[{ id:1, title:'Plan' }]} getRowId={row => row.id} columns={columns} />;
+ *
+ * const Projects = createDataGrid<{ id: number; title: string }>();
+ * const columns = Projects.defineColumns(c => [
+ *   c.text({ id: 'title', header: 'Title', field: 'title' })
+ * ]);
+ * <Projects
+ *   items={[{ id: 1, title: 'Plan' }]}
+ *   getRowId={row => row.id}
+ *   columns={columns}
+ * />;
  * ```
  *
  * Executable examples mount beneath the host FluentProvider/theme and shared Griffel
@@ -31,7 +38,7 @@ import type { DataGridSuite } from './data-grid.types';
  * changes restore the baseline while preserving Demo identity. Selecting another
  * scenario mounts that scenario's baseline. All changes are local consumer state.
  *
- * @example Explore typed document columns and controlled interaction
+ * @scenario Explore typed document columns and controlled interaction
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, Select, FluentProvider, makeStyles } from '@fluentui/react-components';
@@ -215,7 +222,7 @@ import type { DataGridSuite } from './data-grid.types';
  * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Switch all five column presets, apply controlled sort intent, select stable row IDs, activate rows and actions, then inspect native slots, Charts and retained custom state.' };
  * ```
  *
- * @example Supply descriptor columns with explicit sort and row order
+ * @scenario Supply descriptor columns with explicit sort and row order
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, Select, FluentProvider, makeStyles } from '@fluentui/react-components';

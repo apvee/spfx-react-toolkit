@@ -20,13 +20,18 @@ import { PickerRenderer } from './picker-renderer.internal';
  * ```tsx
  * import * as React from 'react';
  * import { ListPicker } from '@apvee/spfx-react-toolkit';
- * <ListPicker label="Lista" baseTemplate={[100,101]} onOptionSelect={(_,data) => console.log(data.selectedValues)} />
+ *
+ * <ListPicker
+ *   label="Lista"
+ *   baseTemplate={[100, 101]}
+ *   onOptionSelect={(_, data) => console.log(data.selectedValues)}
+ * />;
  * ```
  *
  * @useWhen A user must select lists from a known or current SharePoint web.
  * @avoidWhen Use SitePicker first when the source web itself must be selected.
  *
- * @example Explore list catalogs and independent consumer choices
+ * @scenario Explore list catalogs and independent consumer choices
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

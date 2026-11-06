@@ -110,7 +110,7 @@ export interface SPFxSiteInfo {
  *
  * @useWhen UI needs current web/site identifiers and optional group metadata without I/O.
  *
- * @example Inspect the current web and site collection
+ * @scenario Inspect the current web and site collection
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';

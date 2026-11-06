@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { responsive, foreground, hover } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = responsive.small(hover(foreground.subtle));
  * ```
  *
- * @example Resize a named container at each breakpoint — inclusive small/medium/large with a real ancestor
+ * @scenario Resize a named container at each breakpoint — inclusive small/medium/large with a real ancestor
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

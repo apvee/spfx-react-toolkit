@@ -90,90 +90,6 @@ function HubLink() {
 }
 ```
 
-#### Start a scope bound hub association lookup
-
-```tsx
-import * as React from 'react';
-import { Button } from '@fluentui/react-components';
-import { SPHttpClient } from '@microsoft/sp-http';
-import { useSPFxContext, useSPFxPageContext, useSPFxServiceScope, useSPFxHubSiteInfo } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type Run = { id: number; revision: number; scope: readonly unknown[] };
-function sameScope(a: readonly unknown[], b: readonly unknown[]): boolean {
-  return a.length === b.length && a.every((value, index) => Object.is(value, b[index]));
-}
-function useLookupScope(): readonly unknown[] {
-  const provider = useSPFxContext();
-  const page = useSPFxPageContext();
-  const scope = useSPFxServiceScope();
-  let client: SPHttpClient | undefined;
-  try { client = scope.consume(SPHttpClient.serviceKey); } catch { client = undefined; }
-  const raw: unknown = page.legacyPageContext;
-  const legacy = typeof raw === 'object' && raw !== null ? raw as Record<string, unknown> : undefined;
-  const metadata = page as unknown as { webAbsoluteUrl?: unknown };
-  return [provider, provider.spfxContext, provider.kind, provider.instanceId, provider.spfxContext.instanceId,
-    page, scope.serviceScope, scope.serviceScope?.consume, client,
-    page.web.absoluteUrl, page.user.loginName, page.user.email,
-    typeof legacy?.hubSiteId === 'string' ? legacy.hubSiteId : undefined,
-    typeof legacy?.isHubSite === 'boolean' ? legacy.isHubSite : undefined,
-    typeof metadata.webAbsoluteUrl === 'string' ? metadata.webAbsoluteUrl : undefined];
-}
-function HubResult({ run, retire }: { run: Run; retire: (id: number) => void }): React.ReactElement {
-  const scope = useLookupScope();
-  const hub = useSPFxHubSiteInfo();
-  const current = sameScope(run.scope, scope);
-  React.useEffect(() => { if (!current) retire(run.id); }, [current, retire, run.id]);
-  // Check again on the child's own completion render: the parent may not render.
-  if (!current) return <p>Scope changed. Start a new lookup.</p>;
-  return <section aria-label="Hub lookup result">
-    <p>Applied web: {String(run.scope[9])}</p>
-    {hub.error ? <p role="alert">Error: {hub.error.message}</p>
-      : !hub.isHubSite ? <p>No hub association</p>
-      : hub.isLoading ? <p>Loading hub URL</p>
-      : hub.hubSiteUrl ? <p>Hub URL: {hub.hubSiteUrl}</p>
-      : <p>Hub URL not available yet</p>}
-    <p>Associated: {String(hub.isHubSite)}; Hub ID: {hub.hubSiteId ?? 'Unavailable'}</p>
-  </section>;
-}
-export function Demo({ render, resetRevision = 0 }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const scope = useLookupScope();
-  const [state, setState] = React.useState<{ run?: Run; expired: boolean }>({ expired: false });
-  const sequence = React.useRef(0);
-  const previous = React.useRef(resetRevision);
-  const alive = React.useRef(true);
-  const latest = React.useRef({ scope, revision: resetRevision });
-  latest.current = { scope, revision: resetRevision };
-  React.useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
-  React.useEffect(() => {
-    if (previous.current !== resetRevision) { previous.current = resetRevision; setState({ expired: false }); }
-  }, [resetRevision]);
-  const retire = React.useCallback((id: number) => {
-    if (alive.current) setState(previous => previous.run?.id === id ? { expired: true } : previous);
-  }, []);
-  const run = state.run;
-  const current = run !== undefined && run.revision === resetRevision && sameScope(run.scope, scope);
-  React.useEffect(() => {
-    if (run && !current) {
-      if (run.revision !== resetRevision) setState(previous => previous.run?.id === run.id ? { expired: false } : previous);
-      else retire(run.id);
-    }
-  }, [run, current, resetRevision, retire]);
-  const start = (): void => {
-    if (!alive.current || latest.current.revision !== resetRevision || !sameScope(scope, latest.current.scope)) return;
-    setState({ run: { id: ++sequence.current, revision: resetRevision, scope: scope.slice() }, expired: false });
-  };
-  const regions: DemoRegions = {
-    commands: <Button onClick={start}>Start / repeat lookup</Button>,
-    children: current && run ? <HubResult key={run.id} run={run} retire={retire} />
-      : <p>{state.expired || (run && run.revision === resetRevision) ? 'Scope changed. Start a new lookup.' : 'Idle. Start a hub lookup.'}</p>,
-    diagnostics: <p>Start gates the first query. Native refresh after Start and requests already sent can still run after scope change or reset; this example hides obsolete results and does not cancel requests. Mutable native metadata is checked when React renders.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start the native hub lookup, compare association, URL and failure, then repeat or reset without displaying a result from a former host scope.' };
-```
-
 ### Signatures
 
 ```ts
@@ -273,31 +189,6 @@ function ListLabel() {
   const list = useSPFxListInfo();
   return <span>{list?.title ?? 'No list context'}</span>;
 }
-```
-
-#### Inspect the optional current list context
-
-```tsx
-import * as React from 'react';
-import { useSPFxListInfo } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxListInfo();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxListInfo result">
-        <dt>List context</dt><dd>{info ? 'Available' : 'No list context'}</dd>
-        <dt>List ID</dt><dd>{info?.id ?? 'Unavailable'}</dd>
-        <dt>List title</dt><dd>{info?.title ?? 'Unavailable'}</dd>
-        <dt>List URL</dt><dd>{info?.serverRelativeUrl || 'Unavailable'}</dd>
-        <dt>Template</dt><dd>{info?.baseTemplate === undefined ? 'Unavailable' : String(info.baseTemplate)}</dd>
-        <dt>Document library</dt><dd>{String(info?.isDocumentLibrary ?? false)}</dd>
-      </dl>,
-    diagnostics: <p>No list ID means no list context. Missing title becomes Unknown List, URL becomes empty, and template 101 alone identifies a library. No list request is issued.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ListInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (2)
@@ -456,33 +347,6 @@ function SiteLabel() {
 }
 ```
 
-#### Inspect the current web and site collection
-
-```tsx
-import * as React from 'react';
-import { useSPFxSiteInfo } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxSiteInfo();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxSiteInfo result">
-        <dt>Web title</dt><dd>{info.title}</dd>
-        <dt>Web URL</dt><dd>{info.webUrl}</dd>
-        <dt>Site URL</dt><dd>{info.siteUrl}</dd>
-        <dt>Web ID</dt><dd>{info.webId}</dd>
-        <dt>Site ID</dt><dd>{info.siteId}</dd>
-        <dt>Classification</dt><dd>{info.siteClassification ?? 'Unavailable'}</dd>
-        <dt>Group</dt><dd>{info.siteGroup?.id ?? 'Unavailable'}</dd>
-        <dt>Logo available</dt><dd>{String(Boolean(info.logoUrl))}</dd>
-      </dl>,
-    diagnostics: <p>Optional classification, group and logo metadata depend on the native host.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual SiteInfo values and explicit unavailable fields as the native host changes.' };
-```
-
 ### Signatures (3)
 
 ```ts
@@ -587,29 +451,6 @@ function UserLabel() {
   const { displayName } = useSPFxUserInfo();
   return <span>{displayName}</span>;
 }
-```
-
-#### Inspect the current user display metadata
-
-```tsx
-import * as React from 'react';
-import { useSPFxUserInfo } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxUserInfo();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxUserInfo result">
-        <dt>User</dt><dd>{info.displayName}</dd>
-        <dt>Email</dt><dd>{info.email ?? 'Unavailable'}</dd>
-        <dt>External user</dt><dd>{String(info.isExternal)}</dd>
-        <dt>Login available</dt><dd>{String(Boolean(info.loginName))}</dd>
-      </dl>,
-    diagnostics: <p>Supplied display metadata performs no profile fetch and is not an authorization result.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual UserInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (4)
@@ -877,66 +718,12 @@ import { useSPFxUserPhoto } from '@apvee/spfx-react-toolkit';
 
 function ProfilePhoto() {
   const photo = useSPFxUserPhoto({ email: 'user@contoso.com', size: '96x96' });
-  return photo.photoUrl ? <img src={photo.photoUrl} alt="Profile" /> : <span>{photo.error?.message}</span>;
+  return photo.photoUrl ? (
+    <img src={photo.photoUrl} alt="Profile" />
+  ) : (
+    <span>{photo.error?.message}</span>
+  );
 }
-```
-
-#### Read the current user photo with managed URL cleanup
-
-```tsx
-import * as React from 'react';
-import { Avatar, Button, Image, Label, MessageBar, MessageBarBody, makeStyles } from '@fluentui/react-components';
-import { useSPFxMSGraphClient, useSPFxUserInfo, useSPFxUserPhoto } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type DemoProps = { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number };
-const useStyles = makeStyles({ profile: { display: 'flex', alignItems: 'center', gap: '12px' } });
-function ActivePhoto({ render, resetRevision = 0 }: DemoProps): React.ReactElement {
-  const classes = useStyles();
-  const user = useSPFxUserInfo();
-  const graph = useSPFxMSGraphClient();
-  const photo = useSPFxUserPhoto({ autoFetch: false });
-  const live = React.useRef({ graph, photo });
-  live.current = { graph, photo };
-  const identity = React.useRef({ client: graph.client, reload: photo.reload, revision: resetRevision });
-  if (identity.current.client !== graph.client || identity.current.reload !== photo.reload || identity.current.revision !== resetRevision) {
-    identity.current = { client: graph.client, reload: photo.reload, revision: resetRevision };
-  }
-  const boundary = identity.current;
-  const mounted = React.useRef(true);
-  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  const sequence = React.useRef(0);
-  const pending = React.useRef<{ reload: typeof photo.reload; request: number }>();
-  const [executed, setExecuted] = React.useState<{ boundary: typeof boundary; request: number; completed: boolean }>();
-  const run = React.useCallback(async (): Promise<void> => {
-    if (!mounted.current || identity.current !== boundary || !live.current.graph.isReady || !live.current.graph.client || live.current.photo.isLoading || pending.current?.reload === boundary.reload) return;
-    const request = ++sequence.current;
-    pending.current = { reload: boundary.reload, request };
-    setExecuted({ boundary, request, completed: false });
-    try {
-      await boundary.reload();
-      if (mounted.current && identity.current === boundary && sequence.current === request) setExecuted({ boundary, request, completed: true });
-    } finally {
-      if (pending.current?.request === request) pending.current = undefined;
-    }
-  }, [boundary]);
-  const current = executed?.boundary === boundary && executed.request === sequence.current && executed.completed;
-  const error = current ? photo.error : undefined;
-  const regions: DemoRegions = {
-    commands: <><Button appearance="primary" disabled={!graph.isReady || !graph.client || photo.isLoading} onClick={() => { run().catch(() => undefined); }}>Run</Button></>,
-    status: graph.initError ? <MessageBar intent="error"><MessageBarBody>{graph.initError.message}</MessageBarBody></MessageBar> : error ? <MessageBar intent="error"><MessageBarBody>{error.message}</MessageBarBody></MessageBar> : undefined,
-    children: <>{!graph.isReady ? <Label>Microsoft Graph unavailable. Wait for client initialization.</Label> : photo.isLoading ? <Label>Loading...</Label> : <div className={classes.profile}>{current && photo.photoUrl ? <Image fit="cover" shape="circular" src={photo.photoUrl} alt={user.displayName} width={96} height={96} /> : <Avatar name={user.displayName} size={96} />}<Label>{user.displayName}</Label></div>}</>,
-    diagnostics: <><dl><dt>Ready</dt><dd>{current ? String(photo.isReady) : 'Not requested'}</dd><dt>Blob</dt><dd>{current && photo.photoBlob ? `${photo.photoBlob.size} bytes` : 'Not requested'}</dd></dl><p>Reset hides local output and invalidates publication. It preserves the active hook, pending work and hook-owned URL; replacement, failure, target change and unmount release that URL.</p></>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export function Demo({ render, resetRevision = 0 }: DemoProps = {}): React.ReactElement {
-  const [started, setStarted] = React.useState(false);
-  if (started) return <ActivePhoto render={render} resetRevision={resetRevision} />;
-  const regions: DemoRegions = { commands: <><Button appearance="primary" onClick={() => setStarted(true)}>Start</Button></>, children: <p>Start initializes Microsoft Graph under the matching SPFx provider. Run then reads the current user's photo.</p> };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'read', contentPlacement: 'configuration', observe: 'Start initializes Graph without a photo request; Run reads the current user at default 240x240, displays a 96px photo or named fallback, loading, error and blob bytes. Reset hides output while preserving the hook, pending work and owned URL until normal cleanup.' };
 ```
 
 ### Signatures (6)
@@ -982,4 +769,4 @@ Contract: see [SPFxUserPhotoResult.reload](user-site.md#spfxuserphotoresult).
 
 ### Source (14)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts:270](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#L270)
+[packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts:274](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxUserPhoto.ts#L274)

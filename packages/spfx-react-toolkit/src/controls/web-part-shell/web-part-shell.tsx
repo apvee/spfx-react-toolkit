@@ -47,15 +47,28 @@ function WebPartShellRender<TProperties extends IWebPartShellProperties>(
  * import { Button } from '@fluentui/react-components';
  * import * as ReactDom from 'react-dom';
  * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
- * interface Properties extends IWebPartShellProperties { listId: string; }
+ *
+ * interface Properties extends IWebPartShellProperties {
+ *   listId: string;
+ * }
  * export class ExampleWebPart extends BaseClientSideWebPart<Properties> {
  *   public render(): void {
- *     ReactDom.render(<WebPartShell instance={this} appearance="filled" size="small" titlePosition="inside"
- *       action={<Button onClick={() => this.render()}>Refresh</Button>}>
- *       <p>Workspace content</p>
- *     </WebPartShell>, this.domElement);
+ *     ReactDom.render(
+ *       <WebPartShell
+ *         instance={this}
+ *         appearance="filled"
+ *         size="small"
+ *         titlePosition="inside"
+ *         action={<Button onClick={() => this.render()}>Refresh</Button>}
+ *       >
+ *         <p>Workspace content</p>
+ *       </WebPartShell>,
+ *       this.domElement
+ *     );
  *   }
- *   protected onDispose(): void { ReactDom.unmountComponentAtNode(this.domElement); }
+ *   protected onDispose(): void {
+ *     ReactDom.unmountComponentAtNode(this.domElement);
+ *   }
  * }
  * ```
  *
@@ -143,7 +156,7 @@ function WebPartShellRender<TProperties extends IWebPartShellProperties>(
  * }
  * ```
  *
- * @example Configure the actual web part Shell
+ * @scenario Configure the actual web part Shell
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Select, Switch } from '@fluentui/react-components';
@@ -278,7 +291,7 @@ function WebPartShellRender<TProperties extends IWebPartShellProperties>(
  * };
  * ```
  *
- * @example Retain content through Shell presentation changes
+ * @scenario Retain content through Shell presentation changes
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select } from '@fluentui/react-components';
@@ -360,7 +373,7 @@ function WebPartShellRender<TProperties extends IWebPartShellProperties>(
  * };
  * ```
  *
- * @example Observe content remount between subtle and Card
+ * @scenario Observe content remount between subtle and Card
  * ```tsx
  * import * as React from 'react';
  * import { Button, Input } from '@fluentui/react-components';

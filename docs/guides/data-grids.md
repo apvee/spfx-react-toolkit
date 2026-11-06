@@ -103,7 +103,14 @@ The canonical [DataGrid](../api/controls/data-grid.md#datagrid) and [createDataG
 ```tsx
 import * as React from 'react';
 import { createDataGrid } from '@apvee/spfx-react-toolkit';
-const Projects = createDataGrid<{ id:number; title:string }>();
-const columns = Projects.defineColumns(c => [c.text({ id:'title', header:'Title', field:'title' })]);
-<Projects items={[{ id:1, title:'Plan' }]} getRowId={row => row.id} columns={columns} />;
+
+const Projects = createDataGrid<{ id: number; title: string }>();
+const columns = Projects.defineColumns(c => [
+  c.text({ id: 'title', header: 'Title', field: 'title' })
+]);
+<Projects
+  items={[{ id: 1, title: 'Plan' }]}
+  getRowId={row => row.id}
+  columns={columns}
+/>;
 ```

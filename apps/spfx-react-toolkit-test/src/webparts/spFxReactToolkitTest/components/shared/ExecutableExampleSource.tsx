@@ -61,7 +61,7 @@ export function ExecutableExampleSource({ entry }: { readonly entry: ExecutableE
     <AccordionItem value="source">
       <AccordionHeader>Example code</AccordionHeader>
       <DemoAccordionPanel className={styles.sourcePanel}>
-        <Text className={styles.sourceProvenance}>{entry.source.file}:{entry.source.line}</Text>
+        <Text className={styles.sourceProvenance}>{entry.exampleSource.file}:{entry.exampleSource.line}</Text>
         <div className={styles.toolbar}>
           <Button disabled={source.status !== 'ready' || copy === 'pending'} onClick={copyCode}>{copy === 'pending' ? 'Copying...' : 'Copy code'}</Button>
           {source.status === 'error' && <Button onClick={load}>Retry</Button>}

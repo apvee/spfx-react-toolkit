@@ -102,7 +102,7 @@ function encodeODataPathValue(value: string): string {
  * }
  * ```
  *
- * @example Read and validate a catalog StorageEntity
+ * @scenario Read and validate a catalog StorageEntity
  * ```tsx
  * import * as React from 'react';
  * import { makeStyles, Button, Field, Input, Text } from '@fluentui/react-components';

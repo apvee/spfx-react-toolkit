@@ -1,6 +1,6 @@
 /**
  * Configure the existing shell.
- * @example Shell presentation
+ * @scenario Shell presentation
  * ```tsx
  * import * as React from 'react';
  * import type { WebPartShellProps, IWebPartShellProperties } from '@apvee/spfx-react-toolkit/controls/web-part-shell';

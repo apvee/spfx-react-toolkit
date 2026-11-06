@@ -1,7 +1,6 @@
 const path = require('node:path');
-const { TSDocConfiguration, TSDocParser, TSDocTagDefinition, TSDocTagSyntaxKind } = require('@microsoft/tsdoc');
 const MarkdownIt = require('markdown-it');
-const profile = require('../../packages/spfx-react-toolkit/tsdoc.json');
+const { parseDocumentationComment, nodeRange } = require('./documentation-tsdoc.cjs');
 const { resolvePublicReference } = require('./documentation-model.cjs');
 const { markdownHeadingSlug } = require('./documentation-markdown.cjs');
 
@@ -9,18 +8,15 @@ const { markdownHeadingSlug } = require('./documentation-markdown.cjs');
 /** @typedef {import('./documentation-model.cjs').DocLocation} DocLocation */
 /** @typedef {import('./documentation-model.cjs').Diagnostic} Diagnostic */
 /** @typedef {{ownerKey: string, title?: string, language: 'ts'|'tsx', code: string, source: DocLocation}} DocExample */
-/** @typedef {{summary: string, useWhen: string[], avoidWhen: string[], remarks: {title: string, body: string}[], params: {name: string, description: string}[], typeParams: {name: string, description: string}[], returns?: string, throws: string[], defaultValue?: string, deprecated?: string, docPage?: string, examples: DocExample[], see: string[], source: DocLocation, inheritedFrom?: string}} DocContract */
+/** @typedef {{summary: string, useWhen: string[], avoidWhen: string[], remarks: {title: string, body: string}[], params: {name: string, description: string}[], typeParams: {name: string, description: string}[], returns?: string, throws: string[], defaultValue?: string, deprecated?: string, docPage?: string, examples: DocExample[], scenarios: DocExample[], see: string[], source: DocLocation, inheritedFrom?: string}} DocContract */
 /** @typedef {{route: string, title: string, introduction: string, entityKeys: string[], anchors: Record<string, string>, bindingAnchors: Record<string, string>, typeHeadingSlugs: string[]}} ApiPage */
 /** @typedef {{sourceRoot: string}} Config */
-/** @typedef {{graph: ApiGraph, contracts: Record<string, DocContract>, bindingContracts: Record<string, DocContract>, pages: ApiPage[], examples: DocExample[], diagnostics: Diagnostic[]}} DocumentationModel */
+/** @typedef {{graph: ApiGraph, contracts: Record<string, DocContract>, bindingContracts: Record<string, DocContract>, pages: ApiPage[], examples: DocExample[], scenarios: DocExample[], diagnostics: Diagnostic[]}} DocumentationModel */
 
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 const sortDiagnostics = items => [...new Map(items.map(item => [JSON.stringify(item), item])).values()]
   .sort((a, b) => compare(a.file, b.file) || a.line - b.line || compare(a.code, b.code) || compare(a.message, b.message) || compare(a.symbol || '', b.symbol || ''));
 const markdown = new MarkdownIt({ html: false, linkify: false, typographer: false });
-const parserConfig = new TSDocConfiguration();
-for (const tag of profile.tagDefinitions) parserConfig.addTagDefinition(new TSDocTagDefinition({ ...tag, syntaxKind: TSDocTagSyntaxKind.BlockTag }));
-const parser = new TSDocParser(parserConfig);
 const memberContractKey = (ownerKey, name) => `${ownerKey}::member:${name}`;
 const bindingContractKey = binding => `${binding.specifier}#${[binding.exportedName, ...binding.memberPath].join('.')}`;
 function memberGroups(entity) {
@@ -48,17 +44,9 @@ function contractMembers(group) {
 }
 const absent = text => /\b(?:omit(?:ted|ting)?|undefined|not (?:provided|specified|supplied))\b/i.test(text);
 
-function excerpts(node) {
-  if (node.kind === 'Excerpt') return [node];
-  return node.getChildNodes().flatMap(excerpts);
-}
-function nodeRange(node) {
-  const ranges = excerpts(node).filter(item => !item.content.isEmpty()).map(item => item.content.getContainingTextRange());
-  return ranges.length ? { pos: Math.min(...ranges.map(item => item.pos)), end: Math.max(...ranges.map(item => item.end)) } : undefined;
-}
 const offsetLocation = (raw, source, offset) => ({ file: source.file, line: source.line + raw.slice(0, offset).split('\n').length - 1 });
 function contentText(raw, node) {
-  const range = nodeRange(node);
+  const range = nodeRange(node, raw);
   return range ? raw.slice(range.pos, range.end).replace(/\r\n?/g, '\n').replace(/^[\t ]*\* ?/gm, '').trim() : '';
 }
 function addDiagnostic(diagnostics, source, symbol, code, message) {
@@ -104,33 +92,11 @@ function remarks(text, source, ownerKey, diagnostics) {
   return sections;
 }
 
-/** Adapt Markdown fences to the pinned TSDoc grammar without changing offsets. */
-function parserText(raw) {
-  const original = raw.split('\n');
-  const body = original.map((line, index) => line.replace(index === 0 ? /^\s*\/\*\* ?/ : /^\s*\* ?/, '').replace(/\*\/\s*$/, ''));
-  const adapted = [...original];
-  for (const token of markdown.parse(body.join('\n'), {})) {
-    if (token.type !== 'fence') continue;
-    const [start, end] = token.map;
-    const rewriteDelimiter = line => line.replace(/[`~]{3,}/, run => '```' + ' '.repeat(run.length - 3));
-    adapted[start] = rewriteDelimiter(adapted[start]);
-    const last = end - 1;
-    const hasClose = last > start && /^\s*([`~])\1{2,}\s*$/.test(body[last]);
-    if (hasClose) adapted[last] = rewriteDelimiter(adapted[last]);
-    for (let index = start + 1; index < (hasClose ? last : end); index += 1) {
-      // An inner shorter backtick run is code in Markdown, but would close a
-      // three-backtick TSDoc fence. Its original spelling stays in the model.
-      adapted[index] = adapted[index].replace(/^(\s*\*?\s*)`{3}/, '$1~``');
-    }
-  }
-  return adapted.join('\n');
-}
-
 /** Parse exactly once with the shared tag profile; Markdown only tokenizes block content. */
 function parseContract(raw, source, ownerKey, diagnostics) {
-  const contract = { summary: '', useWhen: [], avoidWhen: [], remarks: [], params: [], typeParams: [], throws: [], examples: [], see: [], source };
+  const contract = { summary: '', useWhen: [], avoidWhen: [], remarks: [], params: [], typeParams: [], throws: [], examples: [], scenarios: [], see: [], source };
   if (!raw) return contract;
-  const context = parser.parseString(parserText(raw));
+  const context = parseDocumentationComment(raw);
   for (const message of context.log.messages) addDiagnostic(diagnostics,
     offsetLocation(raw, source, message.textRange.pos), ownerKey, message.messageId, message.unformattedText);
   const doc = context.docComment;
@@ -175,23 +141,25 @@ function parseContract(raw, source, ownerKey, diagnostics) {
       case '@default': case '@defaultValue': contract.defaultValue = text; break;
       case '@deprecated': contract.deprecated = text; break;
       case '@see': contract.see.push(text); break;
-      case '@example': {
+      case '@example': case '@scenario': {
+        const scenario = tag === '@scenario';
         const tokens = markdown.parse(text, {});
         const fences = tokens.filter(token => token.type === 'fence');
         if (fences.length !== 1 || !['ts', 'tsx'].includes(fences[0]?.info.trim()) || !fences[0]?.content.trim()) {
-          addDiagnostic(diagnostics, blockSource, ownerKey, 'DOC_INVALID_EXAMPLE', 'Each @example requires exactly one nonempty ts or tsx fenced code block.');
+          addDiagnostic(diagnostics, blockSource, ownerKey, scenario ? 'DOC_INVALID_SCENARIO' : 'DOC_INVALID_EXAMPLE', `Each ${tag} requires exactly one nonempty ts or tsx fenced code block.`);
           break;
         }
         const fence = fences[0];
         const title = text.split('\n').slice(0, fence.map[0]).join('\n').trim();
-        const range = nodeRange(block.content);
+        const range = nodeRange(block.content, raw);
         const contentSource = offsetLocation(raw, source, range?.pos ?? 0);
         // Markdown offsets start after contentText trims leading blank margins.
         // Count those physical lines without trimming or rewriting fenced code.
         const untrimmed = range ? raw.slice(range.pos, range.end).replace(/\r\n?/g, '\n').replace(/^[\t ]*\* ?/gm, '') : '';
         const leading = untrimmed.slice(0, untrimmed.length - untrimmed.trimStart().length);
         contentSource.line += leading.split('\n').length - 1;
-        contract.examples.push({ ownerKey, ...(title ? { title } : {}), language: fence.info.trim(), code: fence.content,
+        const snippets = scenario ? contract.scenarios : contract.examples;
+        snippets.push({ ownerKey, ...(title ? { title } : {}), language: fence.info.trim(), code: fence.content,
           source: { file: source.file, line: contentSource.line + fence.map[0] + 1 } });
         break;
       }
@@ -432,16 +400,21 @@ function buildDocumentationModel(graph, config) {
     }
   }
   const pages = [...pageMap.values()].sort((a, b) => compare(a.route, b.route));
-  const sourceExamples = new Map();
-  for (const contract of Object.values({ ...contracts, ...bindingContracts })) {
-    contract.examples = contract.examples.map(example => {
-      const identity = JSON.stringify([example.source, example.title, example.language, example.code]);
-      if (!sourceExamples.has(identity)) sourceExamples.set(identity, example);
-      return sourceExamples.get(identity);
-    });
-  }
-  const examples = [...sourceExamples.values()];
-  return { graph, contracts, bindingContracts, pages, examples, diagnostics: sortDiagnostics(diagnostics) };
+  const allContracts = Object.values({ ...contracts, ...bindingContracts });
+  const canonicalize = section => {
+    const snippets = new Map();
+    for (const contract of allContracts) {
+      contract[section] = contract[section].map(snippet => {
+        const identity = JSON.stringify([snippet.source, snippet.title, snippet.language, snippet.code]);
+        if (!snippets.has(identity)) snippets.set(identity, snippet);
+        return snippets.get(identity);
+      });
+    }
+    return [...snippets.values()];
+  };
+  const examples = canonicalize('examples');
+  const scenarios = canonicalize('scenarios');
+  return { graph, contracts, bindingContracts, pages, examples, scenarios, diagnostics: sortDiagnostics(diagnostics) };
 }
 
 /**
@@ -575,5 +548,14 @@ function getDocumentationExample(model, reference, title) {
   return contract.examples[0];
 }
 
+/** Scenarios can only be included editorially by an exact, nonempty local title. */
+function getDocumentationScenario(model, reference, title) {
+  if (!title?.trim()) throw new Error(`Select an exact scenario title for ${reference}.`);
+  const { contract } = resolveDocumentationReference(model, reference);
+  const matches = contract.scenarios.filter(scenario => scenario.title === title);
+  if (matches.length === 1) return matches[0];
+  throw new Error(`Missing or ambiguous scenario "${title}" for ${reference}.`);
+}
+
 module.exports = { parseContract, apiHeadingName, buildDocumentationModel, validateDocumentation, memberContractKey, bindingContractKey,
-  resolveDocumentationReference, getDocumentationSelection, getDocumentationExample, getPageIntroductions };
+  resolveDocumentationReference, getDocumentationSelection, getDocumentationExample, getDocumentationScenario, getPageIntroductions };

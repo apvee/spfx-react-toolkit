@@ -10,7 +10,7 @@ const template = fs.readFileSync(path.join(__dirname, 'fixtures/executable-examp
   .replace("import * as React from 'react';", "import * as React from 'react';\nimport type { SitePickerValue, ListPickerValue, FieldPickerValue, ViewPickerValue, ContentTypePickerValue, ListItemPickerValue, PrincipalPickerValue } from '@apvee/spfx-react-toolkit/controls/pickers';\nimport type { FileFolderPickerValue, FileFolderPickerProps, FileFolderPickerPreset, FileFolderPickerScope } from '@apvee/spfx-react-toolkit/controls/file-folder-picker';");
 const id = 'a'.repeat(64);
 function emitted(code) {
-  return renderExecutableExamples([{ id, ownerKey: 'source#Native', title: 'Native', groupRoute: 'docs/api/property-pane/pickers.md', groupKey: 'property-pane', featureKey: 'source#Native', featureTitle: 'Native', publicNames: ['Native'], source: { file: 'source.ts', line: 1 }, code, metadata: { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: 'Native fixture.' } }]);
+  return renderExecutableExamples([{ id, ownerKey: 'source#Native', title: 'Native', groupRoute: 'docs/api/property-pane/pickers.md', groupKey: 'property-pane', featureKey: 'source#Native', featureTitle: 'Native', publicNames: ['Native'], source: { file: 'source.ts', line: 1 }, code, publicExample: { code: 'const example = 1;\n', source: { file: 'source.ts', line: 5 } }, metadata: { host: 'webPart', kind: 'read', contentPlacement: 'configuration', hostAdapter: 'propertyPane', observe: 'Native fixture.' } }]);
 }
 function compile(domain) {
   const artifacts = emitted(domain.startsWith('type SourceProperties') ? template.replace('interface SourceProperties { pickerSites?: string[]; }', domain) : template.replace('pickerSites?: string[];', domain));
@@ -63,8 +63,8 @@ test('canonical native validation accepts actual public full integrated array do
   const config = require('../scripts/docs/documentation.config.cjs');
   const graph = require('../scripts/docs/documentation-model.cjs').buildApiGraph(root, config);
   const model = require('../scripts/docs/documentation-contract.cjs').buildDocumentationModel(graph, config);
-  const original = model.examples.find(example => example.title === 'Select native site references'); assert.ok(original);
+  const original = model.scenarios.find(example => example.title === 'Select native site references'); assert.ok(original);
   const code = template.replace('pickerSites?: string[];', integrated);
-  const result = require('../scripts/docs/executable-examples-model.cjs').collectExecutableExamples(root, { ...model, examples: [{ ...original, code }] }, config);
+  const result = require('../scripts/docs/executable-examples-model.cjs').collectExecutableExamples(root, { ...model, scenarios: [{ ...original, code }] }, config);
   assert.deepEqual(result.diagnostics, []); assert.equal(result.examples.length, 1);
 });

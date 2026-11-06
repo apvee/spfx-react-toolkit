@@ -63,14 +63,21 @@ function Action({ action, appearance, className }: {
  * ```tsx
  * import * as React from 'react';
  * import { StateMessage } from '@apvee/spfx-react-toolkit';
- * const clearFilters = (): void => { console.log('Clear filters requested'); };
- * <StateMessage preset="empty" title="No results" description="Try **other filters**."
- *   primaryAction={{ label: 'Clear filters', onClick: clearFilters }} />
+ *
+ * const clearFilters = (): void => {
+ *   console.log('Clear filters requested');
+ * };
+ * <StateMessage
+ *   preset="empty"
+ *   title="No results"
+ *   description="Try **other filters**."
+ *   primaryAction={{ label: 'Clear filters', onClick: clearFilters }}
+ * />;
  * ```
  *
  * @useWhen A section needs an empty, error or completion state with optional artwork and explicit actions.
  * @avoidWhen Use FormattedText for ordinary text without state semantics or illustration/actions.
- * @example Configure state artwork semantics and actions
+ * @scenario Configure state artwork semantics and actions
  * ```tsx
  * import * as React from 'react';
  * import { FluentProvider, Text, makeStyles, tokens, Checkbox, Select, Button, Field, Input } from '@fluentui/react-components';

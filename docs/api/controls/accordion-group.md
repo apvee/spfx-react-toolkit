@@ -39,101 +39,12 @@ import { AccordionGroup } from '@apvee/spfx-react-toolkit/controls/accordion-gro
 ```tsx
 import * as React from 'react';
 import { AccordionGroup } from '@apvee/spfx-react-toolkit';
-<AccordionGroup title="Preferences" defaultOpenItems={['profile']}><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
-```
 
-#### Control disclosure selection and retained content
-
-```tsx
-import * as React from 'react';
-import { Button, Checkbox, Field, FluentProvider, Input, Select, Switch, makeStyles } from '@fluentui/react-components';
-import { Info24Regular, Person20Regular } from '@fluentui/react-icons';
-import { AccordionGroup, background, useSx, width } from '@apvee/spfx-react-toolkit';
-import type { AccordionGroupValue } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = {
-  controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode;
-  diagnostics?: React.ReactNode; children?: React.ReactNode;
-};
-const standalone = (regions: DemoRegions): React.ReactElement => <>
-  {regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}
-</>;
-const useStyles = makeStyles({ frame: { maxInlineSize: '100%', minInlineSize: 0 } });
-const ProfileNote: React.FC<{ revision: number }> = ({ revision }) => {
-  // Explicit Reset replaces only this uncontrolled Fluent Input's internal value state.
-  // Ordinary props and retained close/reopen keep the same input instance.
-  return <Field label="Profile note"><Input key={revision} input={{ as: 'input', ...{ 'data-accordion-demo': 'note' } }} defaultValue="Retained note" /></Field>;
-};
-export function Demo({ render = standalone, resetRevision = 0 }: {
-  render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number;
-}): React.ReactElement {
-  const sx = useSx(), styles = useStyles();
-  const [title, setTitle] = React.useState('Optional details');
-  const [description, setDescription] = React.useState('Edit a note and compare closed-content policies.');
-  const [pixels, setPixels] = React.useState(640);
-  const [appearance, setAppearance] = React.useState<'filled' | 'alternate' | 'outline'>('filled');
-  const [rtl, setRtl] = React.useState(false);
-  const directionSx = useSx({ dir: rtl ? 'rtl' : undefined });
-  const [multiple, setMultiple] = React.useState(false);
-  const [disabled, setDisabled] = React.useState(false);
-  const [unmount, setUnmount] = React.useState(false);
-  const [alerts, setAlerts] = React.useState(true);
-  const [openItems, setOpenItems] = React.useState<AccordionGroupValue[]>(['profile']);
-  const [toggles, setToggles] = React.useState(0);
-  const [lastToggle, setLastToggle] = React.useState('No native toggle');
-  const [observed, setObserved] = React.useState('Not inspected.');
-  const rootRef = React.useMemo(() => React.createRef<HTMLDivElement>(), []);
-  const titleRef = React.useMemo(() => React.createRef<HTMLSpanElement>(), []);
-  const previousReset = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (previousReset.current === resetRevision) return;
-    previousReset.current = resetRevision;
-    setTitle('Optional details'); setDescription('Edit a note and compare closed-content policies.');
-    setPixels(640); setAppearance('filled'); setRtl(false); setMultiple(false); setDisabled(false);
-    setUnmount(false); setAlerts(true); setOpenItems(['profile']); setToggles(0);
-    setLastToggle('No native toggle'); setObserved('Not inspected.');
-  }, [resetRevision]);
-  const selectedOpenItems = ['profile', 'advanced'].filter(value => openItems.includes(value)).join(',');
-  return render({
-    controls: <>
-      <Field label="Title"><Input value={title} input={{ as: 'input', ...{ 'data-accordion-demo': 'title' } }} onChange={(_, data) => setTitle(data.value)} /></Field>
-      <Field label="Description"><Input value={description} input={{ as: 'input', ...{ 'data-accordion-demo': 'description' } }} onChange={(_, data) => setDescription(data.value)} /></Field>
-      <Field label="Width"><Select data-accordion-demo="width" value={pixels} onChange={event => setPixels(Number(event.target.value))}>{[320, 500, 639, 640, 900].map(value => <option key={value} value={value}>{value} px</option>)}</Select></Field>
-      <Field label="Appearance"><Select data-accordion-demo="appearance" data-demo-variant="accordion-appearance" value={appearance} onChange={event => { const value = event.target.value; if (value === 'filled' || value === 'alternate' || value === 'outline') setAppearance(value); }}><option value="filled">Filled</option><option value="alternate">Alternate</option><option value="outline">Outline</option></Select></Field>
-      <Field label="Open sections"><Select data-accordion-demo="open-items" value={selectedOpenItems} onChange={event => setOpenItems(event.target.value ? event.target.value.split(',') : [])}><option value="">None</option><option value="profile">Profile</option><option value="advanced">Advanced</option>{multiple && <option value="profile,advanced">Both</option>}</Select></Field>
-      <Checkbox input={{ as: 'input', ...{ 'data-accordion-demo': 'multiple' } }} label="Allow multiple open sections" checked={multiple} onChange={(_, data) => { setMultiple(data.checked === true); setOpenItems(['profile']); }} />
-    </>,
-    status: <output data-accordion-demo="status" aria-live="polite">Open sections: {openItems.join(', ') || 'none'} · Toggles: {toggles}</output>,
-    diagnostics: <>
-      <Checkbox input={{ as: 'input', ...{ 'data-accordion-demo': 'direction' } }} label="Override RTL" checked={rtl} onChange={(_, data) => setRtl(data.checked === true)} />
-      <Checkbox input={{ as: 'input', ...{ 'data-accordion-demo': 'disabled' } }} label="Disable profile trigger" checked={disabled} onChange={(_, data) => setDisabled(data.checked === true)} />
-      <Checkbox input={{ as: 'input', ...{ 'data-accordion-demo': 'unmount' } }} label="Unmount closed sections" checked={unmount} onChange={(_, data) => setUnmount(data.checked === true)} />
-      <Button data-accordion-demo="inspect" onClick={() => setObserved(`root:${rootRef.current?.tagName ?? 'absent'} title:${titleRef.current?.tagName ?? 'absent'}`)}>Inspect refs</Button>
-      <output data-accordion-demo="observations">{observed} · {lastToggle}</output>
-      <p>Native triggers emit their unchanged value and openItems. Configuration changes only the controlled list. Closed content stays inert and mounted unless unmounting is selected. Trigger content contains no interactive descendants.</p>
-    </>,
-    children: <FluentProvider dir={rtl ? 'rtl' : undefined} className={directionSx(background.transparent)}><div className={sx(styles.frame, width.px(pixels))}>
-      <AccordionGroup ref={rootRef} data-accordion-demo="group" title={{ ref: titleRef, children: title }} description={description} appearance={appearance} icon={{ children: (Tag, props) => <Tag {...props}><Info24Regular aria-hidden="true" /></Tag> }}
-        action={{ children: (Tag, props) => <Tag {...props}><Button data-accordion-demo="close-all" onClick={() => setOpenItems([])}>Close all panels</Button></Tag> }}
-        openItems={openItems} multiple={multiple} collapsible onToggle={(event, data) => {
-          setOpenItems(data.openItems); setToggles(value => value + 1);
-          setLastToggle(`${event.type}: ${String(data.value)} -> ${data.openItems.join(', ') || 'none'}`);
-        }}>
-        <AccordionGroup.Item value="profile" title="Profile details" description="Your account preferences." icon={<Person20Regular aria-hidden="true" />} disabled={disabled} unmountOnClose={unmount}>
-          <ProfileNote revision={resetRevision} />
-        </AccordionGroup.Item>
-        <AccordionGroup.Item value="advanced" title="Advanced preferences" unmountOnClose={unmount}>
-          <Switch label="Enable advanced notifications" checked={alerts} onChange={(_, data) => setAlerts(data.checked)} />
-        </AccordionGroup.Item>
-      </AccordionGroup>
-    </div></FluentProvider>,
-  });
-}
-
-export const demo = {
-  host: 'none', kind: 'snapshot', contentPlacement: 'subject',
-  observe: 'Use native triggers and controlled selection to open or close sections, then compare retained notes with content removed after closing.',
-};
+<AccordionGroup title="Preferences" defaultOpenItems={['profile']}>
+  <AccordionGroup.Item value="profile" title="Profile">
+    Details
+  </AccordionGroup.Item>
+</AccordionGroup>;
 ```
 
 ### Signatures
@@ -206,7 +117,7 @@ An item div with semantic heading, trigger and associated panel.
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx:200](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#L200)
+[packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx:205](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#L205)
 
 ## AccordionGroup.Item
 
@@ -284,7 +195,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source (2)
 
-[packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx:213](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#L213)
+[packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx:218](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/accordion-group/accordion-group.tsx#L218)
 
 ## AccordionGroupHeadingLevel
 

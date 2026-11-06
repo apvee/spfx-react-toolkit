@@ -39,30 +39,12 @@ import { useSPFxContext } from '@apvee/spfx-react-toolkit';
 
 function HostLabel() {
   const { kind, instanceId } = useSPFxContext();
-  return <span>{kind}: {instanceId}</span>;
+  return (
+    <span>
+      {kind}: {instanceId}
+    </span>
+  );
 }
-```
-
-#### Inspect the current native host identity
-
-```tsx
-import * as React from 'react';
-import { useSPFxContext } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxContext();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxContext result">
-        <dt>Host kind</dt><dd>{info.kind}</dd>
-        <dt>Instance ID</dt><dd>{info.instanceId}</dd>
-        <dt>Native context available</dt><dd>{String(info.spfxContext !== undefined)}</dd>
-      </dl>,
-    diagnostics: <p>Provider metadata identifies this native host; mutable nested fields require a React render.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual Context values and explicit unavailable fields as the native host changes.' };
 ```
 
 Returns static metadata from the nearest host-specific SPFx provider.
@@ -215,7 +197,7 @@ Nearest provider metadata, including kind, instanceId and the SPFx context refer
 
 ### Source
 
-[packages/spfx-react-toolkit/src/core/context.internal.tsx:71](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/core/context.internal.tsx#L71)
+[packages/spfx-react-toolkit/src/core/context.internal.tsx:75](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/core/context.internal.tsx#L75)
 
 ## SPFxInstanceInfo
 
@@ -285,29 +267,12 @@ import { useSPFxInstanceInfo } from '@apvee/spfx-react-toolkit';
 
 function InstanceLabel() {
   const { id, kind } = useSPFxInstanceInfo();
-  return <span>{kind}: {id}</span>;
+  return (
+    <span>
+      {kind}: {id}
+    </span>
+  );
 }
-```
-
-#### Inspect the provider instance identity
-
-```tsx
-import * as React from 'react';
-import { useSPFxInstanceInfo } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxInstanceInfo();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxInstanceInfo result">
-        <dt>Instance ID</dt><dd>{info.id}</dd>
-        <dt>Host kind</dt><dd>{info.kind}</dd>
-      </dl>,
-    diagnostics: <p>The nearest provider supplies the actual identity; a diagnostic ID does not grant access.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual InstanceInfo values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (2)
@@ -335,7 +300,7 @@ Instance identifier and host discriminator.
 
 ### Source (3)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts:76](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#L76)
+[packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts:80](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxInstanceInfo.ts#L80)
 
 ## useSPFxPageContext
 
@@ -368,32 +333,6 @@ function SiteLabel() {
   const context = useSPFxPageContext();
   return <span>{context.web.title}</span>;
 }
-```
-
-#### Inspect selected native page metadata
-
-```tsx
-import * as React from 'react';
-import { useSPFxPageContext } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxPageContext();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxPageContext result">
-        <dt>Web title</dt><dd>{info.web.title}</dd>
-        <dt>Web URL</dt><dd>{info.web.absoluteUrl}</dd>
-        <dt>Site URL</dt><dd>{info.site.absoluteUrl}</dd>
-        <dt>User</dt><dd>{info.user.displayName}</dd>
-        <dt>Email</dt><dd>{info.user.email ?? 'Unavailable'}</dd>
-        <dt>UI culture</dt><dd>{info.cultureInfo.currentUICultureName}</dd>
-        <dt>List context</dt><dd>{info.list ? 'Available' : 'No list context'}</dd>
-      </dl>,
-    diagnostics: <p>This is the native PageContext service reference. It neither queries data nor independently subscribes to every mutable field.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual PageContext values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (3)
@@ -581,26 +520,6 @@ function ServiceItems() {
     <ul>{data.map((item, index) => <li key={index}>{item}</li>)}</ul>
   </section>;
 }
-```
-
-#### Inspect the native registered service scope
-
-```tsx
-import * as React from 'react';
-import { useSPFxServiceScope } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-export function Demo({ render }: { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number } = {}): React.ReactElement {
-  const info = useSPFxServiceScope();
-  const regions: DemoRegions = {
-    children: <dl aria-label="useSPFxServiceScope result">
-        <dt>Native service scope</dt><dd>{info.serviceScope ? 'Available' : 'Unavailable'}</dd>
-      </dl>,
-    diagnostics: <p>The host registers and finishes services. This inspection neither registers a default service, finishes a scope nor performs a request.</p>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Inspect the actual ServiceScope values and explicit unavailable fields as the native host changes.' };
 ```
 
 ### Signatures (5)

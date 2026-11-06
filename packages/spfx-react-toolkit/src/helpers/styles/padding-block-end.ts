@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { paddingBlockEnd } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = paddingBlockEnd.none;
  * ```
  *
- * @example Select block end padding descriptors — visible end spacing
+ * @scenario Select block end padding descriptors — visible end spacing
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

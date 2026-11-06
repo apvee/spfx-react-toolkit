@@ -521,11 +521,12 @@ test('rendering a shared validated context preserves bytes without rebuilding or
     ['../scripts/docs/documentation-contract.cjs', 'buildDocumentationModel'],
     ['../scripts/docs/documentation-contract.cjs', 'validateDocumentation'],
     ['../scripts/docs/documentation-examples.cjs', 'checkDocumentationExamples'],
+    ['../scripts/docs/executable-examples-model.cjs', 'collectExecutableExamples'],
   ];
   const originals = dependencies.map(([name, key]) => require(name)[key]);
   const calls = dependencies.map(() => 0);
   const clear = () => {
-    for (const name of ['../scripts/docs/documentation-context.cjs', '../scripts/docs/documentation-artifacts.cjs']) {
+    for (const name of ['../scripts/docs/documentation-context.cjs', '../scripts/docs/documentation-artifacts.cjs', '../scripts/docs/executable-examples.cjs']) {
       delete require.cache[require.resolve(name)];
     }
   };
@@ -541,9 +542,11 @@ test('rendering a shared validated context preserves bytes without rebuilding or
     assert.ok(context.graph && context.model);
     assert.deepEqual(renderDocumentationArtifacts(root, context, config), baseline);
     assert.deepEqual(renderDocumentationArtifacts(root, context, config), baseline);
-    const executable = require('../scripts/docs/executable-examples.cjs').renderExecutableArtifacts(root, context, config);
+    const { renderExecutableArtifacts } = require('../scripts/docs/executable-examples.cjs');
+    const executable = renderExecutableArtifacts(root, context, config);
     assert.equal(Object.keys(executable).length, 1);
-    assert.deepEqual(calls, [1, 1, 1, 1]);
+    assert.deepEqual(renderExecutableArtifacts(root, context, config), executable);
+    assert.deepEqual(calls, [1, 1, 1, 1, 1]);
   } finally {
     dependencies.forEach(([name, key], index) => { require(name)[key] = originals[index]; });
     clear();

@@ -63,7 +63,7 @@ import type { SxFunction, SxOptions } from '../helpers/styles/types';
  * }
  * ```
  *
- * @example Compare root domain and historical imports
+ * @scenario Compare root domain and historical imports
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, FluentProvider, Select } from '@fluentui/react-components';
@@ -199,7 +199,7 @@ import type { SxFunction, SxOptions } from '../helpers/styles/types';
  * };
  * ```
  *
- * @example Explore eight style recipes with the host renderer
+ * @scenario Explore eight style recipes with the host renderer
  * ```tsx
  * // Requires the existing web-part SPFx provider for current Teams metadata.
  * // Inherit the host Fluent theme and Griffel renderer; override direction only.

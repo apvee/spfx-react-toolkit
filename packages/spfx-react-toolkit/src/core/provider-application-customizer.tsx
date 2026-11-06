@@ -54,10 +54,18 @@ export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> 
  * ```tsx
  * import * as React from 'react';
  * import { BaseApplicationCustomizer } from '@microsoft/sp-application-base';
- * import { SPFxApplicationCustomizerProvider, SPFxApplicationCustomizerProviderProps } from '@apvee/spfx-react-toolkit';
+ * import {
+ *   SPFxApplicationCustomizerProvider,
+ *   SPFxApplicationCustomizerProviderProps
+ * } from '@apvee/spfx-react-toolkit';
  *
- * function hostTree(instance: BaseApplicationCustomizer<{ title: string }>): React.ReactElement {
- *   const props: SPFxApplicationCustomizerProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ * function hostTree(
+ *   instance: BaseApplicationCustomizer<{ title: string }>
+ * ): React.ReactElement {
+ *   const props: SPFxApplicationCustomizerProviderProps<{ title: string }> = {
+ *     instance,
+ *     children: <span>Host content</span>
+ *   };
  *   return <SPFxApplicationCustomizerProvider {...props} />;
  * }
  * ```
@@ -129,7 +137,7 @@ export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> 
  * }
  * ```
 
- * @example Compare Application Customizer provider availability with the current host
+ * @scenario Compare Application Customizer provider availability with the current host
  * ```tsx
  * import * as React from 'react';
  * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Badge, Field, Select, makeStyles, tokens } from '@fluentui/react-components';
@@ -178,7 +186,7 @@ export interface SPFxApplicationCustomizerProviderProps<TProps extends {} = {}> 
  * export const demo = { host: 'webPart', kind: 'snapshot', contentPlacement: 'configuration', observe: 'Choose each of four providers and compare the actual exported function, required kind and current host independently. Reset restores this owner’s provider choice without mounting a new provider.' };
  * ```
 
- * @example Inspect the actual Top placeholder provider
+ * @scenario Inspect the actual Top placeholder provider
  * ```tsx
  * import * as React from 'react';
  * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, MessageBarBody } from '@fluentui/react-components';

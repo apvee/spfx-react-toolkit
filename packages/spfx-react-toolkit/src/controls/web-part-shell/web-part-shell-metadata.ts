@@ -11,17 +11,26 @@ import type { IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
  * @returns A new map and title descriptor on every call.
  * @example Compose searchable title metadata in a web part
  * ```ts
- * import { IWebPartShellProperties, getWebPartShellPropertiesMetadata } from '@apvee/spfx-react-toolkit';
- * import { BaseClientSideWebPart, IWebPartPropertiesMetadata } from '@microsoft/sp-webpart-base';
+ * import {
+ *   IWebPartShellProperties,
+ *   getWebPartShellPropertiesMetadata
+ * } from '@apvee/spfx-react-toolkit';
+ * import {
+ *   BaseClientSideWebPart,
+ *   IWebPartPropertiesMetadata
+ * } from '@microsoft/sp-webpart-base';
+ *
  * export class ExampleWebPart extends BaseClientSideWebPart<IWebPartShellProperties> {
- *   public render(): void { this.domElement.textContent = this.properties.title; }
+ *   public render(): void {
+ *     this.domElement.textContent = this.properties.title;
+ *   }
  *   protected get propertiesMetadata(): IWebPartPropertiesMetadata {
  *     return { ...getWebPartShellPropertiesMetadata() };
  *   }
  * }
  * ```
  *
- * @example Inspect searchable Shell title metadata
+ * @scenario Inspect searchable Shell title metadata
  * ```tsx
  * import * as React from 'react';
  * import { Button } from '@fluentui/react-components';

@@ -25,7 +25,10 @@ import type { PnPContextInfo } from './useSPFxPnPContext';
  * import { useSPFxPnPListByPath } from '@apvee/spfx-react-toolkit';
  *
  * function Example() {
- *   const { query, items, error, loading } = useSPFxPnPListByPath<{ Id: number; Title: string }>('Lists/Tasks', { pageSize: 50 });
+ *   const { query, items, error, loading } = useSPFxPnPListByPath<{
+ *     Id: number;
+ *     Title: string;
+ *   }>('Lists/Tasks', { pageSize: 50 });
  *   const [failure, setFailure] = React.useState<string>();
  *   const run = async () => {
  *     setFailure(undefined);
@@ -35,14 +38,20 @@ import type { PnPContextInfo } from './useSPFxPnPContext';
  *       setFailure(failure instanceof Error ? failure.message : String(failure));
  *     }
  *   };
- *   return <>
- *     <button disabled={loading} onClick={() => void run()}>Load</button>
- *     {(failure ?? error?.message) && <span role="alert">{failure ?? error?.message}</span>}
- *     <pre>{JSON.stringify(items)}</pre>
- *   </>;
+ *   return (
+ *     <>
+ *       <button disabled={loading} onClick={() => void run()}>
+ *         Load
+ *       </button>
+ *       {(failure ?? error?.message) && (
+ *         <span role="alert">{failure ?? error?.message}</span>
+ *       )}
+ *       <pre>{JSON.stringify(items)}</pre>
+ *     </>
+ *   );
  * }
  * ```
- * @example Read items by decoded web-relative path
+ * @scenario Read items by decoded web-relative path
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';

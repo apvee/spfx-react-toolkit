@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { paddingInline } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = paddingInline.none;
  * ```
  *
- * @example Select inline padding descriptors — host/LTR/RTL and opposite edges
+ * @scenario Select inline padding descriptors — host/LTR/RTL and opposite edges
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select, FluentProvider } from '@fluentui/react-components';

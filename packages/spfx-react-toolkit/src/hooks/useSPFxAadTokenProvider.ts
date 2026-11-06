@@ -116,7 +116,7 @@ export interface SPFxAadTokenProviderInfo {
  * }
  * ```
  *
- * @example Inspect client readiness and token-provider initialization
+ * @scenario Inspect client readiness and token-provider initialization
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxHttpClient, useSPFxSPHttpClient, useSPFxMSGraphClient, useSPFxAadHttpClient, useSPFxAadTokenProvider, useSPFxServiceScope } from '@apvee/spfx-react-toolkit';

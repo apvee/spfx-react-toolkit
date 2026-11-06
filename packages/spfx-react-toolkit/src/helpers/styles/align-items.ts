@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { alignItems } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = alignItems.start;
  * ```
  *
- * @example Select cross axis item alignment — actual fixed-height flex parent
+ * @scenario Select cross axis item alignment — actual fixed-height flex parent
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

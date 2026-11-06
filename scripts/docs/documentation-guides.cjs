@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const MarkdownIt = require('markdown-it');
 const defaultConfig = require('./documentation.config.cjs');
-const { getDocumentationSelection, getDocumentationExample, resolveDocumentationReference } = require('./documentation-contract.cjs');
+const { getDocumentationSelection, getDocumentationExample, getDocumentationScenario, resolveDocumentationReference } = require('./documentation-contract.cjs');
 const { renderDocumentationExample } = require('./documentation-render.cjs');
 const { markdownLabel, transformMarkdown, resolveMarkdown: resolveMarkdownProse, markdownAnchors, markdownLinks, relativeMarkdownTarget, editorialRoute, externalTarget } = require('./documentation-markdown.cjs');
 
@@ -124,9 +124,13 @@ function includeFragment(directive, source, model) {
     return '| Resource ID | Package-relative path |\n| --- | --- |\n' + [...source.inventory.resources].sort((a, b) => compare(a.id, b.id))
       .map(resource => `| \`${resource.id}\` | \`${resource.path}\` |`).join('\n');
   }
-  if (!attrs.symbol || !['selection', 'example'].includes(attrs.section) || attrs.title !== undefined && attrs.section !== 'example') throw new Error('Include requires symbol and selection/example section; title is only valid for an example.');
-  if (attrs.section === 'example') {
-    const example = getDocumentationExample(model, attrs.symbol, attrs.title);
+  const includesCode = ['example', 'scenario'].includes(attrs.section);
+  if (!attrs.symbol || !['selection', 'example', 'scenario'].includes(attrs.section) || (attrs.title !== undefined && !includesCode)) {
+    throw new Error('Include requires symbol and selection/example/scenario section. Title is valid for examples and scenarios.');
+  }
+  if (includesCode) {
+    const select = attrs.section === 'scenario' ? getDocumentationScenario : getDocumentationExample;
+    const example = select(model, attrs.symbol, attrs.title);
     return renderDocumentationExample({ ...example, title: example.title
       ? resolveMarkdown(example.title, model, example.source.file, source.route, undefined, resolveDocumentationReference(model, attrs.symbol).page?.route) : example.title }).replace(/\n$/, '');
   }

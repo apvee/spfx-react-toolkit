@@ -184,8 +184,8 @@ The test web part exposes three source-owned **WebPartShell** scenarios under **
 
 Presentation presets are explicit commands, so selecting a scenario preserves the current outer presentation. **Ripristina scenario** applies the selected source baseline and resets the local values owned by that scenario. Only **Configure the actual web part Shell** owns title commands and restores the persisted title to `SPFx React Toolkit`, and only on explicit reset in actual native Edit mode. The retention and remount scenarios preserve all persisted title properties in Read and Edit. Mount and selection never reset the title. The configuration scenario provides an always-reachable **Show title** command and moves focus there only when a visible header becomes hidden; mounting an already-hidden title preserves navigation focus.
 
-<!-- toolkit:include symbol="WebPartShell" section="example" title="Configure the actual web part Shell" -->
+<!-- toolkit:include symbol="WebPartShell" section="scenario" title="Configure the actual web part Shell" -->
 
-<!-- toolkit:include symbol="WebPartShell" section="example" title="Retain content through Shell presentation changes" -->
+<!-- toolkit:include symbol="WebPartShell" section="scenario" title="Retain content through Shell presentation changes" -->
 
-<!-- toolkit:include symbol="WebPartShell" section="example" title="Observe content remount between subtle and Card" -->
+<!-- toolkit:include symbol="WebPartShell" section="scenario" title="Observe content remount between subtle and Card" -->

@@ -124,7 +124,7 @@ function scenarioSource(name, product) {
   return product + (fs.existsSync(fixture) ? '\n' + read(fixture) : '');
 }
 
-const styleCompositionSource = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts')), 'Explore eight style recipes with the host renderer');
+const styleCompositionSource = ownedSourceScenario(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSx.ts')), 'Explore eight style recipes with the host renderer');
 assertStyleExampleCoverage(
   styleSurface,
   read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')),
@@ -159,10 +159,10 @@ for (const marker of ['DescriptionList.Item', 'items=', 'layout=', 'key={entry.i
 // Product policy reads only the exact owned executable recipe, never conformance fixtures.
 function ownedExecutable(slug, title) {
   const source = read(path.join(root, 'packages/spfx-react-toolkit/src/controls', slug, slug + '.tsx'));
-  return ownedSourceExample(source, title);
+  return ownedSourceScenario(source, title);
 }
-function ownedSourceExample(source, title) {
-  const start = source.indexOf(' * @example ' + title + '\n');
+function ownedSourceScenario(source, title) {
+  const start = source.indexOf(' * @scenario ' + title + '\n');
   if (start < 0) throw new Error('Missing owned executable: ' + title);
   const fence = ' * ```tsx\n';
   const code = source.indexOf(fence, start);
@@ -188,7 +188,7 @@ const relativePanel = ownedExecutable('relative-time', 'Explore relative clocks 
 for (const marker of ['RelativeTime', 'dateTime', 'referenceTime', 'locale', 'format', 'autoUpdate', 'showTooltip', 'timeZone', 'fallback', 'ref']) {
   if (!relativePanel.includes(marker)) throw new Error(`RelativeTime interactive example missing ${marker}`);
 }
-const localeScenario = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts')), 'Compare host cultures and seasonal site times');
+const localeScenario = ownedSourceScenario(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks/useSPFxLocaleInfo.ts')), 'Compare host cultures and seasonal site times');
 if (!localeScenario.includes('ianaTimeZone')) throw new Error('Locale mapping scenario missing');
 
 const skeletonPanel = ownedExecutable('auto-skeleton', 'Explore mounted profile loading and native focus');
@@ -237,7 +237,7 @@ for (const marker of ['appearance', 'card-size', 'title-position', 'show-title',
   if (!shellPanel.includes(`data-shell-demo="${marker}"`) && !shellPanel.includes(`'data-shell-demo': '${marker}'`)) throw new Error(`WebPartShell sample missing ${marker}`);
 }
 const shellHost = read(path.join(componentRoot, 'WebPartShellDemoHost.tsx'));
-if (!shellPanel.includes('aria-label="Project note"') || !shellPanel.includes('Increment counter') || !shellMetadata.includes('@example Inspect searchable Shell title metadata')) throw new Error('Shell needs source-owned body state and real metadata scenarios.');
+if (!shellPanel.includes('aria-label="Project note"') || !shellPanel.includes('Increment counter') || !shellMetadata.includes('@scenario Inspect searchable Shell title metadata')) throw new Error('Shell needs source-owned body state and real metadata scenarios.');
 if ((shellHost.match(/<WebPartShell /g) || []).length !== 1) throw new Error('WebPartShell sample must wrap the web part exactly once');
 console.log('Verified WebPartShell root host, metadata and observable child/presentation scenario.');
 
@@ -301,7 +301,7 @@ for (const [file, owner, title] of [
 ]) {
   const ownerKey = `packages/spfx-react-toolkit/src/core/${file}.tsx#${owner}`;
   if (!generated.identities.has(JSON.stringify([ownerKey, title]))) throw new Error(`Actual provider owner/title association missing: ${ownerKey}/${title}`);
-  const source = ownedSourceExample(read(path.join(root, `packages/spfx-react-toolkit/src/core/${file}.tsx`)), title);
+  const source = ownedSourceScenario(read(path.join(root, `packages/spfx-react-toolkit/src/core/${file}.tsx`)), title);
   if (!source.includes('diagnostics:') || !source.includes('observe:')) throw new Error(`Observable provider regions missing: ${owner}`);
 }
 console.log('Verified four provider availability owners and separate actual Top observation; availability is not native execution.');
@@ -330,14 +330,14 @@ for (const [file, title, markers] of [
   ['useSPFxCrossSitePermissions.ts', 'Check staged legacy site web and list permissions', ['useSPFxCrossSitePermissions(run.siteUrl, run.options)', 'Check / repeat', 'key={run.id}']],
   ['useSPFxHubSiteInfo.ts', 'Start a scope bound hub association lookup', ['useSPFxHubSiteInfo()', 'Start / repeat lookup', 'sameScope(run.scope, scope)', 'key={run.id}']],
 ]) {
-  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks', file)), title);
+  const source = ownedSourceScenario(read(path.join(root, 'packages/spfx-react-toolkit/src/hooks', file)), title);
   for (const marker of markers) if (!source.includes(marker)) throw new Error(`Context source-owned case missing ${marker}`);
   if (!read(path.join(componentRoot, 'generated/jsdoc-examples/catalogue.ts')).includes(JSON.stringify(title))) throw new Error(`Context generated case unavailable: ${title}`);
 }
 console.log('Verified actual trim scenarios and canonical Context availability; execution remains separately verified.');
 
 for (const title of ['Stage resource permissions and observe protected lifetimes', 'Compose permission and Entra checks with nested AND']) {
-  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx')), title);
+  const source = ownedSourceScenario(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/sharepoint-permission-trim/sharepoint-permission-trim.tsx')), title);
   const markers = ['export function Demo(', 'resetRevision', 'observe:', 'key={applied.id}', 'ProtectedContent', 'data-trim-demo="run"', 'data-trim-demo="applied-target"', 'SharePointPermissionTrim.Loading', 'SharePointPermissionTrim.Fallback', 'SharePointPermissionTrim.ErrorFallback'];
   if (title === 'Compose permission and Entra checks with nested AND') markers.push('<EntraGroupTrim groups={[{ name: applied.group }]}', 'groupType="All" relationship="member" match="all"', 'level="inner"');
   for (const marker of markers) if (!source.includes(marker)) throw new Error(`Canonical permission/AND scenario missing ${marker}`);
@@ -347,7 +347,7 @@ for (const title of ['Stage resource permissions and observe protected lifetimes
 // The hosted dictionary override belongs to its exact canonical case, not a retired panel.
 {
   const title = 'Explore hosted files and folders with explicit source policies';
-  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx')), title);
+  const source = ownedSourceScenario(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/file-folder-picker/file-folder-picker.tsx')), title);
   if (!generated.symbols.has('FileFolderPicker')) throw new Error('Canonical hosted picker scenario is unavailable');
   for (const marker of ['label="Custom browse text"', 'checked={customStrings}', 'setCustomStrings(data.checked)', 'strings={customStrings ?', "files: 'Choose report attachments…'", "folders: 'Choose a report folder…'", "all: 'Choose report content…'"]) {
     if (!source.includes(marker)) throw new Error(`Canonical hosted picker dictionary override missing ${marker}`);
@@ -365,7 +365,7 @@ for (const [file, name, title] of [
   ['principal-picker','PrincipalPicker','Explore principal discovery and explicit identity resolution'],
 ]) {
   if (!generated.symbols.has(name)) throw new Error(`${name}: canonical scenario is unavailable`);
-  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/pickers', file + '.tsx')), title);
+  const source = ownedSourceScenario(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/pickers', file + '.tsx')), title);
   for (const marker of ['label="Custom search and status text"', 'checked={config.customStrings}', 'update({ customStrings: data.checked })', 'strings: config.customStrings ?', "selectOne: 'Choose source content'", "search: 'Find a source item'", "noOptions: 'No matching source items'"]) {
     if (!source.includes(marker)) throw new Error(`${name}: observable dictionary override missing ${marker}`);
   }
@@ -379,7 +379,7 @@ if (!gridSource.includes('id="dg-strings"') || !gridSource.includes('strings={gr
 
 {
   const title = 'Stage direct SharePoint group membership and observe protected lifetimes';
-  const source = ownedSourceExample(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/sharepoint-group-trim/sharepoint-group-trim.tsx')), title);
+  const source = ownedSourceScenario(read(path.join(root, 'packages/spfx-react-toolkit/src/controls/sharepoint-group-trim/sharepoint-group-trim.tsx')), title);
   for (const marker of ['export function Demo(', 'resetRevision', 'observe:', 'key={applied.id}', 'ProtectedContent', 'data-trim-demo="run"', 'data-trim-demo="applied-target"', 'SharePointGroupTrim.Loading', 'SharePointGroupTrim.Fallback', 'SharePointGroupTrim.ErrorFallback', "draft.values.split(';')", 'Number(value.trim())', 'Object.freeze', 'groups={applied.groups}', 'webUrl={applied.webUrl}', 'match={applied.match}']) {
     if (!source.includes(marker)) throw new Error(`Canonical SharePoint group scenario missing ${marker}`);
   }

@@ -99,12 +99,17 @@ AccordionGroupRoot.displayName = 'AccordionGroup';
  * ```tsx
  * import * as React from 'react';
  * import { AccordionGroup } from '@apvee/spfx-react-toolkit';
- * <AccordionGroup title="Preferences" defaultOpenItems={['profile']}><AccordionGroup.Item value="profile" title="Profile">Details</AccordionGroup.Item></AccordionGroup>
+ *
+ * <AccordionGroup title="Preferences" defaultOpenItems={['profile']}>
+ *   <AccordionGroup.Item value="profile" title="Profile">
+ *     Details
+ *   </AccordionGroup.Item>
+ * </AccordionGroup>;
  * ```
  *
  * @useWhen Several related disclosure panels need Fluent expansion with retained child state.
  * @avoidWhen Use SettingsGroup when fields should remain continuously visible.
- * @example Control disclosure selection and retained content
+ * @scenario Control disclosure selection and retained content
  * ```tsx
  * import * as React from 'react';
  * import { Button, Checkbox, Field, FluentProvider, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

@@ -55,9 +55,9 @@ For current-web scope, an available mask is read through `useSPFxPermissions` wi
 
 Requires a matching SPFx provider and its native PageContext/SPHttpClient; it imports no PnP feature registrations. Local behavior/type tests use native boundary doubles and do not establish authenticated SharePoint results. The source-owned cases below keep separate staged legacy and scoped targets. Draft edits perform no request; explicit Check/Run and repeat mount fresh query attempts. Scalar-equivalent repeats after settlement request fresh masks; concurrent identical native reads may share their pending promise within the same provider/client/user scope. Errors remain distinct from denial, and reset or native identity replacement retires previous display ownership. The [SharePointPermissionTrim](../../api/controls/sharepoint-permission-trim.md) sample composes this same hook; [authenticated scoped checks](../development/sharepoint-validation/INDEX.md) remain separate. A permission check is a UI decision; SharePoint remains responsible for authorization.
 
-<!-- toolkit:include symbol="useSPFxCrossSitePermissions" section="example" title="Check staged legacy site web and list permissions" -->
+<!-- toolkit:include symbol="useSPFxCrossSitePermissions" section="scenario" title="Check staged legacy site web and list permissions" -->
 
-<!-- toolkit:include symbol="useSPFxCrossSitePermissions" section="example" title="Check staged web list item and folder permissions" -->
+<!-- toolkit:include symbol="useSPFxCrossSitePermissions" section="scenario" title="Check staged web list item and folder permissions" -->
 
 ## Passive delegated checks
 
@@ -121,7 +121,7 @@ Provider, native client, PageContext/current-user identity and target changes hi
 
 The source-owned **Stage Entra relationships and observe protected lifetimes** scenario stages exact names/GUIDs, classification, relationship and all/any before Run. It uses the actual control and native APIs, with a real protected counter, caller ref and mount/cleanup observations. Drafts and Reset start no checks; Run repeats a settled check. Local native doubles establish control behavior, while [authenticated host validation](../development/sharepoint-validation/INDEX.md) remains separate.
 
-<!-- toolkit:include symbol="EntraGroupTrim" section="example" title="Stage Entra relationships and observe protected lifetimes" -->
+<!-- toolkit:include symbol="EntraGroupTrim" section="scenario" title="Stage Entra relationships and observe protected lifetimes" -->
 
 `EntraGroupTrimBranchProps` describes each structural marker. `EntraGroupTrimProps` describes the control.
 
@@ -137,7 +137,7 @@ Requires a matching SPFx provider and native SPHttpClient. Reads the selected we
 
 Stage exact names or numeric IDs, semicolon-separated selections, current or explicit web and all/any matching, then Run. Draft edits retain the applied decision and protected counter. A settled repeat checks again; Reset restores idle without replacing the editor or starting membership reads. Local native-boundary tests and authenticated SharePoint validation remain separate; see [development verification](../development/INDEX.md).
 
-<!-- toolkit:include symbol="SharePointGroupTrim" section="example" title="Stage direct SharePoint group membership and observe protected lifetimes" -->
+<!-- toolkit:include symbol="SharePointGroupTrim" section="scenario" title="Stage direct SharePoint group membership and observe protected lifetimes" -->
 
 `SharePointGroupTrimBranchProps` describes each structural marker. `SharePointGroupTrimProps` describes the control.
 
@@ -153,13 +153,13 @@ Available current-web masks use `useSPFxPermissions` without REST and inherit Pa
 
 Stage current or explicit web/list/item/folder targets, native permission values and all/any matching, then Run. Draft edits retain the applied decision and actual protected counter. Repeating a settled check creates a new attempt; pending equivalent reads may share only within the matching provider. Reset retires the check, clears observations and restores idle without replacing the editor. Local native-boundary tests and authenticated SharePoint validation remain separate.
 
-<!-- toolkit:include symbol="SharePointPermissionTrim" section="example" title="Stage resource permissions and observe protected lifetimes" -->
+<!-- toolkit:include symbol="SharePointPermissionTrim" section="scenario" title="Stage resource permissions and observe protected lifetimes" -->
 
 ### AND composition
 
 Nest actual trims to require both decisions. The inner check mounts only when the outer check allows, so an outer denial/error does not start the inner request. The separate source-owned AND case retains the complete staged resource editor and names its outer and inner branches. Its nested Entra check additionally needs the native Graph client and approved User.Read/GroupMember.Read.All access.
 
-<!-- toolkit:include symbol="SharePointPermissionTrim" section="example" title="Compose permission and Entra checks with nested AND" -->
+<!-- toolkit:include symbol="SharePointPermissionTrim" section="scenario" title="Compose permission and Entra checks with nested AND" -->
 
 `SharePointPermissionTrimBranchProps` describes each structural marker. `SharePointPermissionTrimProps` describes the control.
 

@@ -20,13 +20,14 @@ import { PickerRenderer } from './picker-renderer.internal';
  * ```tsx
  * import * as React from 'react';
  * import { FieldPicker } from '@apvee/spfx-react-toolkit';
- * <FieldPicker label="Campi" list="Projects" includeReadOnly={false} />
+ *
+ * <FieldPicker label="Campi" list="Projects" includeReadOnly={false} />;
  * ```
  *
  * @useWhen A user must select fields from a specified SharePoint list.
  * @avoidWhen Use ContentTypePicker when the configuration requires content-type identities.
  *
- * @example Explore site columns and list fields
+ * @scenario Explore site columns and list fields
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

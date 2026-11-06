@@ -333,7 +333,7 @@ function useSPFxBrowserStorage<T>(
  * }
  * ```
  *
- * @example Save and clear an instance scoped local value
+ * @scenario Save and clear an instance scoped local value
  * ```tsx
  * // Requires the matching SPFx provider. Only named commands write; browser JSON persistence is best effort. The string generic does not validate stored JSON. Reset keeps current hook state, rather than rereading persistence; reentry initializes from the scoped key.
  * import * as React from 'react';
@@ -544,7 +544,7 @@ export function useSPFxLocalStorage<T>(
  * }
  * ```
  *
- * @example Save and clear an instance scoped session value
+ * @scenario Save and clear an instance scoped session value
  * ```tsx
  * // Requires the matching SPFx provider. Only named commands write; browser JSON persistence is best effort. The string generic does not validate stored JSON. Reset keeps current hook state, rather than rereading persistence; reentry initializes from the scoped key.
  * import * as React from 'react';

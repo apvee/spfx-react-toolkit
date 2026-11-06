@@ -56,8 +56,13 @@ export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
  * import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
  * import { SPFxWebPartProvider, SPFxWebPartProviderProps } from '@apvee/spfx-react-toolkit';
  *
- * function hostTree(instance: BaseClientSideWebPart<{ title: string }>): React.ReactElement {
- *   const props: SPFxWebPartProviderProps<{ title: string }> = { instance, children: <span>Host content</span> };
+ * function hostTree(
+ *   instance: BaseClientSideWebPart<{ title: string }>
+ * ): React.ReactElement {
+ *   const props: SPFxWebPartProviderProps<{ title: string }> = {
+ *     instance,
+ *     children: <span>Host content</span>
+ *   };
  *   return <SPFxWebPartProvider {...props} />;
  * }
  * ```
@@ -117,7 +122,7 @@ export interface SPFxWebPartProviderProps<TProps extends {} = {}> {
  * }
  * ```
 
- * @example Compare WebPart provider availability with the current host
+ * @scenario Compare WebPart provider availability with the current host
  * ```tsx
  * import * as React from 'react';
  * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Badge, Field, Select, makeStyles, tokens } from '@fluentui/react-components';

@@ -145,9 +145,15 @@ export interface SPFxOneDriveAppDataOptions<T> {
  *
  * function Settings() {
  *   const file = useSPFxOneDriveAppData<{ theme: string }>('settings.json', {
- *     folder: 'dashboard', autoFetch: false, defaultValue: { theme: 'dark' }
+ *     folder: 'dashboard',
+ *     autoFetch: false,
+ *     defaultValue: { theme: 'dark' }
  *   });
- *   return <button onClick={file.load} disabled={file.isLoading}>Load settings</button>;
+ *   return (
+ *     <button onClick={file.load} disabled={file.isLoading}>
+ *       Load settings
+ *     </button>
+ *   );
  * }
  * ```
  *
@@ -230,7 +236,7 @@ export interface SPFxOneDriveAppDataOptions<T> {
  * @remarks
  * Mount below the matching SPFx provider with Fluent peers and approved app-folder grants. Start gates all Graph initialization. This scenario disables autoFetch and createIfMissing and supplies no defaultValue. Only explicit Write replaces the fixed file; it does not create a folder. Reset preserves the operational child, original hook callbacks and pending read/write locks, restores local drafts and hides stale output without clearing hook state, cancelling I/O or rolling back accepted writes. T remains an expected JSON shape, not runtime validation.
  *
- * @example Read and explicitly replace OneDrive app data
+ * @scenario Read and explicitly replace OneDrive app data
  * ```tsx
  * import * as React from 'react';
  * import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Field, Input, Label, MessageBar, MessageBarBody, Select, makeStyles } from '@fluentui/react-components';

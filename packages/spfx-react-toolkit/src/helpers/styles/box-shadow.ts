@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { boxShadow } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = boxShadow.none;
  * ```
  *
- * @example Select shadow elevation descriptors — actual surface with room for shadow
+ * @scenario Select shadow elevation descriptors — actual surface with room for shadow
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

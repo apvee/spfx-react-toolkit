@@ -242,9 +242,15 @@ import { useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
 
 function Settings() {
   const file = useSPFxOneDriveAppData<{ theme: string }>('settings.json', {
-    folder: 'dashboard', autoFetch: false, defaultValue: { theme: 'dark' }
+    folder: 'dashboard',
+    autoFetch: false,
+    defaultValue: { theme: 'dark' }
   });
-  return <button onClick={file.load} disabled={file.isLoading}>Load settings</button>;
+  return (
+    <button onClick={file.load} disabled={file.isLoading}>
+      Load settings
+    </button>
+  );
 }
 ```
 
@@ -322,91 +328,6 @@ function ConfigPanel() {
 }
 ```
 
-#### Read and explicitly replace OneDrive app data
-
-```tsx
-import * as React from 'react';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Field, Input, Label, MessageBar, MessageBarBody, Select, makeStyles } from '@fluentui/react-components';
-import { useSPFxMSGraphClient, useSPFxOneDriveAppData } from '@apvee/spfx-react-toolkit';
-
-type DemoRegions = { controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode; diagnostics?: React.ReactNode; children?: React.ReactNode };
-type DemoProps = { render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number };
-interface OneDriveDemoData { readonly message: string; readonly counter: number; readonly timestamp: number; }
-const useStyles = makeStyles({ diagnostics: { minWidth: 0, maxWidth: '100%', overflowX: 'auto' }, json: { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } });
-function ActiveOneDrive({ render, resetRevision = 0 }: DemoProps): React.ReactElement {
-  const classes = useStyles();
-  const options = React.useMemo(() => ({ autoFetch: false, createIfMissing: false, folder: 'spfx-react-toolkit-demo' }), []);
-  const graph = useSPFxMSGraphClient();
-  const appData = useSPFxOneDriveAppData<OneDriveDemoData>('test-data.json', options);
-  const [operation, setOperation] = React.useState<'read' | 'write'>('read');
-  const [draft, setDraft] = React.useState({ message: 'Project update', revision: 0 });
-  const message = draft.message;
-  const live = React.useRef({ graph, appData, message });
-  live.current = { graph, appData, message };
-  const identity = React.useRef({ client: graph.client, load: appData.load, write: appData.write, revision: resetRevision, operation, message, draftRevision: draft.revision });
-  if (identity.current.client !== graph.client || identity.current.load !== appData.load || identity.current.write !== appData.write || identity.current.revision !== resetRevision || identity.current.operation !== operation || identity.current.draftRevision !== draft.revision) {
-    identity.current = { client: graph.client, load: appData.load, write: appData.write, revision: resetRevision, operation, message, draftRevision: draft.revision };
-  }
-  const boundary = identity.current;
-  const mounted = React.useRef(true);
-  React.useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  const sequence = React.useRef(0);
-  const pending = React.useRef<{ load: typeof appData.load; write: typeof appData.write; request: number }>();
-  const [executed, setExecuted] = React.useState<{ boundary: typeof boundary; request: number; completed: boolean; error?: Error }>();
-  const observedRevision = React.useRef(resetRevision);
-  React.useEffect(() => {
-    if (observedRevision.current !== resetRevision) {
-      observedRevision.current = resetRevision;
-      setOperation('read'); setDraft(previous => ({ message: 'Project update', revision: previous.revision + 1 })); setExecuted(undefined);
-    }
-  }, [resetRevision]);
-  const run = React.useCallback(async (): Promise<void> => {
-    const active = live.current;
-    if (!mounted.current || identity.current !== boundary || active.message !== boundary.message || !active.graph.isReady || !active.graph.client || active.appData.isLoading || active.appData.isWriting || (pending.current?.load === boundary.load && pending.current.write === boundary.write) || (boundary.operation === 'write' && boundary.message === '')) return;
-    const request = ++sequence.current;
-    pending.current = { load: boundary.load, write: boundary.write, request };
-    const isCurrent = (): boolean => mounted.current && identity.current === boundary && sequence.current === request;
-    setExecuted({ boundary, request, completed: false });
-    try {
-      if (boundary.operation === 'read') await boundary.load();
-      else {
-        await boundary.write({ message: boundary.message, counter: (active.appData.data?.counter ?? 0) + 1, timestamp: Date.now() });
-      }
-      if (isCurrent()) {
-        // User edits retire the draft revision; this owned clear preserves its completed result.
-        if (boundary.operation === 'write') setDraft(previous => ({ ...previous, message: '' }));
-        setExecuted({ boundary, request, completed: true });
-      }
-    } catch (failure) {
-      if (isCurrent()) setExecuted({ boundary, request, completed: true, error: failure instanceof Error ? failure : new Error(String(failure)) });
-    } finally {
-      if (pending.current?.request === request) pending.current = undefined;
-    }
-  }, [boundary]);
-  const available = graph.isReady && graph.client !== undefined;
-  const busy = appData.isLoading || appData.isWriting;
-  const current = executed?.boundary === boundary && executed.request === sequence.current;
-  const error = current ? executed?.error ?? (operation === 'read' ? appData.error : appData.writeError) : undefined;
-  const completed = current && executed?.completed && !busy;
-  // Legacy JSON null remains present; optional field reads do not validate stored shapes.
-  const regions: DemoRegions = {
-    controls: <><Field label="OneDrive operation"><Select aria-label="OneDrive operation" disabled={appData.isWriting} value={operation} onChange={(_, data) => { if (data.value === 'read' || data.value === 'write') setOperation(data.value); }}><option value="read">Read</option><option value="write">Write</option></Select></Field>{operation === 'write' && <Field label="Message"><Input aria-label="Message" disabled={appData.isWriting} value={message} onChange={(_, data) => setDraft(previous => ({ message: data.value, revision: previous.revision + 1 }))} /></Field>}</>,
-    commands: <><Button appearance="primary" disabled={!available || busy || (operation === 'write' && message === '')} onClick={() => { run().catch(() => undefined); }}>Run</Button></>,
-    status: graph.initError ? <MessageBar intent="error"><MessageBarBody>{graph.initError.message}</MessageBarBody></MessageBar> : error ? <MessageBar intent="error"><MessageBarBody>{error.message}</MessageBarBody></MessageBar> : undefined,
-    children: !available ? <Label>Microsoft Graph unavailable. Wait for client initialization.</Label> : busy ? <Label>Loading...</Label> : !completed ? <Label>Run the selected operation.</Label> : error ? <Label>Operation not completed.</Label> : appData.isNotFound ? <Label>File not found.</Label> : appData.data === undefined ? <Label>No data returned.</Label> : <dl><dt>Saved message</dt><dd>{appData.data?.message === '' ? '(empty)' : appData.data?.message}</dd><dt>Counter</dt><dd>{appData.data ? String(appData.data.counter) : undefined}</dd></dl>,
-    diagnostics: <><Label>approot:/spfx-react-toolkit-demo/test-data.json</Label><dl><dt>Ready</dt><dd>{completed ? String(appData.isReady) : 'Not requested'}</dd><dt>Not Found</dt><dd>{completed ? String(appData.isNotFound) : 'Not requested'}</dd></dl>{completed && !error && appData.data !== undefined && <Accordion collapsible className={classes.diagnostics}><AccordionItem value="data"><AccordionHeader>OneDrive data</AccordionHeader><AccordionPanel><pre className={classes.json}>{JSON.stringify(appData.data, undefined, 2)}</pre></AccordionPanel></AccordionItem></Accordion>}<MessageBar intent="info"><MessageBarBody>Reading a missing file does not create it. Only explicit Write replaces this file. Reset restores local drafts and hides publication; it preserves the active hook and genuine pending locks, does not cancel requests and cannot undo a remote write. Generic JSON types do not validate stored data.</MessageBarBody></MessageBar></>,
-  };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export function Demo({ render, resetRevision = 0 }: DemoProps = {}): React.ReactElement {
-  const [started, setStarted] = React.useState(false);
-  if (started) return <ActiveOneDrive render={render} resetRevision={resetRevision} />;
-  const regions: DemoRegions = { commands: <><Button appearance="primary" onClick={() => setStarted(true)}>Start</Button></>, children: <p>Start initializes Microsoft Graph under the matching SPFx provider. Then choose Read or explicitly Write the fixed app-folder file.</p> };
-  return render ? render(regions) : <>{regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}</>;
-}
-export const demo = { host: 'webPart', kind: 'write', contentPlacement: 'configuration', observe: 'Start initializes Graph without reading or writing. Read missing data never creates a file; explicit Write replaces the fixed app-folder message and increments its counter. Pending writes lock inputs. Reset restores local drafts and hides old publication while preserving the hook and real pending locks; it cannot undo remote writes.' };
-```
-
 ### Type (3)
 
 ```ts
@@ -468,4 +389,4 @@ Contract: see [SPFxOneDriveAppDataResult.write](onedrive-app-data.md#spfxonedriv
 
 ### Source (5)
 
-[packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts:317](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts#L317)
+[packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts:323](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/hooks/useSPFxOneDriveAppData.ts#L323)

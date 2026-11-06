@@ -28,8 +28,15 @@ import type { FileFolderPickerProps } from './file-folder-picker.types';
  * ```tsx
  * import * as React from 'react';
  * import { FileFolderPicker } from '@apvee/spfx-react-toolkit';
- * <FileFolderPicker label="Documents" defaultValue={[]} multiselect extensions={['.pdf']}
- *   scope={{ kind: 'siteCollection' }} onChange={data => console.log(data.values)} />
+ *
+ * <FileFolderPicker
+ *   label="Documents"
+ *   defaultValue={[]}
+ *   multiselect
+ *   extensions={['.pdf']}
+ *   scope={{ kind: 'siteCollection' }}
+ *   onChange={data => console.log(data.values)}
+ * />;
  * ```
  *
  * @useWhen Existing SharePoint or OneDrive files/folders should be selected through Microsoft’s hosted picker as serializable metadata references.
@@ -103,7 +110,7 @@ import type { FileFolderPickerProps } from './file-folder-picker.types';
  * }
  * ```
  *
- * @example Explore hosted files and folders with explicit source policies
+ * @scenario Explore hosted files and folders with explicit source policies
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

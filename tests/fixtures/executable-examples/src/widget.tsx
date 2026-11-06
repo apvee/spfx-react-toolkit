@@ -3,7 +3,7 @@ import * as React from 'react';
 /**
  * Displays a widget.
  * @docPage controls/widget
- * @example Basic view
+ * @scenario Basic view
  * ```tsx
  * import * as React from 'react';
  * import { Widget } from '@apvee/spfx-react-toolkit';

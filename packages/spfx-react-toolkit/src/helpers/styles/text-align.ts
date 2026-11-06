@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { textAlign } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = textAlign.start;
  * ```
  *
- * @example Select text alignment descriptors — bounded multiline content and direction
+ * @scenario Select text alignment descriptors — bounded multiline content and direction
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select, FluentProvider } from '@fluentui/react-components';

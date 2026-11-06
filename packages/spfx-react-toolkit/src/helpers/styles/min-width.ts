@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { minWidth } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = minWidth.zero;
  * ```
  *
- * @example Select minimum width descriptors — zero/pixels versus constrained parent
+ * @scenario Select minimum width descriptors — zero/pixels versus constrained parent
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

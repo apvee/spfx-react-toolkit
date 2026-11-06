@@ -25,7 +25,7 @@ test('root/workspace build, serve, bundle, package and pack lifecycles never gen
   }
   fs.mkdirSync(path.join(root, 'scripts/docs'), { recursive: true });
   fs.mkdirSync(path.join(root, h.config.packageRoot, 'scripts'), { recursive: true });
-  for (const name of ['localization-resources', 'pack-library']) fs.writeFileSync(path.join(root, h.config.packageRoot, 'scripts/' + name + '.cjs'), "require('node:fs').appendFileSync(process.env.LIFECYCLE_LOG, process.argv.slice(1).join(' ') + '\\n');\n");
+  for (const name of ['localization-resources', 'compile-library', 'pack-library']) fs.writeFileSync(path.join(root, h.config.packageRoot, 'scripts/' + name + '.cjs'), "require('node:fs').appendFileSync(process.env.LIFECYCLE_LOG, process.argv.slice(1).join(' ') + '\\n');\n");
   for (const name of ['documentation', 'generated', 'executable-examples']) fs.writeFileSync(path.join(root, 'scripts/docs/' + name + '.cjs'), "throw new Error('Forbidden generation/check in lifecycle');\n");
   for (const route of metadata) {
     const scripts = JSON.parse(fs.readFileSync(path.join(root, route), 'utf8')).scripts;
@@ -50,6 +50,7 @@ test('root/workspace build, serve, bundle, package and pack lifecycles never gen
   const calls = fs.readFileSync(log, 'utf8');
   assert.match(calls, /gulp serve/);
   assert.match(calls, /--check-inventory/);
+  assert.match(calls, /compile-library\.cjs/);
   assert.match(calls, /--emit/);
 });
 
@@ -95,7 +96,7 @@ test('real app compiler consumes copied compiled library and catches invalid/mis
   const source = path.join(root, h.config.sourceRoot, 'hooks/useStableCallback.ts');
   const prior = fs.readFileSync(source, 'utf8');
   const doc = [
-    ' * @example Compiler boundary probe', ' * ```tsx', " * import * as React from 'react';",
+    ' * @scenario Compiler boundary probe', ' * ```tsx', " * import * as React from 'react';",
     " * import { useState as unusedCompilerProbe } from 'react';",
     ' * export function Demo(): React.ReactElement { return <div>Compiler boundary</div>; }',
     " * export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject', observe: 'Compiler boundary is visible.' };", ' * ```',

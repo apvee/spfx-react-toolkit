@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { height } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = height.auto;
  * ```
  *
- * @example Select height descriptors — auto/full/pixels under a sized parent
+ * @scenario Select height descriptors — auto/full/pixels under a sized parent
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

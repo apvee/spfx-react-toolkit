@@ -20,13 +20,17 @@ import { PickerRenderer } from './picker-renderer.internal';
  * ```tsx
  * import * as React from 'react';
  * import { ViewPicker } from '@apvee/spfx-react-toolkit';
- * <ViewPicker label="Vista" list={{kind:'id',id:'11111111-1111-4111-8111-111111111111'}} />
+ *
+ * <ViewPicker
+ *   label="Vista"
+ *   list={{ kind: 'id', id: '11111111-1111-4111-8111-111111111111' }}
+ * />;
  * ```
  *
  * @useWhen A user must select saved views of a specified SharePoint list.
  * @avoidWhen Use ListItemPicker for actual item selection rather than view definitions.
  *
- * @example Explore scoped view catalogs
+ * @scenario Explore scoped view catalogs
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, Select, Switch, makeStyles } from '@fluentui/react-components';

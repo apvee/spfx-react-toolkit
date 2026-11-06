@@ -363,3 +363,21 @@ test('stale development targets and canonical aliases cannot satisfy missing vir
   assert.ok(!targets.some(target => ['docs/development/stale.md', 'stale-alias.md'].includes(target.route)));
   assert.deepEqual(api().validatePublicLinks(artifacts, targets, config).map(item => item.code), ['DOC_LINK_TARGET', 'DOC_LINK_TARGET']);
 });
+
+test('renders scenario code only in guides that select its exact local title', () => {
+  const copy = structuredClone(model);
+  const contract = copy.contracts[copy.graph.bindings.find(binding => binding.exportedName === 'Stage').entityKey];
+  const scenario = { title: 'Basic', language: 'tsx', code: 'const scenarioContent = <div />;\n', source: contract.source };
+  contract.scenarios = [scenario];
+  const source = { source: 'docs/_sources/guides/test.md', route: 'docs/guides/test.md', title: 'Test', summary: 'Test.', area: 'guides' };
+  const include = (section, title) => api().renderEditorialPages([{ ...source, content:
+    '<!-- toolkit:include symbol="Stage" section="' + section + '"' + (title === undefined ? '' : ' title="' + title + '"') + ' -->' }], copy, config)[source.route];
+  assert.match(include('scenario', 'Basic'), /const scenarioContent/);
+  assert.doesNotMatch(include('example', 'Basic'), /const scenarioContent/);
+  assert.doesNotMatch(render.renderApiPages(copy, config)['docs/api/controls/stage.md'], /const scenarioContent/);
+  assert.throws(() => include('scenario'), /exact scenario title/);
+  assert.throws(() => include('scenario', '  '), /exact scenario title/);
+  assert.throws(() => include('scenario', 'basic'), /Missing or ambiguous scenario/);
+  contract.scenarios.push(scenario);
+  assert.throws(() => include('scenario', 'Basic'), /Missing or ambiguous scenario/);
+});

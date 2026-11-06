@@ -56,7 +56,7 @@ export interface SPFxDisplayModeInfo {
  *
  * @useWhen WebPart UI must distinguish the current edit and read modes.
  *
- * @example Observe the native Read and Edit mode
+ * @scenario Observe the native Read and Edit mode
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxDisplayMode } from '@apvee/spfx-react-toolkit';
@@ -113,7 +113,7 @@ export function useSPFxDisplayMode(): SPFxDisplayModeInfo {
  *
  * @useWhen a WebPart only needs an edit-mode boolean for conditional UI.
  *
- * @example Observe the native edit mode shortcut
+ * @scenario Observe the native edit mode shortcut
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxIsEdit } from '@apvee/spfx-react-toolkit';

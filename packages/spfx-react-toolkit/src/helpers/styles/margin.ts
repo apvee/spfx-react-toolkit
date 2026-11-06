@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { margin } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = margin.none;
  * ```
  *
- * @example Select all side margin descriptors — actual subject among bounded siblings
+ * @scenario Select all side margin descriptors — actual subject among bounded siblings
  * ```tsx
  * import * as React from 'react';
  * import { Field, Input, Select } from '@fluentui/react-components';

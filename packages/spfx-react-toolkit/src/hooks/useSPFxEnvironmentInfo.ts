@@ -92,7 +92,7 @@ export interface SPFxEnvironmentInfo {
  *
  * @useWhen UI must adapt to the detected SharePoint, Teams or Office host.
  *
- * @example Observe the acquired application host
+ * @scenario Observe the acquired application host
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxEnvironmentInfo } from '@apvee/spfx-react-toolkit';

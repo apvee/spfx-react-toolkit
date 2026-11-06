@@ -68,9 +68,9 @@ function mirror(t, executable = true) {
     const project = JSON.parse(fs.readFileSync(filename, 'utf8'));
     project.compilerOptions.jsx = 'react';
     fs.writeFileSync(filename, JSON.stringify(project));
-    // The editorial selector must still identify a unique source example.
+    // Opt the guide into the exact source-owned scenario.
     const guide = path.join(root, 'docs/_sources/guides/count.md');
-    fs.writeFileSync(guide, fs.readFileSync(guide, 'utf8').replace('section="example"', 'section="example" title="Z first scenario"'));
+    fs.writeFileSync(guide, fs.readFileSync(guide, 'utf8').replace('section="example"', 'section="scenario" title="Z first scenario"'));
   }
   return root;
 }

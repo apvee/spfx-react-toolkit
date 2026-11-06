@@ -15,16 +15,28 @@ const { bindingContractKey, memberContractKey } = require('./documentation-contr
 const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
 const exported = node => ts.getModifiers(node)?.some(modifier => modifier.kind === ts.SyntaxKind.ExportKeyword) &&
   !ts.getModifiers(node)?.some(modifier => modifier.kind === ts.SyntaxKind.DefaultKeyword);
+function addBindingNames(binding, names) {
+  if (ts.isIdentifier(binding)) {
+    names.add(binding.text);
+    return;
+  }
+  for (const element of binding.elements) {
+    if (ts.isBindingElement(element)) addBindingNames(element.name, names);
+  }
+}
 function namedExports(source) {
-  // Erased names still opt into the convention so they receive an error
-  // instead of silently becoming ordinary documentation examples.
+  // Include erased names so runtime validation and legacy diagnostics catch them.
   const names = new Set();
   for (const statement of source.statements) {
-    if (ts.isExportDeclaration(statement) && statement.exportClause && ts.isNamedExports(statement.exportClause)) {
-      statement.exportClause.elements.forEach(element => names.add(element.name.text));
+    if (ts.isExportDeclaration(statement) && statement.exportClause) {
+      if (ts.isNamedExports(statement.exportClause)) {
+        statement.exportClause.elements.forEach(element => names.add(element.name.text));
+      } else if (ts.isNamespaceExport(statement.exportClause)) {
+        names.add(statement.exportClause.name.text);
+      }
     } else if (exported(statement)) {
       if (ts.isVariableStatement(statement)) {
-        for (const declaration of statement.declarationList.declarations) if (ts.isIdentifier(declaration.name)) names.add(declaration.name.text);
+        for (const declaration of statement.declarationList.declarations) addBindingNames(declaration.name, names);
       } else if (statement.name && ts.isIdentifier(statement.name)) names.add(statement.name.text);
     }
   }
@@ -71,7 +83,7 @@ function runtimeOwner(model, key) {
 }
 
 /**
- * Project the optional executable convention from canonical source examples.
+ * Project executable modules from explicit source-owned scenarios.
  * One guarded TypeScript program checks all opted-in modules and host input
  * shapes together. Discovery never imports, evaluates or emits snippet code.
  * Ordinary examples remain the responsibility of checkDocumentationExamples;
@@ -91,16 +103,22 @@ function collectExecutableExamples(root, model, config) {
     const offset = node ? node.getSourceFile().getLineAndCharacterOfPosition(node.getStart()).line : 0;
     diagnostics.push({ code, file: example.source.file, line: example.source.line + offset, symbol: example.ownerKey, message });
   };
-  const localTitles = new Map();
   for (const example of model.examples) {
+    const source = ts.createSourceFile('example.' + example.language, example.code, ts.ScriptTarget.Latest, true);
+    const exports = namedExports(source);
+    if (exports.has('Demo') || exports.has('demo')) {
+      report(example, 'EXECUTABLE_LEGACY_EXAMPLE', 'Named exports Demo and demo are reserved for @scenario. Move the runnable module to @scenario and provide a separate @example.');
+    }
+  }
+  const localTitles = new Map();
+  for (const example of model.scenarios) {
     const key = JSON.stringify([example.ownerKey, example.title]);
     if (!localTitles.has(key)) localTitles.set(key, []);
     localTitles.get(key).push(example);
   }
-  for (const example of model.examples) {
-    const source = ts.createSourceFile('example.' + example.language, example.code, ts.ScriptTarget.Latest, true);
+  for (const example of model.scenarios) {
+    const source = ts.createSourceFile('scenario.' + example.language, example.code, ts.ScriptTarget.Latest, true);
     const exports = namedExports(source);
-    if (!exports.has('Demo') && !exports.has('demo')) continue;
     const shell = source.statements.some(statement => ts.isVariableStatement(statement) &&
       statement.declarationList.declarations.some(declaration => readMetadata(declaration)?.hostAdapter === 'webPartShell'));
     const native = source.statements.some(statement => ts.isVariableStatement(statement) &&
@@ -114,7 +132,7 @@ function collectExecutableExamples(root, model, config) {
     const titleKey = JSON.stringify([example.ownerKey, example.title]);
     if (localTitles.get(titleKey).length > 1) report(example, 'EXECUTABLE_DUPLICATE_TITLE', `Duplicate local executable example title "${example.title}".`);
   }
-  if (!candidates.length) return { examples: [], diagnostics: [] };
+  if (!candidates.length) return { examples: [], diagnostics };
 
   const inputs = createDocumentationInputs(root, config);
   root = inputs.root;

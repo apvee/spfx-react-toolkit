@@ -2,7 +2,7 @@
  * Source-owned Empty recipe.
  * @packageDocumentation
  * @docPage helpers/styles
- * @example Empty recipe
+ * @scenario Empty recipe
  * ```tsx
  * import * as React from 'react';
  * export function Demo(): React.ReactElement { return <div>Visible namespace</div>; }

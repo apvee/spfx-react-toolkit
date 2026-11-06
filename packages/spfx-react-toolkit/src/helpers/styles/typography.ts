@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { typography } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = typography.body1;
  * ```
  *
- * @example Select typography role descriptors — actual sized sample text
+ * @scenario Select typography role descriptors — actual sized sample text
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

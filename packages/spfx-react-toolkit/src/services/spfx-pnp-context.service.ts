@@ -175,7 +175,7 @@ function createDefaultCacheKey(url: string): string {
  * }
  * ```
  *
- * @example Explore PnP context caching and request headers
+ * @scenario Explore PnP context caching and request headers
  * ```tsx
  * import * as React from 'react';
  * import { Button, Field, Input, makeStyles } from '@fluentui/react-components';

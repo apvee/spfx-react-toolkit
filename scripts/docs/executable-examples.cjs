@@ -1,8 +1,7 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const defaultConfig = require('./documentation.config.cjs');
-const { buildValidatedDocumentationContext, failDiagnostics } = require('./documentation-context.cjs');
-const { collectExecutableExamples } = require('./executable-examples-model.cjs');
+const { buildValidatedDocumentationContext } = require('./documentation-context.cjs');
 const { renderExecutableExamples, executableRoot, ownership } = require('./executable-examples-render.cjs');
 const { validRoute, preflightGeneratedArtifacts, applyGeneratedArtifacts } = require('./generated-artifacts.cjs');
 
@@ -28,26 +27,25 @@ function executableExamplesPolicy(config = defaultConfig) {
     allowTrailingBlankLines: true,
   };
 }
-/** Project executable contracts from an already validated shared context.
- * The collector's batch structural check complements the full canonical check;
- * it does not rebuild that graph/model or recheck ordinary source examples.
+/** Render the validated executable scenarios in canonical source order.
  * @param {string} root Repository root.
  * @param {DocumentationContext} context Canonical graph/model already validated once.
  * @param {Config} [config] Same configuration used for the context.
  * @returns {ArtifactSet} Complete executable output set, without filesystem writes.
  */
 function renderExecutableArtifacts(root, context, config = defaultConfig) {
-  const collected = collectExecutableExamples(root, context.model, config);
-  failDiagnostics(collected.diagnostics);
-  const byIdentity = new Map(collected.examples.map(example => [JSON.stringify([example.ownerKey, example.title]), example]));
+  const byIdentity = new Map(context.executableScenarios.map(scenario => [JSON.stringify([scenario.ownerKey, scenario.title]), scenario]));
   // The collector deliberately sorts titles for deterministic diagnostics/model
-  // output. Source order belongs to the canonical per-owner @example sequence.
-  const ordered = context.model.examples.flatMap(example => {
-    const identity = JSON.stringify([example.ownerKey, example.title]);
+  // output. Source order belongs to the canonical per-owner @scenario sequence.
+  const ordered = context.model.scenarios.flatMap(scenario => {
+    const identity = JSON.stringify([scenario.ownerKey, scenario.title]);
     const accepted = byIdentity.get(identity);
     if (!accepted) return [];
     byIdentity.delete(identity);
-    return [accepted];
+    const contract = context.model.contracts[scenario.ownerKey] ?? context.model.bindingContracts[scenario.ownerKey];
+    const publicExample = contract?.examples[0];
+    if (!publicExample) throw new Error(`${scenario.source.file}:${scenario.source.line} Scenario "${scenario.title}" requires an @example on its owner for Example code.`);
+    return [{ ...accepted, publicExample }];
   });
   const artifacts = renderExecutableExamples(ordered);
   preflightGeneratedArtifacts(root, artifacts, executableExamplesPolicy(config));

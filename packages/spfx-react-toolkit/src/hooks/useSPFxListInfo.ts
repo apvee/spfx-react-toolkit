@@ -68,7 +68,7 @@ export interface SPFxListInfo {
  *
  * @useWhen a list-hosted view needs the current list identity and template metadata.
  *
- * @example Inspect the optional current list context
+ * @scenario Inspect the optional current list context
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxListInfo } from '@apvee/spfx-react-toolkit';

@@ -41,7 +41,7 @@ test('actual shared helpers and lazy navigation expose labels, errors, safe JSON
   const renderer = require('@griffel/core').createDOMRenderer(null);
   const host = document.createElement('div'); document.body.appendChild(host);
   const mounts = new Map(), unmounts = new Map(), loads = new Map();
-  const groups = [{ key: 'core', title: 'Providers and context', features: ['first', 'second'].map(key => ({ key, title: key, scenarios: [{ id: key, title: key, source: { file: 'fixture.tsx', line: 1 }, loadSource: () => Promise.resolve({ code: '// Authored example' }), metadata: { host: 'none', contentPlacement: 'configuration', observe: 'Observe generated lazy lifetime.' }, load: () => {
+  const groups = [{ key: 'core', title: 'Providers and context', features: ['first', 'second'].map(key => ({ key, title: key, scenarios: [{ id: key, title: key, source: { file: 'fixture.tsx', line: 1 }, exampleSource: { file: 'fixture.tsx', line: 2 }, loadSource: () => Promise.resolve({ code: '// Authored example' }), metadata: { host: 'none', contentPlacement: 'configuration', observe: 'Observe generated lazy lifetime.' }, load: () => {
     loads.set(key, (loads.get(key) || 0) + 1);
     return Promise.resolve({ Demo: props => {
       React.useEffect(() => { mounts.set(key, (mounts.get(key) || 0) + 1); return () => unmounts.set(key, (unmounts.get(key) || 0) + 1); }, []);

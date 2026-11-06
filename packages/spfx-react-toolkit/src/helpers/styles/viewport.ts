@@ -7,10 +7,11 @@
  * @example Basic usage
  * ```ts
  * import { viewport, foreground, hover } from '@apvee/spfx-react-toolkit/styles';
+ *
  * const descriptor = viewport.small(hover(foreground.subtle));
  * ```
  *
- * @example Resize the viewport at each breakpoint — inclusive small/medium/large
+ * @scenario Resize the viewport at each breakpoint — inclusive small/medium/large
  * ```tsx
  * import * as React from 'react';
  * import { Field, Select } from '@fluentui/react-components';

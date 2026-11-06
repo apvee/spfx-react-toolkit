@@ -39,11 +39,19 @@ import { EditableText } from '@apvee/spfx-react-toolkit/controls/editable-text';
 ```tsx
 import * as React from 'react';
 import { EditableText } from '@apvee/spfx-react-toolkit';
+
 function Summary(): React.ReactElement {
   const [html, setHtml] = React.useState<string>();
-  return <EditableText mode="edit" value={html} fallbackText="Summary"
-    allowedBlocks={['p', 'h2']} aria-label="Summary"
-    onChange={data => setHtml(data.html)} />;
+  return (
+    <EditableText
+      mode="edit"
+      value={html}
+      fallbackText="Summary"
+      allowedBlocks={['p', 'h2']}
+      aria-label="Summary"
+      onChange={data => setHtml(data.html)}
+    />
+  );
 }
 ```
 
@@ -120,160 +128,6 @@ export function SummaryContent(): React.ReactElement {
 }
 ```
 
-#### Edit a controlled block with policy and dictionaries
-
-```tsx
-// This standalone React scenario uses the host Fluent theme and Griffel renderer. Native resource module setup is required even with a complete dictionary. Read does not initialize this body editor; a surrounding Shell title can have its own session.
-import * as React from 'react';
-import { Button, Field, Input, Select } from '@fluentui/react-components';
-import { EditableText, type EditableTextBlock, type EditableTextChangeData, type EditableTextStringsOverride, type EditableTextStrings } from '@apvee/spfx-react-toolkit';
-
-const italianEditableTextStrings: EditableTextStrings = {
-  "editorLoadError": "Impossibile caricare l’editor del testo.",
-  "retry": "Riprova",
-  "savedFormattingWarning": "Impossibile leggere la formattazione salvata del testo. Modifica il testo per correggerla.",
-  "loadingEditor": "Caricamento dell’editor del testo",
-  "placeholder": "Aggiungi un testo",
-  "tooLargeError": "Il testo è troppo grande per essere salvato. Accorcialo per continuare.",
-  "moreFormatting": "Altre opzioni di formattazione del testo",
-  "heading": "Intestazione",
-  "normal": "Normale",
-  "bold": "Grassetto",
-  "italic": "Corsivo",
-  "underline": "Sottolineato",
-  "themeColor": "Colore del tema",
-  "clearFormatting": "Cancella formattazione",
-  "spacing": "Spaziatura",
-  "defaultLineSpacing": "Interlinea predefinita",
-  "spaceBefore": "Spazio prima",
-  "spaceAfter": "Spazio dopo",
-  "formattingControls": "Controlli di formattazione del testo",
-  "formatting": "Formattazione del testo",
-  "fontSize": "Dimensione carattere",
-  "mixed": "Mista",
-  "themeColorGroup": "Colori del tema del testo",
-  "automatic": "Automatico",
-  "themeColors": "Colori del tema",
-  "paletteColors": "Colori standard",
-  "colorNames": {
-    "neutralDark": "Tonalità neutra 2",
-    "neutralLight": "Tonalità neutra 5",
-    "neutralLighter": "Tonalità neutra 6",
-    "brandDarkest": "Tonalità del marchio 1",
-    "brandDarker": "Tonalità del marchio 2",
-    "brandDark": "Tonalità del marchio 3",
-    "brandLight": "Tonalità del marchio 6",
-    "darkRed": "Rosso scuro",
-    "amber": "Ambra",
-    "yellowGreen": "Verde giallastro",
-    "cyan": "Ciano",
-    "navy": "Blu navy",
-    "primary": "Colore del testo principale",
-    "subtle": "Colore del testo secondario",
-    "brand": "Colore del marchio",
-    "neutralMuted": "Colore del testo attenuato",
-    "brandAlt": "Colore alternativo del marchio",
-    "red": "Rosso",
-    "orange": "Arancione",
-    "yellow": "Giallo",
-    "green": "Verde",
-    "teal": "Verde petrolio",
-    "blue": "Blu",
-    "purple": "Viola",
-    "pink": "Rosa",
-    "brown": "Marrone"
-  },
-  headingLevel: level => `Intestazione ${level}`,
-  lineSpacingValue: value => `Interlinea ${value}`,
-  formattingShortcut: (label, shortcut) => `${label} (${shortcut})`,
-  mixedFormatting: label => `${label}: formattazione mista`,
-};
-
-const presets = ['all', 'paragraph', 'headings', 'h2-h4'] as const;
-type Preset = typeof presets[number];
-const blocks: Record<Preset, readonly EditableTextBlock[] | undefined> = {
-  all: undefined,
-  paragraph: ['p'],
-  headings: ['h1', 'h2', 'h3', 'h4'],
-  'h2-h4': ['h2', 'h3', 'h4'],
-};
-const customStrings: EditableTextStringsOverride = { bold: 'Strong', italic: 'Slanted', themeColor: 'Ink', formattingControls: 'Project text formatting', colorNames: { red: 'Alert red' } };
-const initialHTML = '<h2><strong>Project</strong> update</h2>';
-
-// Pure React controlled example; SPFx persistence remains a caller concern.
-type DemoRegions = {
-  controls?: React.ReactNode; commands?: React.ReactNode; status?: React.ReactNode;
-  diagnostics?: React.ReactNode; children?: React.ReactNode;
-};
-const standalone = (regions: DemoRegions): React.ReactElement => <>
-  {regions.controls}{regions.commands}{regions.status}{regions.children}{regions.diagnostics}
-</>;
-export function Demo({ render = standalone, resetRevision = 0 }: {
-  render?: (regions: DemoRegions) => React.ReactElement; resetRevision?: number;
-}): React.ReactElement {
-  const [html, setHTML] = React.useState<string | undefined>(initialHTML);
-  const [mode, setMode] = React.useState<'read' | 'edit'>('read');
-  const [preset, setPreset] = React.useState<Preset>('all');
-  const [fallback, setFallback] = React.useState('Literal <h2>fallback</h2>');
-  const [placeholder, setPlaceholder] = React.useState('Write a project update');
-  const [dictionary, setDictionary] = React.useState('native');
-  const [lastChange, setLastChange] = React.useState<EditableTextChangeData>();
-  const [changes, setChanges] = React.useState(0);
-  // A reset invalidates the old session before any child cleanup. Only explicit Edit
-  // admits a session into the current revision; Read still permits its ordinary final flush.
-  const [editRevision, setEditRevision] = React.useState(resetRevision);
-  const previousReset = React.useRef(resetRevision);
-  const onChange = React.useCallback((data: EditableTextChangeData) => {
-    if (editRevision !== resetRevision) return;
-    setHTML(data.html);
-    setLastChange(data);
-    setChanges(count => count + 1);
-  }, [editRevision, resetRevision]);
-  React.useLayoutEffect(() => {
-    if (previousReset.current === resetRevision) return;
-    previousReset.current = resetRevision;
-    setHTML(initialHTML); setMode('read'); setPreset('all'); setFallback('Literal <h2>fallback</h2>');
-    setPlaceholder('Write a project update'); setDictionary('native'); setLastChange(undefined); setChanges(0);
-  }, [resetRevision]);
-  return render({ controls: <>
-      <Field label="Mode"><Select select={{ as: 'select', ...{ 'data-editable-text-demo': 'mode' } }} value={mode}
-        onChange={event => {
-          const next = event.target.value === 'edit' ? 'edit' : 'read';
-          if (next === 'edit') setEditRevision(resetRevision);
-          setMode(next);
-        }}><option value="read">Read</option><option value="edit">Edit</option></Select></Field>
-      <Field label="Allowed blocks"><Select select={{ as: 'select', ...{ 'data-editable-text-demo': 'preset', 'data-demo-variant': 'editable-text' } }} value={preset}
-        onChange={event => { const selected = presets.find(value => value === event.target.value); if (selected !== undefined) setPreset(selected); }}>
-        {presets.map(value => <option key={value} value={value}>{value}</option>)}
-      </Select></Field>
-      <Field label="Literal fallback"><Input input={{ as: 'input', ...{ 'data-editable-text-demo': 'fallback-input' } }} value={fallback} onChange={(_event, data) => setFallback(data.value)} /></Field>
-      <Field label="Empty editor hint"><Input input={{ as: 'input', ...{ 'data-editable-text-demo': 'placeholder' } }} value={placeholder} onChange={(_event, data) => setPlaceholder(data.value)} /></Field>
-    </>,
-    commands: <>
-      <Button data-editable-text-demo="h2" onClick={() => setHTML(initialHTML)}>Load H2 HTML</Button>
-      <Button data-editable-text-demo="fallback" onClick={() => setHTML(undefined)}>Use literal fallback</Button>
-      <Button data-editable-text-demo="empty" onClick={() => setHTML('')}>Load empty value</Button>
-    </>,
-    status: <>
-      <p data-editable-text-demo="status" aria-live="polite">Mode: {mode} · Policy: {preset} · Callbacks: {changes}</p>
-      <p>Stored controlled input: <code data-editable-text-demo="stored">{html === undefined ? 'undefined (literal fallback)' : html === '' ? '"" (authoritative empty)' : html}</code></p>
-      <p>The live subject below is the visible policy projection. Normalization does not rewrite the stored input; a user change saves its canonical HTML into React state.</p>
-    </>,
-    diagnostics: <>
-      <Field label="Editor dictionary"><Select select={{ as: 'select', ...{ 'data-editable-text-demo': 'strings' } }} value={dictionary} onChange={event => setDictionary(event.target.value)}>
-        <option value="native">Native SPFx labels</option><option value="italian">Italiano · complete dictionary</option><option value="custom">Project labels · partial dictionary</option>
-      </Select></Field>
-      <p>Last user callback: <code data-editable-text-demo="callback">{lastChange === undefined ? 'No user changes' : JSON.stringify(lastChange)}</code></p>
-      <p>Preset changes retain this control and its source. Switching to Read destroys its editor session. Dictionary changes update commands without changing content or publishing a callback.</p>
-    </>,
-    children: <EditableText data-editable-text-demo="preview" aria-label="Project update visible policy projection" mode={mode} value={html}
-      fallbackText={fallback} allowedBlocks={blocks[preset]} placeholder={placeholder} strings={dictionary === 'italian' ? italianEditableTextStrings : dictionary === 'custom' ? customStrings : undefined} onChange={onChange} /> });
-}
-
-export const demo = { host: 'none', kind: 'snapshot', contentPlacement: 'subject',
-  observe: 'Edit one controlled block and compare stored HTML, visible policy projection, callback counts and live dictionaries.' };
-```
-
 ### Signatures
 
 ```ts
@@ -322,7 +176,7 @@ ReactElement<any, string | JSXElementConstructor<any>>
 
 ### Source
 
-[packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx:312](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#L312)
+[packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx:320](https://github.com/apvee/spfx-react-toolkit/blob/main/packages/spfx-react-toolkit/src/controls/editable-text/editable-text.tsx#L320)
 
 ## EditableTextBlock
 

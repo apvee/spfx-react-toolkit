@@ -55,13 +55,17 @@ export interface SPFxFluent9ThemeInfo {
  *
  * function ThemedContent() {
  *   const { theme } = useSPFxFluent9ThemeInfo();
- *   return <FluentProvider theme={theme}><span>Themed content</span></FluentProvider>;
+ *   return (
+ *     <FluentProvider theme={theme}>
+ *       <span>Themed content</span>
+ *     </FluentProvider>
+ *   );
  * }
  * ```
  *
  * @useWhen custom Fluent 9 UI must use the theme derived from this provider host.
  *
- * @example Observe the projected Fluent theme tokens
+ * @scenario Observe the projected Fluent theme tokens
  * ```tsx
  * import * as React from 'react';
  * import { useSPFxFluent9ThemeInfo } from '@apvee/spfx-react-toolkit';

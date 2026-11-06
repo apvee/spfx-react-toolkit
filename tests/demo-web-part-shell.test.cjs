@@ -63,7 +63,7 @@ test('three source-owned Shell pilots use the actual host port while rich dictio
   const owner = read('packages/spfx-react-toolkit/src/controls/web-part-shell/web-part-shell.tsx');
   const catalogue = read(`${base}components/generated/jsdoc-examples/catalogue.ts`);
   for (const title of ['Configure the actual web part Shell', 'Retain content through Shell presentation changes', 'Observe content remount between subtle and Card']) {
-    assert.ok(owner.includes(`@example ${title}\n`));
+    assert.ok(owner.includes(`@scenario ${title}\n`));
     assert.ok(catalogue.includes(`"title": "${title}"`));
   }
   for (const title of ['Basic usage', 'First web part with metadata and native Property Pane', 'Customize the header action and restore a hidden title']) assert.ok(owner.includes(`@example ${title}\n`), title);
